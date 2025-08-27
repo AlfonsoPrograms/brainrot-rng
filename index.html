@@ -249,7 +249,27 @@
       }
 
       .sidebar::-webkit-scrollbar {
-        display: none;
+        width: 6px; /* thin scrollbar */
+      }
+
+      .sidebar::-webkit-scrollbar-track {
+        background: transparent; /* no background */
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.3); /* light glowing thumb */
+        border-radius: 10px;
+        transition: background-color 0.3s;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(255, 255, 255, 0.6); /* brighter on hover */
+      }
+
+      /* Firefox */
+      .sidebar {
+        scrollbar-width: thin; /* makes it slim */
+        scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
       }
 
       .sidebar.active {
