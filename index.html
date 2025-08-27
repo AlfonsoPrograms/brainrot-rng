@@ -142,13 +142,21 @@
       }
 
       .dataResetButton {
-        background-color: red;
-        font-size: 55px;
-        width: 125px;
-        height: 75px;
-        font-family: Impact, Charcoal, sans-serif;
-        border-radius: 6px;
-        top: 100%;
+        width: 100%; /* wide button */
+        padding: 12px;
+        background-color: #e63946; /* red */
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 12px; /* rounded corners */
+        cursor: pointer;
+        transition: background 0.3s;
+        margin-top: auto; /* forces it to the bottom */
+      }
+
+      .dataResetButton:hover {
+        background-color: #d62828; /* darker red on hover */
       }
 
       .AutoRollButton {
