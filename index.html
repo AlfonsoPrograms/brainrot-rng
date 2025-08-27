@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brainrot RNG</title>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        color: black;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      body.dark-mode {
+        background-color: #000;
+        color: white;
+      }
+
+      /* STARTUP SCREEN */
+      #startupScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: black;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 5000;
+        font-size: 32px;
+        font-family: Impact, sans-serif;
+      }
+      #startupScreen button {
+        margin-top: 20px;
+        padding: 12px 24px;
+        font-size: 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        background: white;
+        color: black;
+        font-weight: bold;
+      }
+
+      #startupScreen button:hover {
+        background: gray;
+      }
+      .topbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: #333;
+        overflow: hidden;
+        z-index: 1000;
+      }
+
+      .topbar a {
+        font-family: Impact, Charcoal, sans-serif;
+        float: left;
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 20px;
+        text-decoration: none;
+      }
+
+      .topbar a:hover {
+        background-color: #575757;
+      }
+
+      .topbar p {
+        font-family: Impact, Charcoal, sans-serif;
+        float: right;
+        color: white;
+        padding: 14px 20px;
+        margin: 0;
+      }
+
+      .RollButton {
+        font-family: Impact, Charcoal, sans-serif;
+        border-radius: 12px;
+        font-size: 75px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        height: 150px;
+        background-color: rgb(0, 0, 215);
+        color: white;
+        animation: pulseGlow 2s infinite ease-in-out;
+        transition: all 0.3s ease-in-out;
+        border: none;
+        box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff,
+          0 0 40px #21a9c4, 0 0 60px #21a9c4;
+      }
+
+      .RollButton:hover {
+        cursor: pointer;
+        font-size: 95px;
+        background-color: rgb(0, 0, 200);
+        width: 325px;
+        height: 165px;
+        box-shadow: 2px 2px 10px gray;
+      }
+
+      .RollButton:active {
+        font-size: 55px;
+        background-color: rgb(0, 0, 235);
+        width: 275px;
+        height: 135px;
+      }
+
+      .dataResetButton {
+        background-color: red;
+        font-size: 35px;
+        width: 75px;
+        height: 50px;
+        font-family: Impact, Charcoal, sans-serif;
+        border-radius: 6px;
+        top: 100%;
+      }
+
+      .AutoRollButton {
+        font-family: Impact, Charcoal, sans-serif;
+        border-radius: 12px;
+        font-size: 35px;
+        position: absolute;
+        top: 72%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 220px;
+        height: 100px;
+        background-color: rgb(150, 0, 0);
+        color: white;
+        animation: redGlow 2s infinite ease-in-out;
+        transition: all 0.3s ease-in-out;
+        border: none;
+        box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff,
+          0 0 40px #ff00ff, 0 0 60px #ff00ff;
+        opacity: 0.4; /* disabled look */
+        pointer-events: none; /* not clickable */
+      }
+
+      .AutoRollButton.unlocked {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .AutoRollButton:hover {
+        width: 250px;
+        height: 120px;
+        cursor: pointer;
+        font-size: 50px;
+        background-color: rgb(120, 0, 0);
+      }
+
+      .AutoRollButton:active {
+        width: 200px;
+        height: 80px;
+        font-size: 30px;
+      }
+
+      @keyframes pulseGlow {
+        0% {
+          box-shadow: 0 0 10px #21a9c4, 0 0 20px #21a9c4, 0 0 30px #21a9c4;
+        }
+        50% {
+          box-shadow: 0 0 30px #21a9c4, 0 0 60px #21a9c4, 0 0 90px #21a9c4;
+        }
+        100% {
+          box-shadow: 0 0 10px #21a9c4, 0 0 20px #21a9c4, 0 0 30px #21a9c4;
+        }
+      }
+
+      @keyframes redGlow {
+        0% {
+          box-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
+        }
+        50% {
+          box-shadow: 0 0 30px red, 0 0 60px red, 0 0 90px red;
+        }
+        100% {
+          box-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
+        }
+      }
+
+      .message {
+        font-family: Impact, Charcoal, sans-serif;
+        font-size: 35px;
+        position: absolute;
+        left: 50%;
+        top: 25%;
+        transform: translate(-50%, -25%);
+        color: inherit;
+        text-shadow: 2px 2px 10px gray;
+        text-align: center;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 300px;
+        height: 100%;
+        background-color: #111;
+        color: white;
+        padding: 20px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        z-index: 2000;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        display: none;
+      }
+
+      .sidebar.active {
+        display: block;
+        transform: translateX(0);
+      }
+
+      .titleBrainrotRNG {
+        font-family: Impact, Charcoal, sans-serif;
+        font-size: 60px;
+        color: white;
+        display: block;
+        transform: translateY(50);
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: transparent;
+        color: white;
+        border: none;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+
+      .close-btn:hover {
+        color: red;
+      }
+
+      /* Rarity styles */
+      .rarity-common {
+        color: limegreen;
+        font-weight: bold;
+      }
+      .rarity-uncommon {
+        color: blue;
+        font-weight: bold;
+      }
+      .rarity-legendary {
+        color: orange;
+        font-weight: bold;
+        text-shadow: 0 0 10px orange, 0 0 20px orangered;
+      }
+      .rarity-mystical {
+        background: linear-gradient(90deg, red, orange);
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .rarity-secret {
+        background: linear-gradient(
+          90deg,
+          red 0%,
+          orange 17%,
+          yellow 33%,
+          green 50%,
+          cyan 67%,
+          blue 83%,
+          violet 100%
+        );
+
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .rarity-epic {
+        color: purple;
+        font-weight: bold;
+        text-shadow: 0 0 10px purple, 0 0 20px blue;
+      }
+
+      .rarity-rare {
+        color: red;
+        font-weight: bold;
+        text-shadow: 0 0 10px red, 0 0 20px orangered;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- STARTUP SCREEN -->
+    <div id="startupScreen">
+      <div class="titleBrainrotRNG" id="titleBrainrotRNG">BRAINROT RNG</div>
+      <div>
+        Dark mode and fullscreen are recommended to have the best experience 🌙
+      </div>
+      <button onclick="startGame()">Enter</button>
+    </div>
+
+    <div class="topbar">
+      <a href="#home">Home</a>
+      <a href="#settings" onclick="toggleSidebar('settingsPanel')">Settings</a>
+      <a href="#inventory" onclick="toggleSidebar('inventoryPanel')"
+        >Inventory</a
+      >
+      <a href="#index" onclick="toggleSidebar('indexPanel')">Index</a>
+      <a href="#quests" onclick="toggleSidebar('questsPanel')">Quests</a>
+      <p>Brainrot RNG</p>
+    </div>
+
+    <div id="message" class="message">Press ROLL to start...</div>
+    <button id="RollButton" onclick="getRandomBrainrot()" class="RollButton">
+      ROLL
+    </button>
+    <button
+      id="AutoRollButton"
+      onclick="toggleAutoRoll()"
+      class="AutoRollButton"
+    >
+      AUTO
+    </button>
+
+    <audio
+      id="Music1"
+      src="https://audio.com/alfonsoo-vilchez/audio/music1"
+      autoplay
+      loop
+      muted
+    ></audio>
+
+    <!-- SETTINGS -->
+    <div id="settingsPanel" class="sidebar">
+      <button class="close-btn" onclick="toggleSidebar('settingsPanel')">
+        &times;
+      </button>
+      <h2>Settings</h2>
+      <label><input type="checkbox" id="darkModeSwitch" /> Dark Mode</label
+      ><br />
+      <label><input type="checkbox" id="musicSwitch" checked /> Music</label>
+      <button class="dataResetButton" onclick="resetData()">Reset Data</button>
+    </div>
+
+    <!-- INVENTORY -->
+    <div id="inventoryPanel" class="sidebar">
+      <button class="close-btn" onclick="toggleSidebar('inventoryPanel')">
+        &times;
+      </button>
+      <h2>Inventory</h2>
+      <ul id="inventoryList"></ul>
+    </div>
+
+    <!-- INDEX -->
+    <div id="indexPanel" class="sidebar">
+      <button class="close-btn" onclick="toggleSidebar('indexPanel')">
+        &times;
+      </button>
+      <h2>Index</h2>
+      <ul>
+        <li>TIM CHEESE - 40%</li>
+        <li>BRR BRR PATAPIM - 35%</li>
+        <li>TUNG TUNG TUNG SAHUR - 35%</li>
+        <li>Lirili Larila - 35%</li>
+        <li>Capuccino Assasino - 35%</li>
+        <li>Cacto Hipopotamo - 30%</li>
+        <li>Ta Ta Ta Sahur - 30%</li>
+        <li>Bananita Dolphinita - 25%</li>
+        <li>Ti Ti Ti Sahur - 25%</li>
+        <li>Trippi Troppi - 20%</li>
+        <li>Pandaccini Bananini - 10%</li>
+        <li>Ballerina Capuccina - 0.7%</li>
+        <li>BOMBARDINO COCODRILLO - 0.5%</li>
+        <li>TRALALERO TRALALA - 0.1%</li>
+        <li>ORCALERO ORCALA - 0.1%</li>
+        <li>??? - 0.069%</li>
+        <li>??? - 0.0005%</li>
+      </ul>
+    </div>
+
+    <!-- QUESTS -->
+    <div id="questsPanel" class="sidebar">
+      <button class="close-btn" onclick="toggleSidebar('questsPanel')">
+        &times;
+      </button>
+      <h2>Quests</h2>
+      <ul id="questsList"></ul>
+    </div>
+
+    <script>
+      const musicOne = document.getElementById("Music1");
+      musicOne.volume = 0.45;
+
+      const messages = [
+        {
+          text: "Brr Brr Patapim!",
+          rarity: "COMMON",
+          class: "rarity-common",
+          weight: 35,
+        },
+        {
+          text: "Tung Tung Tung Sahur!",
+          rarity: "COMMON",
+          class: "rarity-common",
+          weight: 35,
+        },
+        {
+          text: "Capuccino Assasino!",
+          rarity: "COMMON",
+          class: "rarity-common",
+          weight: 35,
+        },
+        {
+          text: "Pandaccini Bananini!",
+          rarity: "EPIC",
+          class: "rarity-epic",
+          weight: 10,
+        },
+        {
+          text: "Tim Cheese!",
+          rarity: "COMMON",
+          class: "rarity-common",
+          weight: 40,
+        },
+        {
+          text: "Ballerina Capuccina!",
+          rarity: "LEGENDARY",
+          class: "rarity-legendary",
+          weight: 7,
+        },
+        {
+          text: "You Got Bombardino Cocodrillo!!!",
+          rarity: "LEGENDARY",
+          class: "rarity-legendary",
+          weight: 5,
+        },
+        {
+          text: "TRALALERO TRALALA!",
+          rarity: "MYSTICAL",
+          class: "rarity-mystical",
+          weight: 1,
+        },
+        {
+          text: "You got Cacto Hipopotamo!",
+          rarity: "UNCOMMON",
+          class: "rarity-uncommon",
+          weight: 30,
+        },
+        {
+          text: "LA GRANDE COMBINASION!",
+          rarity: "???",
+          class: "rarity-secret",
+          weight: 0.69,
+        },
+        {
+          text: "Ta Ta Ta Sahur!",
+          rarity: "UNCOMMON",
+          class: "rarity-uncommon",
+          weight: 30,
+        },
+        {
+          text: "Orcalero Orcala!",
+          rarity: "MYSTICAL",
+          class: "rarity-mystical",
+          weight: 1,
+        },
+        {
+          text: "Trippi Troppi!",
+          rarity: "EPIC",
+          class: "rarity-epic",
+          weight: 20,
+        },
+        {
+          text: "Lirili Larila",
+          rarity: "COMMON",
+          class: "rarity-common",
+          weight: 35,
+        },
+        {
+          text: "Garama and Madundung!",
+          rarity: "???",
+          class: "rarity-secret",
+          weight: 0.05,
+        },
+        {
+          text: "Ti Ti Ti Sahur",
+          rarity: "RARE",
+          class: "rarity-rare",
+          weight: 25,
+        },
+        {
+          text: "Bananita Dolphinita",
+          rarity: "RARE",
+          class: "rarity-rare",
+          weight: 25,
+        },
+      ];
+
+      function resetData() {
+        if (confirm("Are you sure you want to reset all data?")) {
+          localStorage.clear();
+          inventory = [];
+          quests = {
+            patapim: 0,
+            cacto: 0,
+            bombardino: 0,
+            grande: 0,
+            completed: {},
+          };
+          luckMultiplier = 1.0;
+          rollCooldown = 1.0;
+          autoRollUnlocked = false;
+          autoRollActive = false;
+          clearInterval(autoRollInterval);
+          document
+            .getElementById("AutoRollButton")
+            .classList.remove("unlocked");
+          updateInventory();
+          updateQuestList();
+          document.getElementById("message").innerText =
+            "Press ROLL to start...";
+        }
+      }
+
+      let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+      let quests = JSON.parse(localStorage.getItem("quests")) || {
+        patapim: 0,
+        cacto: 0,
+        bombardino: 0,
+        grande: 0,
+        completed: {},
+      };
+      let luckMultiplier =
+        parseFloat(localStorage.getItem("luckMultiplier")) || 1.0;
+      let rollCooldown =
+        parseFloat(localStorage.getItem("rollCooldown")) || 1.0;
+      let autoRollUnlocked =
+        localStorage.getItem("autoRollUnlocked") === "true";
+      let autoRollActive = false;
+      let autoRollInterval;
+
+      function saveGame() {
+        localStorage.setItem("inventory", JSON.stringify(inventory));
+        localStorage.setItem("quests", JSON.stringify(quests));
+        localStorage.setItem("luckMultiplier", luckMultiplier);
+        localStorage.setItem("rollCooldown", rollCooldown);
+        localStorage.setItem("autoRollUnlocked", autoRollUnlocked);
+      }
+
+      function getRandomBrainrot() {
+        let totalWeight = messages.reduce((sum, msg) => sum + msg.weight, 0);
+        let rand = (Math.random() * totalWeight) / luckMultiplier;
+        for (let msg of messages) {
+          if (rand < msg.weight) {
+            const result = `${msg.text}<br><span class="${msg.class}">${msg.rarity}</span>`;
+            document.getElementById("message").innerHTML = result;
+
+            if (!inventory.includes(result)) {
+              inventory.push(result);
+              updateInventory();
+            }
+            updateQuests(msg.text);
+            saveGame();
+
+            // ✅ Stop AutoRoll if user enabled and rarity is top tier
+            if (
+              autoRollActive &&
+              stopOnGoodDrops &&
+              (msg.rarity === "MYSTICAL" || msg.rarity === "???")
+            ) {
+              toggleAutoRoll(); // turns it off
+            }
+
+            return;
+          }
+          rand -= msg.weight;
+        }
+      }
+
+      function updateInventory() {
+        const list = document.getElementById("inventoryList");
+        list.innerHTML = "";
+        inventory.forEach((item) => {
+          const li = document.createElement("li");
+          li.innerHTML = item;
+          list.appendChild(li);
+        });
+      }
+
+      function updateQuests(itemText) {
+        function showQuestComplete(msg) {
+          const note = document.createElement("div");
+          note.innerText = "Quest Completed: " + msg;
+          note.style.position = "fixed";
+          note.style.bottom = "20px";
+          note.style.left = "50%";
+          note.style.transform = "translateX(-50%)";
+          note.style.background = "limegreen";
+          note.style.color = "black";
+          note.style.padding = "10px 20px";
+          note.style.borderRadius = "8px";
+          note.style.fontWeight = "bold";
+          note.style.zIndex = "9999";
+          document.body.appendChild(note);
+          setTimeout(() => note.remove(), 3000);
+        }
+
+        if (itemText.includes("Patapim")) quests.patapim++;
+        if (itemText.includes("Hipopotamo")) quests.cacto++;
+        if (itemText.includes("Bombardino")) quests.bombardino++;
+        if (itemText.includes("GRANDE")) quests.grande++;
+
+        // Rewards
+        if (quests.patapim >= 5 && !quests.completed.patapim) {
+          autoRollUnlocked = true;
+          document.getElementById("AutoRollButton").classList.add("unlocked");
+          quests.completed.patapim = true;
+        }
+        if (quests.cacto >= 5 && !quests.completed.cacto) {
+          luckMultiplier += 0.05;
+          quests.completed.cacto = true;
+        }
+        if (quests.bombardino >= 1 && !quests.completed.bombardino) {
+          rollCooldown = Math.max(0.2, rollCooldown - 0.05);
+          quests.completed.bombardino = true;
+        }
+        if (quests.grande >= 1 && !quests.completed.grande) {
+          luckMultiplier *= 1.1;
+          quests.completed.grande = true;
+        }
+        updateQuestList();
+      }
+
+      function updateQuestList() {
+        const q = document.getElementById("questsList");
+        q.innerHTML = `
+          <li>${
+            quests.patapim >= 5 ? "✅" : "⬜"
+          } Get 5x Brr Brr Patapim (Unlock Auto Roll) - ${quests.patapim}/5</li>
+          <li>${
+            quests.cacto >= 5 ? "✅" : "⬜"
+          } Get 5x Cacto Hipopotamo (+0.05 Luck) - ${quests.cacto}/5</li>
+          <li>${
+            quests.bombardino >= 1 ? "✅" : "⬜"
+          } Get 1x Bombardino Cocodrillo (-0.05 Roll Speed) - ${
+          quests.bombardino
+        }/1</li>
+          <li>${
+            quests.grande >= 1 ? "✅" : "⬜"
+          } Get 1x LA GRANDE COMBINASION (×1.1 Luck) - ${quests.grande}/1</li>
+        `;
+      }
+
+      function toggleAutoRoll() {
+        if (!autoRollUnlocked) return;
+        autoRollActive = !autoRollActive;
+        if (autoRollActive) {
+          autoRollButton = document.getElementById("AutoRollButton");
+          autoRollButton.innerText = "STOP";
+          autoRollInterval = setInterval(() => {
+            getRandomBrainrot();
+          }, rollCooldown * 1000);
+        } else {
+          autoRollButton.innerText = "AUTO";
+          clearInterval(autoRollInterval);
+        }
+      }
+
+      // Sidebar toggle
+      function toggleSidebar(id) {
+        const panel = document.getElementById(id);
+        if (panel.classList.contains("active")) {
+          panel.classList.remove("active");
+          setTimeout(() => {
+            panel.style.display = "none";
+          }, 300);
+        } else {
+          panel.style.display = "block";
+          requestAnimationFrame(() => {
+            panel.classList.add("active");
+          });
+        }
+      }
+
+      // Dark mode toggle
+      const darkModeSwitch = document.getElementById("darkModeSwitch");
+      darkModeSwitch.checked = localStorage.getItem("darkMode") === "true";
+      if (darkModeSwitch.checked) document.body.classList.add("dark-mode");
+      darkModeSwitch.addEventListener("change", function () {
+        document.body.classList.toggle("dark-mode", darkModeSwitch.checked);
+        localStorage.setItem("darkMode", darkModeSwitch.checked);
+      });
+
+      // Music toggle
+      const musicSwitch = document.getElementById("musicSwitch");
+      musicSwitch.checked = localStorage.getItem("music") !== "false";
+      musicOne.muted = !musicSwitch.checked;
+      musicSwitch.addEventListener("change", function () {
+        musicOne.muted = !musicSwitch.checked;
+        localStorage.setItem("music", musicSwitch.checked);
+      });
+
+      // Game start
+      function startGame() {
+        document.getElementById("startupScreen").style.display = "none";
+      }
+
+      // Init
+      if (autoRollUnlocked)
+        document.getElementById("AutoRollButton").classList.add("unlocked");
+      updateInventory();
+      updateQuestList();
+    </script>
+  </body>
+</html>
