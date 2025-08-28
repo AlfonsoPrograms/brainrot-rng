@@ -124,6 +124,11 @@
         box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff,
           0 0 40px #21a9c4, 0 0 60px #21a9c4;
       }
+      .RollButton[disabled] {
+        filter: grayscale(0.3);
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
 
       .RollButton:hover {
         cursor: pointer;
@@ -360,6 +365,32 @@
         font-weight: bold;
         text-shadow: 0 0 10px red, 0 0 20px orangered;
       }
+
+      .stat {
+        font-size: 14px;
+        opacity: 0.85;
+        margin: 6px 0;
+      }
+      .rebirth-note {
+        font-size: 13px;
+        opacity: 0.9;
+      }
+      .rebirth-btn {
+        width: 100%;
+        padding: 12px;
+        background: #0ea5e9;
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+      .rebirth-btn:disabled {
+        background: #1f2937;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
     </style>
   </head>
   <body>
@@ -380,11 +411,13 @@
       >
       <a href="#index" onclick="toggleSidebar('indexPanel')">Index</a>
       <a href="#quests" onclick="toggleSidebar('questsPanel')">Quests</a>
+      <!-- NEW: Rebirth topbar entry -->
+      <a href="#rebirth" onclick="toggleSidebar('rebirthPanel')">Rebirth</a>
       <p>Brainrot RNG</p>
     </div>
 
     <div id="message" class="message">Press ROLL to start...</div>
-    <button id="RollButton" onclick="getRandomBrainrot()" class="RollButton">
+    <button id="RollButton" onclick="rollClicked()" class="RollButton">
       ROLL
     </button>
     <button
@@ -411,7 +444,13 @@
       <h2>Settings</h2>
       <label><input type="checkbox" id="darkModeSwitch" /> Dark Mode</label
       ><br />
-      <label><input type="checkbox" id="musicSwitch" checked /> Music</label>
+      <label><input type="checkbox" id="musicSwitch" checked /> Music</label
+      ><br />
+      <!-- NEW: fix stopOnGoodDrops undefined -->
+      <label
+        ><input type="checkbox" id="stopOnGoodDropsSwitch" checked /> Stop AUTO
+        on Mystical/Secret</label
+      >
       <button class="dataResetButton" onclick="resetData()">Reset Data</button>
     </div>
 
@@ -463,13 +502,83 @@
         &times;
       </button>
       <h2>Quests</h2>
+      <div class="stat" id="questTierLabel"></div>
       <ul id="questsList"></ul>
+    </div>
+
+    <!-- NEW: REBIRTH PANEL -->
+    <div id="rebirthPanel" class="sidebar">
+      <button class="close-btn" onclick="toggleSidebar('rebirthPanel')">
+        &times;
+      </button>
+      <h2>Rebirth</h2>
+      <div class="stat">Rebirths: <span id="rbCount">0</span></div>
+      <div class="stat">Total Rolls: <span id="rbRolls">0</span></div>
+      <div class="stat">
+        Current Roll Speed: <span id="rbSpeed">1.00s</span>
+      </div>
+      <div class="rebirth-note">
+        Rebirthing resets inventory & quests but grants permanent bonuses.
+        <br />Rebirth 3 adds a big roll speed boost.
+      </div>
+      <hr />
+      <h3>Requirements to Rebirth</h3>
+      <ul id="rebirthReqs"></ul>
+      <button id="rebirthBtn" class="rebirth-btn" onclick="doRebirth()">
+        Rebirth Now
+      </button>
     </div>
 
     <script>
       const musicOne = document.getElementById("Music1");
       musicOne.volume = 0.45;
 
+      // ======= GAME DATA =======
+      const MIN_CLICK_COOLDOWN = 0.35; // anti-spam/autoclickers (seconds)
+      let lastRollTs = 0;
+
+      let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+      let quests = JSON.parse(localStorage.getItem("quests")) || {
+        patapim: 0,
+        cacto: 0,
+        bombardino: 0,
+        grande: 0,
+        completed: {},
+      };
+
+      // NEW: rebirth & progression storage
+      let rebirths = parseInt(localStorage.getItem("rebirths")) || 0;
+      let totalRolls = parseInt(localStorage.getItem("totalRolls")) || 0;
+
+      // NEW: extra quest tracking per rebirth tier
+      let questsExclusive =
+        JSON.parse(localStorage.getItem("questsExclusive")) || {}; // {id: count}
+      let questsExclusiveCompleted =
+        JSON.parse(localStorage.getItem("questsExclusiveCompleted")) || {}; // {id: true}
+
+      // NEW: extra speed bonus from exclusive quests (seconds, negative = faster)
+      let questsSpeedBonus =
+        parseFloat(localStorage.getItem("questsSpeedBonus")) || 0.0;
+
+      // old stats
+      let luckMultiplier =
+        parseFloat(localStorage.getItem("luckMultiplier")) || 1.0;
+
+      // rollCooldown value stored historically; we now compute it dynamically but keep for backward compat
+      let rollCooldownStored =
+        parseFloat(localStorage.getItem("rollCooldown")) || 1.0;
+
+      let autoRollUnlocked =
+        localStorage.getItem("autoRollUnlocked") === "true";
+      let autoRollActive = false;
+      let autoRollInterval;
+
+      // NEW: stopOnGoodDrops toggle (fix undefined var)
+      let stopOnGoodDrops = JSON.parse(
+        localStorage.getItem("stopOnGoodDrops") || "true"
+      );
+
+      // ======= MESSAGES / POOL =======
       const messages = [
         {
           text: "Brr Brr Patapim!",
@@ -571,7 +680,7 @@
           text: "Bananita Dolphinita",
           rarity: "RARE",
           class: "rarity-rare",
-          weight: 25,
+          weight: 99,
         },
         {
           text: "Tric Trac Baraboom",
@@ -623,60 +732,173 @@
         },
       ];
 
-      function resetData() {
-        if (confirm("Are you sure you want to reset all data?")) {
-          localStorage.clear();
-          inventory = [];
-          quests = {
-            patapim: 0,
-            cacto: 0,
-            bombardino: 0,
-            grande: 0,
-            completed: {},
-          };
-          luckMultiplier = 1.0;
-          rollCooldown = 1.0;
-          autoRollUnlocked = false;
-          autoRollActive = false;
-          clearInterval(autoRollInterval);
-          document
-            .getElementById("AutoRollButton")
-            .classList.remove("unlocked");
-          updateInventory();
-          updateQuestList();
-          document.getElementById("message").innerText =
-            "Press ROLL to start...";
+      // ======= EXCLUSIVE QUESTS PER REBIRTH (harder each time) =======
+      const exclusiveQuestDefs = {
+        // After Rebirth 1 (stage = 1)
+        1: [
+          {
+            id: "r1_rares10",
+            name: "Get 10x RARE rolls",
+            type: "rarity",
+            rarity: "RARE",
+            target: 10,
+            reward: { luck: 0.02 }, // +0.02 luck
+          },
+          {
+            id: "r1_epics3",
+            name: "Get 3x EPIC rolls",
+            type: "rarity",
+            rarity: "EPIC",
+            target: 3,
+            reward: { speed: -0.02 }, // -0.02s faster
+          },
+          {
+            id: "r1_rolls150",
+            name: "Reach 150 total rolls",
+            type: "rolls",
+            target: 150,
+            reward: { luck: 0.02 },
+          },
+        ],
+        // After Rebirth 2 (stage = 2)
+        2: [
+          {
+            id: "r2_legend1",
+            name: "Get 1x LEGENDARY roll",
+            type: "rarity",
+            rarity: "LEGENDARY",
+            target: 1,
+            reward: { luck: 0.03 },
+          },
+          {
+            id: "r2_mystical1",
+            name: "Get 1x MYSTICAL roll",
+            type: "rarity",
+            rarity: "MYSTICAL",
+            target: 1,
+            reward: { speed: -0.03 },
+          },
+          {
+            id: "r2_rolls300",
+            name: "Reach 300 total rolls",
+            type: "rolls",
+            target: 300,
+            reward: { luck: 0.03 },
+          },
+        ],
+        // After Rebirth 3 (stage = 3)
+        3: [
+          {
+            id: "r3_rares25",
+            name: "Get 25x RARE rolls",
+            type: "rarity",
+            rarity: "RARE",
+            target: 25,
+            reward: { speed: -0.05 },
+          },
+          {
+            id: "r3_epic10",
+            name: "Get 10x EPIC rolls",
+            type: "rarity",
+            rarity: "EPIC",
+            target: 10,
+            reward: { luck: 0.05 },
+          },
+          {
+            id: "r3_rolls600",
+            name: "Reach 600 total rolls",
+            type: "rolls",
+            target: 600,
+            reward: { speed: -0.05 },
+          },
+        ],
+      };
+
+      // ======= CORE HELPERS =======
+      function computeRollCooldownSeconds() {
+        // Start at 1.0s base
+        let base = 1.0;
+
+        // Quest: Bombardino (-0.05s)
+        if (quests.completed && quests.completed.bombardino) base -= 0.05;
+
+        // Exclusive quest rewards (accumulated)
+        base += questsSpeedBonus; // negative is faster
+
+        // Rebirth 3 special: -0.5s
+        if (rebirths >= 3) base -= 0.5;
+
+        // Clamp to 0.35s minimum (anti-spam & autobot proofing)
+        return Math.max(MIN_CLICK_COOLDOWN, parseFloat(base.toFixed(3)));
+      }
+
+      function canRebirth() {
+        // Stage is current rebirth count.
+        // Stage 0 requirements = base quests.
+        // Stage N (>=1) requirements = exclusiveQuestDefs[N].
+        if (rebirths === 0) {
+          return (
+            quests.completed.patapim &&
+            quests.completed.cacto &&
+            quests.completed.bombardino &&
+            quests.completed.grande
+          );
+        } else {
+          const set = exclusiveQuestDefs[rebirths] || [];
+          if (set.length === 0) return true; // no gate
+          return set.every((q) => questsExclusiveCompleted[q.id]);
         }
       }
 
-      let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-      let quests = JSON.parse(localStorage.getItem("quests")) || {
-        patapim: 0,
-        cacto: 0,
-        bombardino: 0,
-        grande: 0,
-        completed: {},
-      };
-      let luckMultiplier =
-        parseFloat(localStorage.getItem("luckMultiplier")) || 1.0;
-      let rollCooldown =
-        parseFloat(localStorage.getItem("rollCooldown")) || 1.0;
-      let autoRollUnlocked =
-        localStorage.getItem("autoRollUnlocked") === "true";
-      let autoRollActive = false;
-      let autoRollInterval;
-
-      function saveGame() {
-        localStorage.setItem("inventory", JSON.stringify(inventory));
-        localStorage.setItem("quests", JSON.stringify(quests));
-        localStorage.setItem("luckMultiplier", luckMultiplier);
-        localStorage.setItem("rollCooldown", rollCooldown);
-        localStorage.setItem("autoRollUnlocked", autoRollUnlocked);
+      function getActiveExclusiveQuests() {
+        // Show quests for current stage (after you've rebirthed)
+        return exclusiveQuestDefs[rebirths] || [];
       }
 
-      function getRandomBrainrot() {
+      function applyExclusiveReward(reward) {
+        if (reward.luck) {
+          luckMultiplier += reward.luck; // additive to your current luck
+        }
+        if (reward.speed) {
+          // speed is in seconds (negative = faster)
+          questsSpeedBonus += reward.speed;
+        }
+        saveGame();
+
+        // if AUTO is running, re-apply interval with new speed
+        if (autoRollActive) {
+          clearInterval(autoRollInterval);
+          autoRollInterval = setInterval(() => {
+            getRandomBrainrot(true);
+          }, computeRollCooldownSeconds() * 1000);
+        }
+      }
+
+      // ======= UI: ROLL CLICK (anti-spam) =======
+      function rollClicked() {
+        const now = Date.now();
+        const cd = computeRollCooldownSeconds() * 1000;
+        if (now - lastRollTs < cd) {
+          // ignore spam clicks
+          return;
+        }
+        lastRollTs = now;
+
+        const btn = document.getElementById("RollButton");
+        btn.disabled = true;
+        getRandomBrainrot(false);
+        setTimeout(() => {
+          btn.disabled = false;
+        }, cd);
+      }
+
+      function getRandomBrainrot(isAuto = false) {
+        totalRolls++;
+        localStorage.setItem("totalRolls", totalRolls);
+
         let totalWeight = messages.reduce((sum, msg) => sum + msg.weight, 0);
         let rand = (Math.random() * totalWeight) / luckMultiplier;
+
         for (let msg of messages) {
           if (rand < msg.weight) {
             const result = `${msg.text}<br><span class="${msg.class}">${msg.rarity}</span>`;
@@ -686,10 +908,13 @@
               inventory.push(result);
               updateInventory();
             }
-            updateQuests(msg.text);
+
+            // Base quests + Exclusive quests
+            updateQuests(msg.text, msg.rarity);
+
             saveGame();
 
-            // ✅ Stop AutoRoll if user enabled and rarity is top tier
+            // Stop AUTO on good drops if enabled
             if (
               autoRollActive &&
               stopOnGoodDrops &&
@@ -698,6 +923,8 @@
               toggleAutoRoll(); // turns it off
             }
 
+            // update panels that show speed/rolls/rebirth
+            updateRebirthPanel();
             return;
           }
           rand -= msg.weight;
@@ -714,7 +941,8 @@
         });
       }
 
-      function updateQuests(itemText) {
+      // ======= QUESTS =======
+      function updateQuests(itemText, itemRarity) {
         function showQuestComplete(msg) {
           const note = document.createElement("div");
           note.innerText = "Quest Completed: " + msg;
@@ -732,35 +960,74 @@
           setTimeout(() => note.remove(), 3000);
         }
 
+        // --- Base quests (stage 0) ---
         if (itemText.includes("Patapim")) quests.patapim++;
         if (itemText.includes("Hipopotamo")) quests.cacto++;
         if (itemText.includes("Bombardino")) quests.bombardino++;
         if (itemText.includes("GRANDE")) quests.grande++;
 
-        // Rewards
+        // Rewards (keep your original ones)
         if (quests.patapim >= 5 && !quests.completed.patapim) {
           autoRollUnlocked = true;
           document.getElementById("AutoRollButton").classList.add("unlocked");
           quests.completed.patapim = true;
+          showQuestComplete("Get 5x Brr Brr Patapim (Auto Roll Unlocked)");
         }
         if (quests.cacto >= 5 && !quests.completed.cacto) {
           luckMultiplier += 0.05;
           quests.completed.cacto = true;
+          showQuestComplete("Get 5x Cacto Hipopotamo (+0.05 Luck)");
         }
         if (quests.bombardino >= 1 && !quests.completed.bombardino) {
-          rollCooldown = Math.max(0.2, rollCooldown - 0.05);
+          // We no longer store rollCooldown directly; compute from flags.
           quests.completed.bombardino = true;
+          showQuestComplete("Get 1x Bombardino Cocodrillo (-0.05s Roll Speed)");
         }
         if (quests.grande >= 1 && !quests.completed.grande) {
           luckMultiplier *= 1.1;
           quests.completed.grande = true;
+          showQuestComplete(
+            "Get 1x LA GRANDE COMBINASION (×1.1 Luck Multiplier)"
+          );
         }
+
+        // --- Exclusive quests for current stage (rebirths >= 1) ---
+        const actives = getActiveExclusiveQuests();
+        for (const q of actives) {
+          if (questsExclusiveCompleted[q.id]) continue;
+
+          if (q.type === "rarity") {
+            if (itemRarity === q.rarity) {
+              questsExclusive[q.id] = (questsExclusive[q.id] || 0) + 1;
+            }
+          } else if (q.type === "rolls") {
+            // keep progress in sync each roll
+            questsExclusive[q.id] = totalRolls;
+          }
+
+          if ((questsExclusive[q.id] || 0) >= q.target) {
+            questsExclusiveCompleted[q.id] = true;
+            applyExclusiveReward(q.reward);
+            showQuestComplete(`${q.name}`);
+          }
+        }
+
         updateQuestList();
       }
 
       function updateQuestList() {
-        const q = document.getElementById("questsList");
-        q.innerHTML = `
+        const qEl = document.getElementById("questsList");
+        const tierLabel = document.getElementById("questTierLabel");
+        qEl.innerHTML = "";
+
+        // Show which stage you're in
+        tierLabel.textContent =
+          rebirths === 0
+            ? "Tier 0 Quests (Pre-Rebirth)"
+            : `Tier ${rebirths} Exclusive Quests`;
+
+        if (rebirths === 0) {
+          qEl.innerHTML = `
           <li>${
             quests.patapim >= 5 ? "✅" : "⬜"
           } Get 5x Brr Brr Patapim (Unlock Auto Roll) - ${quests.patapim}/5</li>
@@ -769,31 +1036,228 @@
           } Get 5x Cacto Hipopotamo (+0.05 Luck) - ${quests.cacto}/5</li>
           <li>${
             quests.bombardino >= 1 ? "✅" : "⬜"
-          } Get 1x Bombardino Cocodrillo (-0.05 Roll Speed) - ${
-          quests.bombardino
-        }/1</li>
+          } Get 1x Bombardino Cocodrillo (-0.05 Roll Speed)</li>
           <li>${
             quests.grande >= 1 ? "✅" : "⬜"
-          } Get 1x LA GRANDE COMBINASION (×1.1 Luck) - ${quests.grande}/1</li>
+          } Get 1x LA GRANDE COMBINASION (×1.1 Luck)</li>
         `;
+        } else {
+          const actives = getActiveExclusiveQuests();
+          if (actives.length === 0) {
+            const li = document.createElement("li");
+            li.textContent = "No exclusive quests for this tier.";
+            qEl.appendChild(li);
+          } else {
+            for (const q of actives) {
+              const li = document.createElement("li");
+              const prog = questsExclusive[q.id] || 0;
+              const done = !!questsExclusiveCompleted[q.id];
+              li.textContent = `${done ? "✅" : "⬜"} ${q.name} - ${
+                q.type === "rolls" ? Math.min(totalRolls, q.target) : prog
+              }/${q.target}`;
+              qEl.appendChild(li);
+            }
+          }
+        }
       }
 
+      // ======= AUTO ROLL =======
       function toggleAutoRoll() {
         if (!autoRollUnlocked) return;
         autoRollActive = !autoRollActive;
+        const autoRollButton = document.getElementById("AutoRollButton");
+
         if (autoRollActive) {
-          autoRollButton = document.getElementById("AutoRollButton");
           autoRollButton.innerText = "STOP";
+          clearInterval(autoRollInterval);
           autoRollInterval = setInterval(() => {
-            getRandomBrainrot();
-          }, rollCooldown * 1000);
+            getRandomBrainrot(true);
+          }, computeRollCooldownSeconds() * 1000);
         } else {
           autoRollButton.innerText = "AUTO";
           clearInterval(autoRollInterval);
         }
       }
 
-      // Sidebar toggle
+      // ======= REBIRTH =======
+      function renderRebirthRequirements() {
+        const reqsEl = document.getElementById("rebirthReqs");
+        reqsEl.innerHTML = "";
+
+        if (rebirths === 0) {
+          const items = [
+            {
+              text: "Complete: 5x Patapim",
+              done: !!quests.completed.patapim,
+            },
+            {
+              text: "Complete: 5x Cacto Hipopotamo",
+              done: !!quests.completed.cacto,
+            },
+            {
+              text: "Complete: 1x Bombardino Cocodrillo",
+              done: !!quests.completed.bombardino,
+            },
+            {
+              text: "Complete: 1x LA GRANDE COMBINASION",
+              done: !!quests.completed.grande,
+            },
+          ];
+          items.forEach((it) => {
+            const li = document.createElement("li");
+            li.textContent = `${it.done ? "✅" : "⬜"} ${it.text}`;
+            reqsEl.appendChild(li);
+          });
+        } else {
+          const set = exclusiveQuestDefs[rebirths] || [];
+          if (set.length === 0) {
+            const li = document.createElement("li");
+            li.textContent = "No requirements for next rebirth at this tier.";
+            reqsEl.appendChild(li);
+          } else {
+            set.forEach((q) => {
+              const done = !!questsExclusiveCompleted[q.id];
+              const li = document.createElement("li");
+              const prog =
+                q.type === "rolls"
+                  ? Math.min(totalRolls, q.target)
+                  : questsExclusive[q.id] || 0;
+              li.textContent = `${done ? "✅" : "⬜"} ${q.name} - ${prog}/${
+                q.target
+              }`;
+              reqsEl.appendChild(li);
+            });
+          }
+        }
+
+        // button state
+        document.getElementById("rebirthBtn").disabled = !canRebirth();
+      }
+
+      function updateRebirthPanel() {
+        document.getElementById("rbCount").textContent = rebirths;
+        document.getElementById("rbRolls").textContent = totalRolls;
+        document.getElementById("rbSpeed").textContent =
+          computeRollCooldownSeconds().toFixed(2) + "s";
+        renderRebirthRequirements();
+      }
+
+      function doRebirth() {
+        if (!canRebirth()) return;
+
+        if (
+          !confirm(
+            "Rebirth will reset inventory and quests, but keep permanent bonuses.\nProceed?"
+          )
+        )
+          return;
+
+        rebirths++;
+        localStorage.setItem("rebirths", rebirths);
+
+        // Reset inventory & base quest progress for the new tier
+        inventory = [];
+        quests = {
+          patapim: 0,
+          cacto: 0,
+          bombardino: 0,
+          grande: 0,
+          completed: {},
+        };
+        totalRolls = 0;
+        autoRollActive = false;
+        clearInterval(autoRollInterval);
+        document.getElementById("AutoRollButton").innerText = "AUTO";
+        autoRollUnlocked = false;
+        document.getElementById("AutoRollButton").classList.remove("unlocked");
+
+        // Reset exclusive quest progress for the NEW stage
+        questsExclusive = {};
+        questsExclusiveCompleted = {};
+
+        // Keep totalRolls (lifetime) going OR reset? We'll keep counting.
+        // totalRolls stays as lifetime stat.
+
+        saveGame();
+        updateInventory();
+        updateQuestList();
+        updateRebirthPanel();
+        alert(
+          `Rebirth complete! You are now at Rebirth ${rebirths}.\n` +
+            (rebirths >= 3
+              ? "Massive speed boost unlocked at ≥3 rebirths!"
+              : "")
+        );
+      }
+
+      // ======= SAVE / RESET =======
+      function saveGame() {
+        localStorage.setItem("inventory", JSON.stringify(inventory));
+        localStorage.setItem("quests", JSON.stringify(quests));
+        localStorage.setItem("autoRollUnlocked", autoRollUnlocked);
+
+        localStorage.setItem("rebirths", rebirths);
+        localStorage.setItem("totalRolls", totalRolls);
+
+        localStorage.setItem(
+          "questsExclusive",
+          JSON.stringify(questsExclusive)
+        );
+        localStorage.setItem(
+          "questsExclusiveCompleted",
+          JSON.stringify(questsExclusiveCompleted)
+        );
+        localStorage.setItem("questsSpeedBonus", questsSpeedBonus);
+        localStorage.setItem("luckMultiplier", luckMultiplier);
+
+        localStorage.setItem(
+          "stopOnGoodDrops",
+          JSON.stringify(stopOnGoodDrops)
+        );
+
+        // keep old key for compatibility
+        localStorage.setItem("rollCooldown", computeRollCooldownSeconds());
+      }
+
+      function resetData() {
+        if (confirm("Are you sure you want to reset ALL data?")) {
+          localStorage.clear();
+
+          inventory = [];
+          quests = {
+            patapim: 0,
+            cacto: 0,
+            bombardino: 0,
+            grande: 0,
+            completed: {},
+          };
+          luckMultiplier = 1.0;
+
+          rebirths = 0;
+          totalRolls = 0;
+          questsExclusive = {};
+          questsExclusiveCompleted = {};
+          questsSpeedBonus = 0.0;
+
+          autoRollUnlocked = false;
+          autoRollActive = false;
+          clearInterval(autoRollInterval);
+          document
+            .getElementById("AutoRollButton")
+            .classList.remove("unlocked");
+
+          stopOnGoodDrops = true;
+          document.getElementById("stopOnGoodDropsSwitch").checked = true;
+
+          updateInventory();
+          updateQuestList();
+          updateRebirthPanel();
+          document.getElementById("message").innerText =
+            "Press ROLL to start...";
+        }
+      }
+
+      // ======= SIDEBARS =======
       function toggleSidebar(id) {
         const panel = document.getElementById(id);
         if (panel.classList.contains("active")) {
@@ -806,10 +1270,12 @@
           requestAnimationFrame(() => {
             panel.classList.add("active");
           });
+          if (id === "rebirthPanel") updateRebirthPanel();
+          if (id === "questsPanel") updateQuestList();
         }
       }
 
-      // Dark mode toggle
+      // ======= SETTINGS (Dark/Music/StopOnGoodDrops) =======
       const darkModeSwitch = document.getElementById("darkModeSwitch");
       darkModeSwitch.checked = localStorage.getItem("darkMode") === "true";
       if (darkModeSwitch.checked) document.body.classList.add("dark-mode");
@@ -818,7 +1284,6 @@
         localStorage.setItem("darkMode", darkModeSwitch.checked);
       });
 
-      // Music toggle
       const musicSwitch = document.getElementById("musicSwitch");
       musicSwitch.checked = localStorage.getItem("music") !== "false";
       musicOne.muted = !musicSwitch.checked;
@@ -827,16 +1292,31 @@
         localStorage.setItem("music", musicSwitch.checked);
       });
 
-      // Game start
+      const stopOnGoodDropsSwitch = document.getElementById(
+        "stopOnGoodDropsSwitch"
+      );
+      stopOnGoodDropsSwitch.checked = stopOnGoodDrops;
+      stopOnGoodDropsSwitch.addEventListener("change", function () {
+        stopOnGoodDrops = stopOnGoodDropsSwitch.checked;
+        localStorage.setItem(
+          "stopOnGoodDrops",
+          JSON.stringify(stopOnGoodDrops)
+        );
+      });
+
+      // ======= GAME START =======
       function startGame() {
         document.getElementById("startupScreen").style.display = "none";
       }
 
-      // Init
+      // ======= INIT =======
       if (autoRollUnlocked)
         document.getElementById("AutoRollButton").classList.add("unlocked");
       updateInventory();
       updateQuestList();
+      updateRebirthPanel();
+      // ensure roll button is enabled and respects cooldown from now on
+      document.getElementById("RollButton").disabled = false;
     </script>
   </body>
 </html>
