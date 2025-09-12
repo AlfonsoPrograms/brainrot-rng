@@ -244,6 +244,63 @@
         text-shadow: 2px 2px 10px gray;
         text-align: center;
       }
+      /* Floating global message box */
+      #globalMessageBox {
+        position: fixed;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(33, 169, 196, 0.95);
+        color: white;
+        font-family: Impact, Charcoal, sans-serif;
+        font-size: 32px;
+        padding: 18px 36px;
+        border-radius: 18px;
+        box-shadow: 0 0 30px #21a9c4, 0 0 60px #21a9c4;
+        z-index: 9998;
+        text-align: center;
+        animation: floatMsg 2s infinite alternate;
+      }
+      @keyframes floatMsg {
+        0% {
+          top: 60px;
+        }
+        100% {
+          top: 80px;
+        }
+      }
+      #adminControls {
+        display: none;
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 9999;
+        background: rgba(33, 169, 196, 0.95);
+        padding: 16px 24px;
+        border-radius: 16px;
+        box-shadow: 0 0 20px #21a9c4;
+      }
+      #adminControls input {
+        font-size: 18px;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #21a9c4;
+        margin-right: 8px;
+      }
+      #adminControls button {
+        font-size: 18px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        background: #21a9c4;
+        color: white;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      #adminControls button:hover {
+        background: #168ba0;
+      }
 
       /* Sidebar */
       .sidebar {
@@ -405,7 +462,7 @@
       <div>
         Dark mode and fullscreen are recommended to have the best experience 🌙
       </div>
-      <button onclick="startGame()">Enter</button>
+      <button id="startBtn">Enter</button>
     </div>
 
     <div class="topbar">
@@ -416,6 +473,10 @@
       >
       <a href="#index" onclick="toggleSidebar('indexPanel')">Index</a>
       <a href="#quests" onclick="toggleSidebar('questsPanel')">Quests</a>
+      <!-- NEW: Sign-In/Log-In topbar entry (moved left of Rebirth) -->
+      <a href="#login" id="loginTopbar" onclick="showLoginPanel()"
+        >Sign-In / Log-In</a
+      >
       <!-- NEW: Rebirth topbar entry -->
       <a href="#rebirth" onclick="toggleSidebar('rebirthPanel')">Rebirth</a>
       <p>Brainrot RNG</p>
@@ -454,6 +515,16 @@
       muted
     ></audio>
 
+    <!-- Floating global message box -->
+    <div id="globalMessageBox">
+      <span id="globalMessage"></span>
+    </div>
+    <!-- Admin controls for global message (only visible to admin) -->
+    <div id="adminControls">
+      <input id="msgInput" type="text" placeholder="Send global message..." />
+      <button id="sendBtn">Send</button>
+    </div>
+
     <!-- SETTINGS -->
     <div id="settingsPanel" class="sidebar">
       <button class="close-btn" onclick="toggleSidebar('settingsPanel')">
@@ -479,6 +550,89 @@
       </button>
       <h2>Inventory</h2>
       <ul id="inventoryList"></ul>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div id="loginPanel" class="sidebar">
+      <button class="close-btn" onclick="toggleSidebar('loginPanel')">
+        &times;
+      </button>
+      <h2>Sign-In / Log-In</h2>
+      <div id="loginStatus">Not signed in.</div>
+      <button
+        id="googleSignInBtn"
+        style="
+          margin-top: 20px;
+          padding: 12px 24px;
+          font-size: 18px;
+          border-radius: 8px;
+          background: #4285f4;
+          color: white;
+          border: none;
+          cursor: pointer;
+        "
+      >
+        Sign in with Google
+      </button>
+      <hr />
+      <form id="emailAuthForm" style="margin-top: 10px">
+        <input
+          type="email"
+          id="emailInput"
+          placeholder="Email"
+          required
+          style="
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            width: 90%;
+          "
+        /><br />
+        <input
+          type="password"
+          id="passwordInput"
+          placeholder="Password"
+          required
+          style="
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            width: 90%;
+          "
+        /><br />
+        <button
+          type="submit"
+          id="emailSignUpBtn"
+          style="
+            margin-right: 8px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background: #21a9c4;
+            color: white;
+            border: none;
+            cursor: pointer;
+          "
+        >
+          Sign Up
+        </button>
+        <button
+          type="button"
+          id="emailLogInBtn"
+          style="
+            padding: 8px 16px;
+            border-radius: 6px;
+            background: #168ba0;
+            color: white;
+            border: none;
+            cursor: pointer;
+          "
+        >
+          Log In
+        </button>
+      </form>
+      <div id="emailAuthError" style="color: red; margin-top: 8px"></div>
     </div>
 
     <!-- INDEX -->
@@ -1293,6 +1447,11 @@
         }
       }
 
+      // Show login panel from topbar
+      function showLoginPanel() {
+        toggleSidebar("loginPanel");
+      }
+
       // ======= SETTINGS (Dark/Music/StopOnGoodDrops) =======
       const darkModeSwitch = document.getElementById("darkModeSwitch");
       darkModeSwitch.checked = localStorage.getItem("darkMode") === "true";
@@ -1322,10 +1481,38 @@
         );
       });
 
-      // ======= GAME START =======
-      function startGame() {
-        document.getElementById("startupScreen").style.display = "none";
-      }
+      // Make startGame globally accessible and fix event listener
+      window.startGame = function () {
+        // Hide startup screen
+        const startup = document.getElementById("startupScreen");
+        if (startup) startup.style.display = "none";
+
+        // Refresh UI
+        updateInventory();
+        updateQuestList();
+        updateRebirthPanel();
+
+        // Auto roll unlock check
+        if (autoRollUnlocked) {
+          document.getElementById("AutoRollButton").classList.add("unlocked");
+        }
+
+        // Dark mode restore
+        if (localStorage.getItem("darkMode") === "true") {
+          document.body.classList.add("dark-mode");
+          document.getElementById("darkModeSwitch").checked = true;
+        }
+
+        // Music restore
+        const musicSwitch = document.getElementById("musicSwitch");
+        if (localStorage.getItem("musicOn") === "false") {
+          document.getElementById("Music1").muted = true;
+          if (musicSwitch) musicSwitch.checked = false;
+        }
+      };
+      document
+        .getElementById("startBtn")
+        .addEventListener("click", window.startGame);
 
       // ======= INIT =======
       if (autoRollUnlocked)
@@ -1335,6 +1522,136 @@
       updateRebirthPanel();
       // ensure roll button is enabled and respects cooldown from now on
       document.getElementById("RollButton").disabled = false;
+    </script>
+    <script type="module">
+      // === Firebase Admin Abuse Integration ===
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        set,
+        onValue,
+      } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+      import {
+        getAuth,
+        signInWithPopup,
+        GoogleAuthProvider,
+        onAuthStateChanged,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+      } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+      // Firebase config
+      const firebaseConfig = {
+        apiKey: "AIzaSyAOxoFFZxc3_0P2mLlllLLri1YLpO17ZK4",
+        authDomain: "brainrot-rng-1d9a1.firebaseapp.com",
+        databaseURL: "https://brainrot-rng-1d9a1-default-rtdb.firebaseio.com",
+        projectId: "brainrot-rng-1d9a1",
+        storageBucket: "brainrot-rng-1d9a1.appspot.com",
+        messagingSenderId: "290999899912",
+        appId: "1:290999899912:web:c0ea8f16267b6db991febd",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+
+      // Global message ref
+      const msgRef = ref(db, "globalMessage");
+
+      // Listen for updates
+      onValue(msgRef, (snap) => {
+        document.getElementById("globalMessage").innerText = snap.val() || "";
+      });
+
+      // Send admin message
+      function sendMessage() {
+        const input = document.getElementById("msgInput");
+        const msg = input.value.trim();
+        if (msg) {
+          set(msgRef, "Alfonso: " + msg);
+          input.value = "";
+        }
+      }
+
+      document.getElementById("sendBtn").addEventListener("click", sendMessage);
+      document.getElementById("msgInput").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+      // Google Sign-In wiring
+      const googleSignInBtn = document.getElementById("googleSignInBtn");
+      const loginStatus = document.getElementById("loginStatus");
+      const adminControls = document.getElementById("adminControls");
+
+      // Replace with your admin email
+      const ADMIN_EMAIL = "alfonsoovilchez52@gmail.com";
+
+      function updateLoginPanel(user) {
+        if (user) {
+          loginStatus.innerText = `Signed in as: ${
+            user.displayName || user.email
+          }`;
+          // Show admin controls only for admin
+          if (user.email === ADMIN_EMAIL) {
+            adminControls.style.display = "block";
+          } else {
+            adminControls.style.display = "none";
+          }
+        } else {
+          loginStatus.innerText = "Not signed in.";
+          adminControls.style.display = "none";
+        }
+      }
+
+      googleSignInBtn.addEventListener("click", async () => {
+        try {
+          await signInWithPopup(auth, provider);
+        } catch (err) {
+          alert("Sign-in failed: " + err.message);
+        }
+      });
+
+      onAuthStateChanged(auth, (user) => {
+        updateLoginPanel(user);
+      });
+
+      // Email/password auth wiring
+      const emailAuthForm = document.getElementById("emailAuthForm");
+      const emailInput = document.getElementById("emailInput");
+      const passwordInput = document.getElementById("passwordInput");
+      const emailSignUpBtn = document.getElementById("emailSignUpBtn");
+      const emailLogInBtn = document.getElementById("emailLogInBtn");
+      const emailAuthError = document.getElementById("emailAuthError");
+
+      // Prevent form submit from refreshing page
+      emailAuthForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+      });
+
+      emailSignUpBtn.addEventListener("click", async () => {
+        emailAuthError.innerText = "";
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        if (!email || !password) return;
+        try {
+          await createUserWithEmailAndPassword(auth, email, password);
+        } catch (err) {
+          emailAuthError.innerText = err.message;
+        }
+      });
+
+      emailLogInBtn.addEventListener("click", async () => {
+        emailAuthError.innerText = "";
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        if (!email || !password) return;
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (err) {
+          emailAuthError.innerText = err.message;
+        }
+      });
     </script>
   </body>
 </html>
