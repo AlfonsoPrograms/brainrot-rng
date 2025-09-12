@@ -1986,8 +1986,11 @@
           if (ADMIN_EMAILS.includes(user.email)) {
             adminControls.style.display = "block";
             if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
-            document.getElementById("adminPanelTopbar").style.display =
-              "inline-block";
+            var adminPanelTopbar = document.getElementById("adminPanelTopbar");
+            var adminPanel = document.getElementById("adminPanel");
+            if (adminPanelTopbar)
+              adminPanelTopbar.style.display = "inline-block";
+            if (adminPanel) adminPanel.style.display = "block";
             showAdminPanel();
             // Adam only gets global message
             if (user.email === "work2013@myyahoo.com") {
