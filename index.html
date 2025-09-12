@@ -2021,6 +2021,7 @@
             if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
             document.getElementById("adminPanelTopbar").style.display =
               "inline-block";
+            document.getElementById("adminPanel").style.display = "block";
             // Adam only gets global message
             if (user.email === "work2013@myyahoo.com") {
               document.getElementById("luck2xBtn").style.display = "none";
@@ -2036,19 +2037,20 @@
               document.getElementById("luck4xBtn").style.display =
                 "inline-block";
               document.getElementById("giveBrainrotForm").style.display =
-                "inline";
+                "block";
             }
           } else {
             adminControls.style.display = "none";
             if (removeMsgBtn) removeMsgBtn.style.display = "none";
             document.getElementById("adminPanelTopbar").style.display = "none";
+            document.getElementById("adminPanel").style.display = "none";
           }
         } else {
           loginStatus.innerText = "Not signed in.";
           adminControls.style.display = "none";
           if (removeMsgBtn) removeMsgBtn.style.display = "none";
-          document.getElementById("adminTopbar").style.display = "none";
           document.getElementById("adminPanelTopbar").style.display = "none";
+          document.getElementById("adminPanel").style.display = "none";
         }
       }
 
