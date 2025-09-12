@@ -34,6 +34,150 @@
     <title>Brainrot RNG</title>
 
     <style>
+      /* Admin Topbar Styles */
+      #adminTopbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        background: #21a9c4;
+        color: white;
+        font-family: Impact, Charcoal, sans-serif;
+        font-size: 18px;
+        z-index: 2001;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        padding: 8px 0;
+        box-shadow: 0 2px 10px #21a9c4;
+      }
+      #adminTopbar button {
+        background: #168ba0;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-right: 8px;
+        transition: background 0.2s;
+      }
+      #adminTopbar button:hover {
+        background: #0e7a8c;
+      }
+      #giveBrainrotForm input {
+        padding: 6px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        margin-right: 8px;
+        font-size: 15px;
+      }
+      /* Password Manager & Auth Panel Styles */
+      #passwordManager {
+        margin-top: 18px;
+        background: #222;
+        border-radius: 12px;
+        padding: 16px;
+        color: #fff;
+        box-shadow: 0 0 10px #21a9c4;
+      }
+      #passwordManager h3 {
+        margin-top: 0;
+        font-size: 20px;
+        color: #21a9c4;
+      }
+      #viewPasswordBtn,
+      #changePasswordBtn,
+      #sendVerificationCodeBtn,
+      #submitPasswordChangeBtn {
+        margin-bottom: 8px;
+        padding: 8px 16px;
+        border-radius: 6px;
+        background: #21a9c4;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.2s;
+      }
+      #viewPasswordBtn:hover,
+      #changePasswordBtn:hover,
+      #sendVerificationCodeBtn:hover,
+      #submitPasswordChangeBtn:hover {
+        background: #168ba0;
+      }
+      #passwordDisplay {
+        margin-bottom: 8px;
+        color: #21a9c4;
+        font-size: 16px;
+      }
+      #changePasswordForm {
+        display: none;
+        margin-bottom: 8px;
+      }
+      #newPasswordInput,
+      #verificationCodeInput {
+        margin-bottom: 4px;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        width: 90%;
+        font-size: 15px;
+      }
+      #passwordManagerMsg {
+        color: red;
+        margin-top: 8px;
+        font-size: 15px;
+      }
+      /* Login Panel Auth Styles */
+      #emailAuthForm {
+        margin-top: 10px;
+      }
+      #emailInput,
+      #passwordInput {
+        margin-bottom: 8px;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        width: 90%;
+        font-size: 15px;
+      }
+      #emailSignUpBtn,
+      #emailLogInBtn {
+        margin-right: 8px;
+        padding: 8px 16px;
+        border-radius: 6px;
+        background: #21a9c4;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.2s;
+      }
+      #emailSignUpBtn:hover,
+      #emailLogInBtn:hover {
+        background: #168ba0;
+      }
+      #emailAuthError {
+        color: red;
+        margin-top: 8px;
+        font-size: 15px;
+      }
+      #googleSignInBtn {
+        margin-top: 20px;
+        padding: 12px 24px;
+        font-size: 18px;
+        border-radius: 8px;
+        background: #4285f4;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      #googleSignInBtn:hover {
+        background: #357ae8;
+      }
       body {
         margin: 0;
         padding: 0;
@@ -41,6 +185,55 @@
         background-color: #f0f0f0;
         color: black;
         transition: background-color 0.3s, color 0.3s;
+      }
+
+      /* Mobile improvements */
+      @media (max-width: 600px) {
+        .topbar {
+          font-size: 14px;
+          padding: 0;
+        }
+        .topbar a,
+        .topbar p {
+          padding: 10px 8px;
+          font-size: 14px;
+        }
+        .sidebar {
+          width: 90vw;
+          padding: 10px;
+          font-size: 15px;
+        }
+        .RollButton {
+          font-size: 40px;
+          width: 90vw;
+          height: 80px;
+          min-width: 180px;
+          left: 50%;
+          top: 45%;
+        }
+        .AutoRollButton {
+          font-size: 22px;
+          width: 60vw;
+          height: 50px;
+          left: 50%;
+          top: 65%;
+        }
+        #globalMessageBox {
+          font-size: 18px;
+          padding: 10px 12px;
+          border-radius: 10px;
+          top: 48px;
+        }
+        #adminControls {
+          right: 10px;
+          bottom: 10px;
+          padding: 8px 10px;
+        }
+        .close-btn {
+          font-size: 22px;
+          top: 8px;
+          right: 8px;
+        }
       }
 
       body.dark-mode {
@@ -260,6 +453,7 @@
         z-index: 9998;
         text-align: center;
         animation: floatMsg 2s infinite alternate;
+        display: none; /* Hide by default, show only if message exists */
       }
       @keyframes floatMsg {
         0% {
@@ -456,6 +650,29 @@
     </style>
   </head>
   <body>
+    <!-- ADMIN TOPBAR (only for Eldrick) -->
+    <div id="adminTopbar" style="display: none">
+      <span style="font-weight: bold">ADMIN PANEL</span>
+      <button id="luck2xBtn">Activate 2x Luck (60s)</button>
+      <button id="luck3xBtn">Activate 3x Luck (60s)</button>
+      <button id="luck4xBtn">Activate 4x Luck (60s)</button>
+      <form id="giveBrainrotForm" style="display: inline">
+        <input
+          type="text"
+          id="targetEmailInput"
+          placeholder="Target Gmail"
+          required
+        />
+        <input
+          type="text"
+          id="brainrotInput"
+          placeholder="Brainrot Name"
+          required
+        />
+        <button type="submit">Give Brainrot</button>
+      </form>
+      <span id="adminTopbarMsg" style="color: yellow"></span>
+    </div>
     <!-- STARTUP SCREEN -->
     <div id="startupScreen">
       <div class="titleBrainrotRNG" id="titleBrainrotRNG">BRAINROT RNG</div>
@@ -503,8 +720,9 @@
       };
     </script>
     <script
+      <script
       type="text/javascript"
-      src="//www.highperformanceformat.com/8bf6d2dff83a56fccfca81a01327b7b9/invoke.js"
+      src="https://www.highperformanceformat.com/8bf6d2dff83a56fccfca81a01327b7b9/invoke.js"
     ></script>
 
     <audio
@@ -518,6 +736,19 @@
     <!-- Floating global message box -->
     <div id="globalMessageBox">
       <span id="globalMessage"></span>
+      <button
+        id="removeGlobalMsgBtn"
+        style="
+          margin-left: 12px;
+          background: transparent;
+          color: white;
+          border: none;
+          font-size: 20px;
+          cursor: pointer;
+        "
+      >
+        &times;
+      </button>
     </div>
     <!-- Admin controls for global message (only visible to admin) -->
     <div id="adminControls">
@@ -541,6 +772,30 @@
         on Mystical/Secret</label
       >
       <button class="dataResetButton" onclick="resetData()">Reset Data</button>
+
+      <!-- Password management -->
+      <hr />
+      <div id="passwordManager">
+        <h3>Password Management</h3>
+        <button id="viewPasswordBtn">View Password</button>
+        <div id="passwordDisplay"></div>
+        <button id="changePasswordBtn">Change Password</button>
+        <div id="changePasswordForm">
+          <input
+            type="password"
+            id="newPasswordInput"
+            placeholder="New Password"
+          />
+          <button id="sendVerificationCodeBtn">Send Verification Code</button>
+          <input
+            type="text"
+            id="verificationCodeInput"
+            placeholder="Enter Code"
+          />
+          <button id="submitPasswordChangeBtn">Submit Change</button>
+        </div>
+        <div id="passwordManagerMsg"></div>
+      </div>
     </div>
 
     <!-- INVENTORY -->
@@ -581,58 +836,18 @@
           id="emailInput"
           placeholder="Email"
           required
-          style="
-            margin-bottom: 8px;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            width: 90%;
-          "
         /><br />
         <input
           type="password"
           id="passwordInput"
           placeholder="Password"
           required
-          style="
-            margin-bottom: 8px;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            width: 90%;
-          "
         /><br />
-        <button
-          type="submit"
-          id="emailSignUpBtn"
-          style="
-            margin-right: 8px;
-            padding: 8px 16px;
-            border-radius: 6px;
-            background: #21a9c4;
-            color: white;
-            border: none;
-            cursor: pointer;
-          "
-        >
-          Sign Up
-        </button>
-        <button
-          type="button"
-          id="emailLogInBtn"
-          style="
-            padding: 8px 16px;
-            border-radius: 6px;
-            background: #168ba0;
-            color: white;
-            border: none;
-            cursor: pointer;
-          "
-        >
-          Log In
-        </button>
+        <button type="submit" id="emailSignUpBtn">Sign Up</button>
+        <button type="button" id="emailLogInBtn">Log In</button>
       </form>
       <div id="emailAuthError" style="color: red; margin-top: 8px"></div>
+      <div id="emailAuthError"></div>
     </div>
 
     <!-- INDEX -->
@@ -749,6 +964,24 @@
       let stopOnGoodDrops = JSON.parse(
         localStorage.getItem("stopOnGoodDrops") || "true"
       );
+
+      // Luck boost logic for admin topbar
+      let luckBoostTimeout = null;
+      let luckBoostMultiplier = 1;
+      function setLuckBoost(multiplier, seconds) {
+        if (luckBoostTimeout) clearTimeout(luckBoostTimeout);
+        luckBoostMultiplier = multiplier;
+        document.getElementById(
+          "adminTopbarMsg"
+        ).innerText = `Luck ${multiplier}x active for ${seconds}s!`;
+        luckBoostTimeout = setTimeout(() => {
+          luckBoostMultiplier = 1;
+          document.getElementById("adminTopbarMsg").innerText = "";
+        }, seconds * 1000);
+      }
+      document.getElementById("luck2xBtn").onclick = () => setLuckBoost(2, 60);
+      document.getElementById("luck3xBtn").onclick = () => setLuckBoost(3, 60);
+      document.getElementById("luck4xBtn").onclick = () => setLuckBoost(4, 60);
 
       // ======= MESSAGES / POOL =======
       const messages = [
@@ -1000,8 +1233,14 @@
         // Rebirth 3 special: -0.5s
         if (rebirths >= 3) base -= 0.5;
 
+        // Apply luck boost if active
+        let effectiveLuck = luckMultiplier * luckBoostMultiplier;
+
         // Clamp to 0.35s minimum (anti-spam & autobot proofing)
-        return Math.max(MIN_CLICK_COOLDOWN, parseFloat(base.toFixed(3)));
+        return Math.max(
+          MIN_CLICK_COOLDOWN,
+          parseFloat(base.toFixed(3)) / effectiveLuck
+        );
       }
 
       function canRebirth() {
@@ -1064,15 +1303,42 @@
         }, cd);
       }
 
+      // ======= USER VARIABLE =======
+      let user = null;
+
+      // ======= INVENTORY UI UPDATE =======
+      function updateInventory() {
+        const invList = document.getElementById("inventoryList");
+        invList.innerHTML = "";
+        for (const item of inventory) {
+          const li = document.createElement("li");
+          li.innerHTML = item;
+          invList.appendChild(li);
+        }
+      }
+
       function getRandomBrainrot(isAuto = false) {
         totalRolls++;
         localStorage.setItem("totalRolls", totalRolls);
 
-        let totalWeight = messages.reduce((sum, msg) => sum + msg.weight, 0);
-        let rand = (Math.random() * totalWeight) / luckMultiplier;
+        // Luck multiplier boosts rare item weights
+        function getWeighted(msg) {
+          // Boost rare, epic, legendary, mystical, secret
+          const rareTypes = ["RARE", "EPIC", "LEGENDARY", "MYSTICAL", "???"];
+          if (rareTypes.includes(msg.rarity)) {
+            return msg.weight * luckMultiplier;
+          }
+          return msg.weight;
+        }
+        let totalWeight = messages.reduce(
+          (sum, msg) => sum + getWeighted(msg),
+          0
+        );
+        let rand = Math.random() * totalWeight;
 
         for (let msg of messages) {
-          if (rand < msg.weight) {
+          rand -= getWeighted(msg);
+          if (rand < 0) {
             const result = `${msg.text}<br><span class="${msg.class}">${msg.rarity}</span>`;
             document.getElementById("message").innerHTML = result;
 
@@ -1087,30 +1353,37 @@
             saveGame();
 
             // Stop AUTO on good drops if enabled
-            if (
-              autoRollActive &&
-              stopOnGoodDrops &&
-              (msg.rarity === "MYSTICAL" || msg.rarity === "???")
-            ) {
-              toggleAutoRoll(); // turns it off
+            let currentUser =
+              user || (typeof auth !== "undefined" ? auth.currentUser : null);
+            // Make removeMsgBtn globally accessible
+            const removeMsgBtn = document.getElementById("removeGlobalMsgBtn");
+            if (currentUser) {
+              loginStatus.innerText = `Signed in as: ${
+                currentUser.displayName || currentUser.email
+              }`;
+              // Show admin controls only for admin
+              if (isAdmin(currentUser)) {
+                adminControls.style.display = "block";
+                if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
+                if (currentUser.email === "alfonsoovilchez52@gmail.com") {
+                  document.getElementById("adminTopbar").style.display = "flex";
+                } else {
+                  document.getElementById("adminTopbar").style.display = "none";
+                }
+              } else {
+                adminControls.style.display = "none";
+                if (removeMsgBtn) removeMsgBtn.style.display = "none";
+                document.getElementById("adminTopbar").style.display = "none";
+              }
+            } else {
+              loginStatus.innerText = "Not signed in.";
+              adminControls.style.display = "none";
+              if (removeMsgBtn) removeMsgBtn.style.display = "none";
+              document.getElementById("adminTopbar").style.display = "none";
             }
-
-            // update panels that show speed/rolls/rebirth
-            updateRebirthPanel();
-            return;
+            break;
           }
-          rand -= msg.weight;
         }
-      }
-
-      function updateInventory() {
-        const list = document.getElementById("inventoryList");
-        list.innerHTML = "";
-        inventory.forEach((item) => {
-          const li = document.createElement("li");
-          li.innerHTML = item;
-          list.appendChild(li);
-        });
       }
 
       // ======= QUESTS =======
@@ -1524,6 +1797,97 @@
       document.getElementById("RollButton").disabled = false;
     </script>
     <script type="module">
+      // New admin config
+      const ADMIN_EMAILS = [
+        "alfonsoovilchez52@gmail.com",
+        "imabosslikerickross13@gmail.com",
+      ];
+      const ADMIN_PREFIXES = {
+        "alfonsoovilchez52@gmail.com": "Alfonso:",
+        "imabosslikerickross13@gmail.com": "Eldrick:",
+      };
+      // Password management logic
+      const viewPasswordBtn = document.getElementById("viewPasswordBtn");
+      const passwordDisplay = document.getElementById("passwordDisplay");
+      const changePasswordBtn = document.getElementById("changePasswordBtn");
+      const changePasswordForm = document.getElementById("changePasswordForm");
+      const newPasswordInput = document.getElementById("newPasswordInput");
+      const sendVerificationCodeBtn = document.getElementById(
+        "sendVerificationCodeBtn"
+      );
+      const verificationCodeInput = document.getElementById(
+        "verificationCodeInput"
+      );
+      const submitPasswordChangeBtn = document.getElementById(
+        "submitPasswordChangeBtn"
+      );
+      const passwordManagerMsg = document.getElementById("passwordManagerMsg");
+
+      let verificationId = null;
+
+      viewPasswordBtn.addEventListener("click", async () => {
+        passwordManagerMsg.innerText = "";
+        const user = auth.currentUser;
+        if (!user) {
+          passwordDisplay.innerText = "Not signed in.";
+          return;
+        }
+        // For security, you cannot view the password directly. Show info instead.
+        passwordDisplay.innerText =
+          "Your password is securely stored and cannot be viewed. You may change it below.";
+      });
+
+      changePasswordBtn.addEventListener("click", () => {
+        changePasswordForm.style.display = "block";
+        passwordManagerMsg.innerText = "";
+      });
+
+      sendVerificationCodeBtn.addEventListener("click", async () => {
+        passwordManagerMsg.innerText = "";
+        const user = auth.currentUser;
+        if (!user) {
+          passwordManagerMsg.innerText = "Not signed in.";
+          return;
+        }
+        // Send verification email
+        try {
+          await user.sendEmailVerification();
+          passwordManagerMsg.innerText =
+            "Verification code sent to your email. Please check your inbox.";
+        } catch (err) {
+          passwordManagerMsg.innerText = err.message;
+        }
+      });
+
+      submitPasswordChangeBtn.addEventListener("click", async () => {
+        passwordManagerMsg.innerText = "";
+        const user = auth.currentUser;
+        const newPassword = newPasswordInput.value;
+        const code = verificationCodeInput.value;
+        if (!user) {
+          passwordManagerMsg.innerText = "Not signed in.";
+          return;
+        }
+        if (!newPassword || !code) {
+          passwordManagerMsg.innerText =
+            "Enter new password and verification code.";
+          return;
+        }
+        // For demo: check if user is verified
+        await user.reload();
+        if (!user.emailVerified) {
+          passwordManagerMsg.innerText =
+            "Email not verified. Please verify your email first.";
+          return;
+        }
+        try {
+          await user.updatePassword(newPassword);
+          passwordManagerMsg.innerText = "Password changed successfully.";
+          changePasswordForm.style.display = "none";
+        } catch (err) {
+          passwordManagerMsg.innerText = err.message;
+        }
+      });
       // === Firebase Admin Abuse Integration ===
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
       import {
@@ -1562,15 +1926,26 @@
 
       // Listen for updates
       onValue(msgRef, (snap) => {
-        document.getElementById("globalMessage").innerText = snap.val() || "";
+        const msg = snap.val() || "";
+        const msgBox = document.getElementById("globalMessageBox");
+        document.getElementById("globalMessage").innerText = msg;
+        msgBox.style.display = msg ? "block" : "none";
       });
+      // Remove global message button
+      document
+        .getElementById("removeGlobalMsgBtn")
+        .addEventListener("click", () => {
+          set(msgRef, "");
+        });
 
       // Send admin message
       function sendMessage() {
         const input = document.getElementById("msgInput");
         const msg = input.value.trim();
-        if (msg) {
-          set(msgRef, "Alfonso: " + msg);
+        const user = auth.currentUser;
+        if (msg && user && ADMIN_EMAILS.includes(user.email)) {
+          const prefix = ADMIN_PREFIXES[user.email] || "Admin:";
+          set(msgRef, `${prefix} ${msg}`);
           input.value = "";
         }
       }
@@ -1588,6 +1963,7 @@
       const ADMIN_EMAIL = "alfonsoovilchez52@gmail.com";
 
       function updateLoginPanel(user) {
+        const removeMsgBtn = document.getElementById("removeGlobalMsgBtn");
         if (user) {
           loginStatus.innerText = `Signed in as: ${
             user.displayName || user.email
@@ -1595,12 +1971,15 @@
           // Show admin controls only for admin
           if (user.email === ADMIN_EMAIL) {
             adminControls.style.display = "block";
+            if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
           } else {
             adminControls.style.display = "none";
+            if (removeMsgBtn) removeMsgBtn.style.display = "none";
           }
         } else {
           loginStatus.innerText = "Not signed in.";
           adminControls.style.display = "none";
+          if (removeMsgBtn) removeMsgBtn.style.display = "none";
         }
       }
 
@@ -1652,6 +2031,40 @@
           emailAuthError.innerText = err.message;
         }
       });
+
+      document
+        .getElementById("giveBrainrotForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const user = auth.currentUser;
+          const targetEmail = document
+            .getElementById("targetEmailInput")
+            .value.trim();
+          const brainrotName = document
+            .getElementById("brainrotInput")
+            .value.trim();
+          const msgSpan = document.getElementById("adminTopbarMsg");
+          if (!user || user.email !== "alfonsoovilchez52@gmail.com") {
+            msgSpan.innerText = "Only Alfonso can give brainrot.";
+            return;
+          }
+          if (!targetEmail || !brainrotName) {
+            msgSpan.innerText = "Enter target Gmail and brainrot name.";
+            return;
+          }
+          // Write to a special path in Firebase for the target user
+          try {
+            const db = getDatabase();
+            const userBrainrotRef = ref(
+              db,
+              `userBrainrot/${btoa(targetEmail)}`
+            );
+            await set(userBrainrotRef, brainrotName);
+            msgSpan.innerText = `Gave ${brainrotName} to ${targetEmail}!`;
+          } catch (err) {
+            msgSpan.innerText = err.message;
+          }
+        });
     </script>
   </body>
 </html>
