@@ -1849,13 +1849,18 @@
           passwordManagerMsg.innerText = "Not signed in.";
           return;
         }
-        // Send verification email
-        try {
-          await user.sendEmailVerification();
+        // Only allow verification for email/password users
+        if (user.providerData[0].providerId === "password") {
+          try {
+            await user.sendEmailVerification();
+            passwordManagerMsg.innerText =
+              "Verification code sent to your email. Please check your inbox.";
+          } catch (err) {
+            passwordManagerMsg.innerText = err.message;
+          }
+        } else {
           passwordManagerMsg.innerText =
-            "Verification code sent to your email. Please check your inbox.";
-        } catch (err) {
-          passwordManagerMsg.innerText = err.message;
+            "Google accounts are already verified.";
         }
       });
 
@@ -1972,16 +1977,27 @@
           if (user.email === ADMIN_EMAIL) {
             adminControls.style.display = "block";
             if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
+            document.getElementById("adminTopbar").style.display = "flex";
           } else {
             adminControls.style.display = "none";
             if (removeMsgBtn) removeMsgBtn.style.display = "none";
+            document.getElementById("adminTopbar").style.display = "none";
           }
         } else {
           loginStatus.innerText = "Not signed in.";
           adminControls.style.display = "none";
           if (removeMsgBtn) removeMsgBtn.style.display = "none";
+          document.getElementById("adminTopbar").style.display = "none";
         }
       }
+
+      // Ensure admin topbar is shown for Alfonso on page load if logged in
+      window.addEventListener("DOMContentLoaded", () => {
+        const user = auth.currentUser;
+        if (user && user.email === ADMIN_EMAIL) {
+          document.getElementById("adminTopbar").style.display = "flex";
+        }
+      });
 
       googleSignInBtn.addEventListener("click", async () => {
         try {
