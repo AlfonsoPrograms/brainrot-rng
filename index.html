@@ -651,12 +651,15 @@
   </head>
   <body>
     <!-- ADMIN TOPBAR (only for Eldrick) -->
-    <div id="adminTopbar" style="display: none">
-      <span style="font-weight: bold">ADMIN PANEL</span>
+    <div id="adminPanel" class="sidebar" style="display: none">
+      <button class="close-btn" onclick="toggleSidebar('adminPanel')">
+        &times;
+      </button>
+      <h2>Admin Panel</h2>
       <button id="luck2xBtn">Activate 2x Luck (60s)</button>
       <button id="luck3xBtn">Activate 3x Luck (60s)</button>
       <button id="luck4xBtn">Activate 4x Luck (60s)</button>
-      <form id="giveBrainrotForm" style="display: inline">
+      <form id="giveBrainrotForm">
         <input
           type="text"
           id="targetEmailInput"
@@ -671,7 +674,7 @@
         />
         <button type="submit">Give Brainrot</button>
       </form>
-      <span id="adminTopbarMsg" style="color: yellow"></span>
+      <span id="adminTopbarMsg" class="admin-msg"></span>
     </div>
     <!-- STARTUP SCREEN -->
     <div id="startupScreen">
@@ -756,6 +759,11 @@
       <input id="msgInput" type="text" placeholder="Send global message..." />
       <button id="sendBtn">Send</button>
     </div>
+    <style>
+      .admin-msg {
+        color: yellow;
+      }
+    </style>
 
     <!-- SETTINGS -->
     <div id="settingsPanel" class="sidebar">
@@ -1370,9 +1378,9 @@
               if (ADMIN_EMAILS.includes(currentUser.email)) {
                 adminControls.style.display = "block";
                 if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
-                document.getElementById("adminTopbar").style.display = "flex";
                 document.getElementById("adminPanelTopbar").style.display =
                   "inline-block";
+                document.getElementById("adminPanel").style.display = "block";
                 // Adam only gets global message
                 if (currentUser.email === "work2013@myyahoo.com") {
                   document.getElementById("luck2xBtn").style.display = "none";
@@ -1388,22 +1396,22 @@
                   document.getElementById("luck4xBtn").style.display =
                     "inline-block";
                   document.getElementById("giveBrainrotForm").style.display =
-                    "inline";
+                    "block";
                 }
               } else {
                 adminControls.style.display = "none";
                 if (removeMsgBtn) removeMsgBtn.style.display = "none";
-                document.getElementById("adminTopbar").style.display = "none";
                 document.getElementById("adminPanelTopbar").style.display =
                   "none";
+                document.getElementById("adminPanel").style.display = "none";
               }
             } else {
               loginStatus.innerText = "Not signed in.";
               adminControls.style.display = "none";
               if (removeMsgBtn) removeMsgBtn.style.display = "none";
-              document.getElementById("adminTopbar").style.display = "none";
               document.getElementById("adminPanelTopbar").style.display =
                 "none";
+              document.getElementById("adminPanel").style.display = "none";
             }
             break;
           }
@@ -2007,7 +2015,6 @@
           if (ADMIN_EMAILS.includes(user.email)) {
             adminControls.style.display = "block";
             if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
-            document.getElementById("adminTopbar").style.display = "flex";
             document.getElementById("adminPanelTopbar").style.display =
               "inline-block";
             // Adam only gets global message
@@ -2030,7 +2037,6 @@
           } else {
             adminControls.style.display = "none";
             if (removeMsgBtn) removeMsgBtn.style.display = "none";
-            document.getElementById("adminTopbar").style.display = "none";
             document.getElementById("adminPanelTopbar").style.display = "none";
           }
         } else {
