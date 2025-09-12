@@ -2006,6 +2006,7 @@
               document.getElementById("giveBrainrotForm").style.display =
                 "block";
             }
+            loginStatus.innerText += ` (Admin access: ${user.email})`;
           } else {
             adminControls.style.display = "none";
             if (removeMsgBtn) removeMsgBtn.style.display = "none";
