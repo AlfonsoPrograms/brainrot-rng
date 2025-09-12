@@ -2120,13 +2120,24 @@
 
       emailLogInBtn.addEventListener("click", async () => {
         emailAuthError.innerText = "";
+        emailLogInBtn.disabled = true;
+        emailLogInBtn.innerText = "Logging in...";
         const email = emailInput.value.trim();
         const password = passwordInput.value;
-        if (!email || !password) return;
+        if (!email || !password) {
+          emailAuthError.innerText = "Please enter both email and password.";
+          emailLogInBtn.disabled = false;
+          emailLogInBtn.innerText = "Log In";
+          return;
+        }
         try {
           await signInWithEmailAndPassword(auth, email, password);
+          updateLoginPanel(auth.currentUser);
         } catch (err) {
           emailAuthError.innerText = err.message;
+        } finally {
+          emailLogInBtn.disabled = false;
+          emailLogInBtn.innerText = "Log In";
         }
       });
 
