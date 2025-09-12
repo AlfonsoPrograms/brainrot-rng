@@ -690,13 +690,16 @@
       >
       <a href="#index" onclick="toggleSidebar('indexPanel')">Index</a>
       <a href="#quests" onclick="toggleSidebar('questsPanel')">Quests</a>
-      <!-- NEW: Sign-In/Log-In topbar entry (moved left of Rebirth) -->
       <a href="#login" id="loginTopbar" onclick="showLoginPanel()"
         >Sign-In / Log-In</a
       >
-      <!-- NEW: Rebirth topbar entry -->
       <a href="#rebirth" onclick="toggleSidebar('rebirthPanel')">Rebirth</a>
+      <a href="#admin" id="adminPanelTopbar" onclick="showAdminPanel()"
+        >Admin Panel</a
+      >
       <p>Brainrot RNG</p>
+      // Show admin panel when topbar entry is clicked function showAdminPanel()
+      { document.getElementById("adminTopbar").style.display = "flex"; }
     </div>
 
     <div id="message" class="message">Press ROLL to start...</div>
@@ -1362,24 +1365,43 @@
                 currentUser.displayName || currentUser.email
               }`;
               // Show admin controls only for admin
-              if (isAdmin(currentUser)) {
+              if (ADMIN_EMAILS.includes(currentUser.email)) {
                 adminControls.style.display = "block";
                 if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
-                if (currentUser.email === "alfonsoovilchez52@gmail.com") {
-                  document.getElementById("adminTopbar").style.display = "flex";
+                document.getElementById("adminTopbar").style.display = "flex";
+                document.getElementById("adminPanelTopbar").style.display =
+                  "inline-block";
+                // Adam only gets global message
+                if (currentUser.email === "work2013@myyahoo.com") {
+                  document.getElementById("luck2xBtn").style.display = "none";
+                  document.getElementById("luck3xBtn").style.display = "none";
+                  document.getElementById("luck4xBtn").style.display = "none";
+                  document.getElementById("giveBrainrotForm").style.display =
+                    "none";
                 } else {
-                  document.getElementById("adminTopbar").style.display = "none";
+                  document.getElementById("luck2xBtn").style.display =
+                    "inline-block";
+                  document.getElementById("luck3xBtn").style.display =
+                    "inline-block";
+                  document.getElementById("luck4xBtn").style.display =
+                    "inline-block";
+                  document.getElementById("giveBrainrotForm").style.display =
+                    "inline";
                 }
               } else {
                 adminControls.style.display = "none";
                 if (removeMsgBtn) removeMsgBtn.style.display = "none";
                 document.getElementById("adminTopbar").style.display = "none";
+                document.getElementById("adminPanelTopbar").style.display =
+                  "none";
               }
             } else {
               loginStatus.innerText = "Not signed in.";
               adminControls.style.display = "none";
               if (removeMsgBtn) removeMsgBtn.style.display = "none";
               document.getElementById("adminTopbar").style.display = "none";
+              document.getElementById("adminPanelTopbar").style.display =
+                "none";
             }
             break;
           }
@@ -1801,10 +1823,12 @@
       const ADMIN_EMAILS = [
         "alfonsoovilchez52@gmail.com",
         "imabosslikerickross13@gmail.com",
+        "work2013@myyahoo.com",
       ];
       const ADMIN_PREFIXES = {
         "alfonsoovilchez52@gmail.com": "Alfonso:",
         "imabosslikerickross13@gmail.com": "Eldrick:",
+        "work2013@myyahoo.com": "Adam:",
       };
       // Password management logic
       const viewPasswordBtn = document.getElementById("viewPasswordBtn");
@@ -1974,20 +1998,41 @@
             user.displayName || user.email
           }`;
           // Show admin controls only for admin
-          if (user.email === ADMIN_EMAIL) {
+          if (ADMIN_EMAILS.includes(user.email)) {
             adminControls.style.display = "block";
             if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
             document.getElementById("adminTopbar").style.display = "flex";
+            document.getElementById("adminPanelTopbar").style.display =
+              "inline-block";
+            // Adam only gets global message
+            if (user.email === "work2013@myyahoo.com") {
+              document.getElementById("luck2xBtn").style.display = "none";
+              document.getElementById("luck3xBtn").style.display = "none";
+              document.getElementById("luck4xBtn").style.display = "none";
+              document.getElementById("giveBrainrotForm").style.display =
+                "none";
+            } else {
+              document.getElementById("luck2xBtn").style.display =
+                "inline-block";
+              document.getElementById("luck3xBtn").style.display =
+                "inline-block";
+              document.getElementById("luck4xBtn").style.display =
+                "inline-block";
+              document.getElementById("giveBrainrotForm").style.display =
+                "inline";
+            }
           } else {
             adminControls.style.display = "none";
             if (removeMsgBtn) removeMsgBtn.style.display = "none";
             document.getElementById("adminTopbar").style.display = "none";
+            document.getElementById("adminPanelTopbar").style.display = "none";
           }
         } else {
           loginStatus.innerText = "Not signed in.";
           adminControls.style.display = "none";
           if (removeMsgBtn) removeMsgBtn.style.display = "none";
           document.getElementById("adminTopbar").style.display = "none";
+          document.getElementById("adminPanelTopbar").style.display = "none";
         }
       }
 
