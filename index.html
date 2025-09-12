@@ -19,9 +19,20 @@
         }
       });
       // Show the admin panel sidebar
-      function showAdminPanel() {
-        document.getElementById("adminPanel").style.display = "block";
-      }
+        function showAdminPanel() {
+          var panel = document.getElementById("adminPanel");
+          if (panel) {
+            panel.classList.add("active");
+            window.adminPanelClosed = false;
+          }
+        }
+        function closeAdminPanel() {
+          var panel = document.getElementById("adminPanel");
+          if (panel) {
+            panel.classList.remove("active");
+            window.adminPanelClosed = true;
+          }
+        }
       window.dataLayer = window.dataLayer || [];
       function gtag() {
         dataLayer.push(arguments);
@@ -661,9 +672,13 @@
   </head>
   <body>
     <!-- ADMIN TOPBAR (only for Eldrick) -->
-    <div id="adminPanel" class="sidebar" style="display: none">
+  <div id="adminPanel" class="sidebar">
       <button class="close-btn" onclick="toggleSidebar('adminPanel')">
         &times;
+        </button>
+        <script>
+          document.querySelector('#adminPanel .close-btn').onclick = closeAdminPanel;
+        </script>
       </button>
       <h2>Admin Panel</h2>
       <button id="luck2xBtn">Activate 2x Luck (60s)</button>
@@ -696,6 +711,7 @@
     </div>
 
     <div class="topbar">
+  <a href="#admin" id="adminPanelTopbar" onclick="showAdminPanel()">Admin Panel</a>
       <a href="#home">Home</a>
       <a href="#settings" onclick="toggleSidebar('settingsPanel')">Settings</a>
       <a href="#inventory" onclick="toggleSidebar('inventoryPanel')"
