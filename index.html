@@ -1982,8 +1982,13 @@
           loginStatus.innerText = `Signed in as: ${
             user.displayName || user.email
           }`;
-          // Show admin controls only for admin
-          if (ADMIN_EMAILS.includes(user.email)) {
+          // Show admin controls only for Alfonso and Eldrick (not Adam)
+          if (
+            [
+              "alfonsoovilchez52@gmail.com",
+              "imabosslikerickross13@gmail.com",
+            ].includes(user.email)
+          ) {
             adminControls.style.display = "block";
             if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
             var adminPanelTopbar = document.getElementById("adminPanelTopbar");
@@ -1992,24 +1997,23 @@
               adminPanelTopbar.style.display = "inline-block";
             if (adminPanel) adminPanel.style.display = "block";
             showAdminPanel();
-            // Adam only gets global message
-            if (user.email === "work2013@myyahoo.com") {
-              document.getElementById("luck2xBtn").style.display = "none";
-              document.getElementById("luck3xBtn").style.display = "none";
-              document.getElementById("luck4xBtn").style.display = "none";
-              document.getElementById("giveBrainrotForm").style.display =
-                "none";
-            } else {
-              document.getElementById("luck2xBtn").style.display =
-                "inline-block";
-              document.getElementById("luck3xBtn").style.display =
-                "inline-block";
-              document.getElementById("luck4xBtn").style.display =
-                "inline-block";
-              document.getElementById("giveBrainrotForm").style.display =
-                "block";
-            }
+            document.getElementById("luck2xBtn").style.display = "inline-block";
+            document.getElementById("luck3xBtn").style.display = "inline-block";
+            document.getElementById("luck4xBtn").style.display = "inline-block";
+            document.getElementById("giveBrainrotForm").style.display = "block";
             loginStatus.innerText += ` (Admin access: ${user.email})`;
+          } else if (user.email === "work2013@myyahoo.com") {
+            adminControls.style.display = "block";
+            if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
+            var adminPanelTopbar = document.getElementById("adminPanelTopbar");
+            var adminPanel = document.getElementById("adminPanel");
+            if (adminPanelTopbar) adminPanelTopbar.style.display = "none";
+            if (adminPanel) adminPanel.style.display = "none";
+            document.getElementById("luck2xBtn").style.display = "none";
+            document.getElementById("luck3xBtn").style.display = "none";
+            document.getElementById("luck4xBtn").style.display = "none";
+            document.getElementById("giveBrainrotForm").style.display = "none";
+            loginStatus.innerText += ` (Admin access: ${user.email}, global message only)`;
           } else {
             adminControls.style.display = "none";
             if (removeMsgBtn) removeMsgBtn.style.display = "none";
