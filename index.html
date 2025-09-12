@@ -707,9 +707,7 @@
         >Sign-In / Log-In</a
       >
       <a href="#rebirth" onclick="toggleSidebar('rebirthPanel')">Rebirth</a>
-      <a href="#admin" id="adminPanelTopbar" onclick="showAdminPanel()"
-        >Admin Panel</a
-      >
+      <!-- Admin Panel entry removed, panel will show automatically for Alfonso/Eldrick -->
       <p>Brainrot RNG</p>
     </div>
 
@@ -1991,12 +1989,14 @@
           ) {
             adminControls.style.display = "block";
             if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
-            var adminPanelTopbar = document.getElementById("adminPanelTopbar");
             var adminPanel = document.getElementById("adminPanel");
-            if (adminPanelTopbar)
-              adminPanelTopbar.style.display = "inline-block";
-            if (adminPanel) adminPanel.style.display = "block";
-            showAdminPanel();
+            if (adminPanel && !window.adminPanelClosed)
+              adminPanel.style.display = "block";
+            // Add logic to close admin panel with X button
+            window.closeAdminPanel = function () {
+              if (adminPanel) adminPanel.style.display = "none";
+              window.adminPanelClosed = true;
+            };
             document.getElementById("luck2xBtn").style.display = "inline-block";
             document.getElementById("luck3xBtn").style.display = "inline-block";
             document.getElementById("luck4xBtn").style.display = "inline-block";
