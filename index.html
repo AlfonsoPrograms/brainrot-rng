@@ -55,6 +55,61 @@
     <title>Brainrot RNG</title>
 
     <style>
+    /* Improved Admin Panel Styles */
+    #adminPanel.sidebar {
+      background: linear-gradient(135deg, #1a2a3a 60%, #21a9c4 100%);
+      color: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(33,169,196,0.25);
+      padding: 32px 24px 24px 24px;
+      min-width: 320px;
+      max-width: 360px;
+      margin-top: 32px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    #adminPanel h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+      color: #fff;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 8px #168ba0;
+    }
+    #adminPanel button:not(.close-btn) {
+      background: #21a9c4;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      margin: 8px 0;
+      box-shadow: 0 2px 8px #168ba033;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #adminPanel button:not(.close-btn):hover {
+      background: #168ba0;
+    }
+    #adminPanel input {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #21a9c4;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      width: 95%;
+      background: #13202b;
+      color: #fff;
+    }
+    #adminPanel form {
+      margin-top: 18px;
+      margin-bottom: 8px;
+    }
+    #adminPanel .admin-msg {
+      color: #ffe066;
+      font-weight: bold;
+      margin-top: 12px;
+      display: block;
+      text-shadow: 0 1px 4px #168ba0;
+    }
       /* Admin Topbar Styles */
       #adminTopbar {
         position: fixed;
@@ -1359,7 +1414,7 @@
           // Boost rare, epic, legendary, mystical, secret
           const rareTypes = ["RARE", "EPIC", "LEGENDARY", "MYSTICAL", "???"];
           if (rareTypes.includes(msg.rarity)) {
-            return msg.weight * luckMultiplier;
+            return msg.weight * luckMultiplier * luckBoostMultiplier;
           }
           return msg.weight;
         }
