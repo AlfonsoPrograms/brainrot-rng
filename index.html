@@ -1317,10 +1317,6 @@
         const btn = document.getElementById("RollButton");
         btn.disabled = true;
         getRandomBrainrot(false);
-        // Always update admin panel after roll
-        if (typeof auth !== "undefined") {
-          updateLoginPanel(auth.currentUser);
-        }
         setTimeout(() => {
           btn.disabled = false;
         }, cd);
@@ -1380,49 +1376,7 @@
               user || (typeof auth !== "undefined" ? auth.currentUser : null);
             // Make removeMsgBtn globally accessible
             const removeMsgBtn = document.getElementById("removeGlobalMsgBtn");
-            if (currentUser) {
-              loginStatus.innerText = `Signed in as: ${
-                currentUser.displayName || currentUser.email
-              }`;
-              // Show admin controls only for admin
-              if (ADMIN_EMAILS.includes(currentUser.email)) {
-                adminControls.style.display = "block";
-                if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
-                document.getElementById("adminPanelTopbar").style.display =
-                  "inline-block";
-                document.getElementById("adminPanel").style.display = "block";
-                // Adam only gets global message
-                if (currentUser.email === "work2013@myyahoo.com") {
-                  document.getElementById("luck2xBtn").style.display = "none";
-                  document.getElementById("luck3xBtn").style.display = "none";
-                  document.getElementById("luck4xBtn").style.display = "none";
-                  document.getElementById("giveBrainrotForm").style.display =
-                    "none";
-                } else {
-                  document.getElementById("luck2xBtn").style.display =
-                    "inline-block";
-                  document.getElementById("luck3xBtn").style.display =
-                    "inline-block";
-                  document.getElementById("luck4xBtn").style.display =
-                    "inline-block";
-                  document.getElementById("giveBrainrotForm").style.display =
-                    "block";
-                }
-              } else {
-                adminControls.style.display = "none";
-                if (removeMsgBtn) removeMsgBtn.style.display = "none";
-                document.getElementById("adminPanelTopbar").style.display =
-                  "none";
-                document.getElementById("adminPanel").style.display = "none";
-              }
-            } else {
-              loginStatus.innerText = "Not signed in.";
-              adminControls.style.display = "none";
-              if (removeMsgBtn) removeMsgBtn.style.display = "none";
-              document.getElementById("adminPanelTopbar").style.display =
-                "none";
-              document.getElementById("adminPanel").style.display = "none";
-            }
+            // ...existing code...
             break;
           }
         }
