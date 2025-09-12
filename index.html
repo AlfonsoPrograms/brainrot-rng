@@ -12,6 +12,12 @@
       src="https://www.googletagmanager.com/gtag/js?id=G-YYNP84KGVN"
     ></script>
     <script>
+      // Ensure login panel updates on page load for persistent login
+      window.addEventListener("DOMContentLoaded", () => {
+        if (typeof auth !== "undefined") {
+          updateLoginPanel(auth.currentUser);
+        }
+      });
       // Show the admin panel sidebar
       function showAdminPanel() {
         document.getElementById("adminPanel").style.display = "block";
@@ -2003,6 +2009,13 @@
       });
       // Google Sign-In wiring
       const googleSignInBtn = document.getElementById("googleSignInBtn");
+      const googleSignInError = document.createElement("div");
+      googleSignInError.id = "googleSignInError";
+      googleSignInError.style.color = "red";
+      googleSignInBtn.parentNode.insertBefore(
+        googleSignInError,
+        googleSignInBtn.nextSibling
+      );
       const loginStatus = document.getElementById("loginStatus");
       const adminControls = document.getElementById("adminControls");
 
@@ -2063,10 +2076,16 @@
       });
 
       googleSignInBtn.addEventListener("click", async () => {
+        googleSignInError.innerText = "";
+        googleSignInBtn.disabled = true;
+        googleSignInBtn.innerText = "Signing in...";
         try {
           await signInWithPopup(auth, provider);
         } catch (err) {
-          alert("Sign-in failed: " + err.message);
+          googleSignInError.innerText = "Google sign-in failed: " + err.message;
+        } finally {
+          googleSignInBtn.disabled = false;
+          googleSignInBtn.innerText = "Sign in with Google";
         }
       });
 
