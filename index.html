@@ -1299,6 +1299,10 @@
         const btn = document.getElementById("RollButton");
         btn.disabled = true;
         getRandomBrainrot(false);
+        // Always update admin panel after roll
+        if (typeof auth !== "undefined") {
+          updateLoginPanel(auth.currentUser);
+        }
         setTimeout(() => {
           btn.disabled = false;
         }, cd);
@@ -1801,6 +1805,10 @@
         if (localStorage.getItem("musicOn") === "false") {
           document.getElementById("Music1").muted = true;
           if (musicSwitch) musicSwitch.checked = false;
+        }
+        // Always update admin panel after starting game
+        if (typeof auth !== "undefined") {
+          updateLoginPanel(auth.currentUser);
         }
       };
       document
