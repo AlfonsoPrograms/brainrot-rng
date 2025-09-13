@@ -726,52 +726,6 @@
     </style>
   </head>
   <body>
-  <div id="luckStatus" class="luck-status"></div>
-    /* Luck Status Indicator */
-    #luckStatus.luck-status {
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      background: rgba(33,169,196,0.85);
-      color: #fff;
-      font-size: 15px;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      padding: 6px 14px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px #21a9c4;
-      z-index: 2100;
-      min-width: 120px;
-      text-align: center;
-      pointer-events: none;
-      opacity: 0.92;
-      transition: opacity 0.2s;
-    }
-    <!-- Adsterra Mobile Horizontal Ad -->
-    <div id="adsterraMobile" class="adsterra-mobile">
-      <!-- Adsterra script will inject here -->
-    </div>
-    /* Adsterra Mobile Horizontal Ad Styles */
-    @media (max-width: 600px) {
-      #adsterraMobile.adsterra-mobile {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100vw;
-        height: 90px;
-        background: #222;
-        z-index: 3000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 -2px 12px #21a9c4;
-      }
-      #adsterraMobile iframe {
-        width: 100vw !important;
-        height: 90px !important;
-        min-height: 90px;
-        border: none;
-      }
-    }
     <!-- ADMIN TOPBAR (only for Eldrick) -->
   <div id="adminPanel" class="sidebar">
       <button class="close-btn" onclick="toggleSidebar('adminPanel')">
@@ -840,16 +794,6 @@
       AUTO
     </button>
     <script type="text/javascript">
-    // Inject Adsterra ad into mobile container
-    if (window.innerWidth <= 600) {
-      var adDiv = document.getElementById('adsterraMobile');
-      var adIframe = document.createElement('iframe');
-      adIframe.src = 'https://www.highperformanceformat.com/8bf6d2dff83a56fccfca81a01327b7b9/invoke.js';
-      adIframe.style.width = '100vw';
-      adIframe.style.height = '90px';
-      adIframe.style.border = 'none';
-      adDiv.appendChild(adIframe);
-    }
       atOptions = {
         key: "8bf6d2dff83a56fccfca81a01327b7b9",
         format: "iframe",
@@ -1111,43 +1055,17 @@
 
       // Luck boost logic for admin topbar
       let luckBoostTimeout = null;
-  let luckBoostEndTime = null;
       let luckBoostMultiplier = 1;
       function setLuckBoost(multiplier, seconds) {
         if (luckBoostTimeout) clearTimeout(luckBoostTimeout);
         luckBoostMultiplier = multiplier;
-        luckBoostEndTime = Date.now() + seconds * 1000;
-        document.getElementById("adminTopbarMsg").innerText = `Luck ${multiplier}x active for ${seconds}s!`;
-        updateLuckStatus();
+        document.getElementById(
+          "adminTopbarMsg"
+        ).innerText = `Luck ${multiplier}x active for ${seconds}s!`;
         luckBoostTimeout = setTimeout(() => {
           luckBoostMultiplier = 1;
-          luckBoostEndTime = null;
           document.getElementById("adminTopbarMsg").innerText = "";
-          updateLuckStatus();
         }, seconds * 1000);
-        startLuckStatusTimer();
-    // Luck status indicator logic
-    function updateLuckStatus() {
-      const el = document.getElementById('luckStatus');
-      if (luckBoostMultiplier > 1 && luckBoostEndTime) {
-        const secondsLeft = Math.max(0, Math.ceil((luckBoostEndTime - Date.now()) / 1000));
-        el.innerText = `${luckBoostMultiplier}x luck active for ${secondsLeft}s`;
-        el.style.display = 'block';
-      } else {
-        el.innerText = '';
-        el.style.display = 'none';
-      }
-    }
-    let luckStatusInterval = null;
-    function startLuckStatusTimer() {
-      if (luckStatusInterval) clearInterval(luckStatusInterval);
-      luckStatusInterval = setInterval(() => {
-        updateLuckStatus();
-        if (luckBoostMultiplier <= 1 || !luckBoostEndTime) {
-          clearInterval(luckStatusInterval);
-        }
-      }, 1000);
-    }
       }
       document.getElementById("luck2xBtn").onclick = () => setLuckBoost(2, 60);
       document.getElementById("luck3xBtn").onclick = () => setLuckBoost(3, 60);
