@@ -726,6 +726,26 @@
     </style>
   </head>
   <body>
+  <div id="luckStatus" class="luck-status"></div>
+    /* Luck Status Indicator */
+    #luckStatus.luck-status {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      background: rgba(33,169,196,0.85);
+      color: #fff;
+      font-size: 15px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      padding: 6px 14px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px #21a9c4;
+      z-index: 2100;
+      min-width: 120px;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0.92;
+      transition: opacity 0.2s;
+    }
     <!-- Adsterra Mobile Horizontal Ad -->
     <div id="adsterraMobile" class="adsterra-mobile">
       <!-- Adsterra script will inject here -->
@@ -1091,17 +1111,43 @@
 
       // Luck boost logic for admin topbar
       let luckBoostTimeout = null;
+  let luckBoostEndTime = null;
       let luckBoostMultiplier = 1;
       function setLuckBoost(multiplier, seconds) {
         if (luckBoostTimeout) clearTimeout(luckBoostTimeout);
         luckBoostMultiplier = multiplier;
-        document.getElementById(
-          "adminTopbarMsg"
-        ).innerText = `Luck ${multiplier}x active for ${seconds}s!`;
+        luckBoostEndTime = Date.now() + seconds * 1000;
+        document.getElementById("adminTopbarMsg").innerText = `Luck ${multiplier}x active for ${seconds}s!`;
+        updateLuckStatus();
         luckBoostTimeout = setTimeout(() => {
           luckBoostMultiplier = 1;
+          luckBoostEndTime = null;
           document.getElementById("adminTopbarMsg").innerText = "";
+          updateLuckStatus();
         }, seconds * 1000);
+        startLuckStatusTimer();
+    // Luck status indicator logic
+    function updateLuckStatus() {
+      const el = document.getElementById('luckStatus');
+      if (luckBoostMultiplier > 1 && luckBoostEndTime) {
+        const secondsLeft = Math.max(0, Math.ceil((luckBoostEndTime - Date.now()) / 1000));
+        el.innerText = `${luckBoostMultiplier}x luck active for ${secondsLeft}s`;
+        el.style.display = 'block';
+      } else {
+        el.innerText = '';
+        el.style.display = 'none';
+      }
+    }
+    let luckStatusInterval = null;
+    function startLuckStatusTimer() {
+      if (luckStatusInterval) clearInterval(luckStatusInterval);
+      luckStatusInterval = setInterval(() => {
+        updateLuckStatus();
+        if (luckBoostMultiplier <= 1 || !luckBoostEndTime) {
+          clearInterval(luckStatusInterval);
+        }
+      }, 1000);
+    }
       }
       document.getElementById("luck2xBtn").onclick = () => setLuckBoost(2, 60);
       document.getElementById("luck3xBtn").onclick = () => setLuckBoost(3, 60);
