@@ -1,6 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <style>
+    /* Luck Status Indicator */
+    #luckStatus {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      background: rgba(33,169,196,0.85);
+      color: #fff;
+      font-size: 15px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      padding: 6px 14px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px #21a9c4;
+      z-index: 2100;
+      min-width: 120px;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0.92;
+      transition: opacity 0.2s;
+      display: none;
+    }
+    </style>
     <script
       <meta
       name="monetag"
@@ -726,6 +748,7 @@
     </style>
   </head>
   <body>
+  <div id="luckStatus"></div>
     <!-- ADMIN TOPBAR (only for Eldrick) -->
   <div id="adminPanel" class="sidebar">
       <button class="close-btn" onclick="toggleSidebar('adminPanel')">
@@ -794,6 +817,36 @@
       AUTO
     </button>
     <script type="text/javascript">
+    // Luck indicator logic
+    var luckBoostMultiplier = 1;
+    var luckBoostEndTime = null;
+    var luckStatusInterval = null;
+    function showLuckIndicator(multiplier, seconds) {
+      luckBoostMultiplier = multiplier;
+      luckBoostEndTime = Date.now() + seconds * 1000;
+      updateLuckStatus();
+      document.getElementById('luckStatus').style.display = 'block';
+      if (luckStatusInterval) clearInterval(luckStatusInterval);
+      luckStatusInterval = setInterval(function() {
+        updateLuckStatus();
+        if (Date.now() > luckBoostEndTime) {
+          luckBoostMultiplier = 1;
+          luckBoostEndTime = null;
+          document.getElementById('luckStatus').style.display = 'none';
+          clearInterval(luckStatusInterval);
+        }
+      }, 1000);
+    }
+    function updateLuckStatus() {
+      var el = document.getElementById('luckStatus');
+      if (luckBoostMultiplier > 1 && luckBoostEndTime) {
+        var secondsLeft = Math.max(0, Math.ceil((luckBoostEndTime - Date.now()) / 1000));
+        el.innerText = luckBoostMultiplier + 'x luck active for ' + secondsLeft + 's';
+      } else {
+        el.innerText = '';
+      }
+    }
+    // Example usage: showLuckIndicator(4, 60); // Shows 4x luck for 60 seconds
       atOptions = {
         key: "8bf6d2dff83a56fccfca81a01327b7b9",
         format: "iframe",
