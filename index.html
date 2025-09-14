@@ -791,6 +791,20 @@
 
     <div class="topbar">
   <a href="#admin" id="adminPanelTopbar" onclick="showAdminPanel()">Admin Panel</a>
+  <a href="#consumables" id="consumablesTopbar" onclick="toggleSidebar('consumablesPanel')">Consumables</a>
+    <!-- CONSUMABLES SIDEBAR -->
+    <div id="consumablesPanel" class="sidebar">
+      <button class="close-btn" onclick="toggleSidebar('consumablesPanel')">&times;</button>
+      <h2>Consumables</h2>
+      <div id="consumablesList"></div>
+      <hr>
+      <h3>Trade Brainrot for Consumable</h3>
+      <form id="tradeConsumableForm">
+        <select id="tradeBrainrotSelect"></select>
+        <button type="submit">Trade</button>
+      </form>
+      <div id="tradeConsumableMsg" style="color:yellow;margin-top:8px;"></div>
+    </div>
       <a href="#home">Home</a>
       <a href="#settings" onclick="toggleSidebar('settingsPanel')">Settings</a>
       <a href="#inventory" onclick="toggleSidebar('inventoryPanel')"
@@ -859,6 +873,8 @@
       type="text/javascript"
       src="https://www.highperformanceformat.com/8bf6d2dff83a56fccfca81a01327b7b9/invoke.js"
     ></script>
+
+    
 
     <audio
       id="Music1"
@@ -1358,6 +1374,89 @@
           },
         ],
       };
+
+      // ======= CONSUMABLES SYSTEM =======
+    let consumables = JSON.parse(localStorage.getItem('consumables')) || [];
+
+    function rarityToConsumable(rarity) {
+      switch (rarity) {
+        case 'COMMON': return {type:'luck', value:2, duration:30, name:'2x Luck (30s)'};
+        case 'UNCOMMON': return {type:'luck', value:3, duration:45, name:'3x Luck (45s)'};
+        case 'RARE': return {type:'luck', value:4, duration:60, name:'4x Luck (60s)'};
+        case 'EPIC': return {type:'speed', value:0.7, duration:60, name:'Auto Roll Speed x0.7 (60s)'};
+        case 'LEGENDARY': return {type:'luck', value:5, duration:90, name:'5x Luck (90s)'};
+        case 'MYSTICAL': return {type:'speed', value:0.5, duration:120, name:'Auto Roll Speed x0.5 (120s)'};
+        case '???': return {type:'luck', value:10, duration:120, name:'10x Luck (120s)'};
+        default: return {type:'luck', value:1, duration:15, name:'1x Luck (15s)'};
+      }
+    }
+
+    function updateConsumablesList() {
+      const list = document.getElementById('consumablesList');
+      if (!list) return;
+      if (consumables.length === 0) {
+        list.innerHTML = '<div>No consumables. Trade a brainrot to get one!</div>';
+        return;
+      }
+      list.innerHTML = '';
+      consumables.forEach((c, i) => {
+        list.innerHTML += `<div>${c.name} <button onclick="useConsumable(${i})">Use</button></div>`;
+      });
+    }
+
+    function updateTradeBrainrotSelect() {
+      const select = document.getElementById('tradeBrainrotSelect');
+      if (!select) return;
+      select.innerHTML = '';
+      inventory.forEach((item, idx) => {
+        // Extract rarity from item HTML
+        const match = item.match(/class="(rarity-[a-zA-Z]+)">([A-Z?]+)/);
+        const rarity = match ? match[2] : 'COMMON';
+        select.innerHTML += `<option value="${idx}">${item.replace(/<br>.*/, '')} (${rarity})</option>`;
+      });
+    }
+
+    document.getElementById('tradeConsumableForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const select = document.getElementById('tradeBrainrotSelect');
+      const msg = document.getElementById('tradeConsumableMsg');
+      if (!select.value) { msg.innerText = 'Select a brainrot to trade.'; return; }
+      const idx = parseInt(select.value);
+      const item = inventory[idx];
+      // Extract rarity
+      const match = item.match(/class="(rarity-[a-zA-Z]+)">([A-Z?]+)/);
+      const rarity = match ? match[2] : 'COMMON';
+      const consumable = rarityToConsumable(rarity);
+      consumables.push(consumable);
+      inventory.splice(idx, 1);
+      localStorage.setItem('consumables', JSON.stringify(consumables));
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+      updateInventory();
+      updateConsumablesList();
+      updateTradeBrainrotSelect();
+      msg.innerText = `Traded for: ${consumable.name}`;
+    });
+
+    function useConsumable(idx) {
+      const c = consumables[idx];
+      if (!c) return;
+      if (c.type === 'luck') {
+        showLuckIndicator(c.value, c.duration);
+      } else if (c.type === 'speed') {
+        // For demo: just show a message, you can wire to auto roll speed logic
+        alert(`Auto Roll Speed Boost: x${c.value} for ${c.duration}s!`);
+      }
+      consumables.splice(idx, 1);
+      localStorage.setItem('consumables', JSON.stringify(consumables));
+      updateConsumablesList();
+    }
+
+    // Update UI on sidebar open
+    document.getElementById('consumablesTopbar').addEventListener('click', function() {
+      updateConsumablesList();
+      updateTradeBrainrotSelect();
+      document.getElementById('tradeConsumableMsg').innerText = '';
+    });
 
       // ======= CORE HELPERS =======
       function computeRollCooldownSeconds() {
