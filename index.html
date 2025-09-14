@@ -3,6 +3,23 @@
   <head>
   <link rel="icon" type="image/png" href="Images/Dice.png">
     <style>
+/* Styled dropdown for admin gift consumable */
+#giftConsumableType {
+  width: 120px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #21a9c4;
+  background: #182a3a;
+  color: #fff;
+  font-size: 1rem;
+  margin-right: 8px;
+  box-shadow: 0 2px 8px #21a9c433;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#giftConsumableType:focus {
+  border-color: #168ba0;
+}
 /* Consumables Use Button Styling */
 #consumablesPanel .use-btn {
   padding: 8px 18px;
@@ -2609,6 +2626,101 @@
           }
         });
       // Listen for gifted brainrots and add to inventory if received
+      // Listen for gifted consumables
+      if (typeof auth !== "undefined") {
+        onAuthStateChanged(auth, (user) => {
+          if (!user) return;
+          const userConsumableRef = ref(db, `userConsumable/${btoa(user.email)}`);
+          onValue(userConsumableRef, (snap) => {
+            const val = snap.val();
+            if (val && val.consumable) {
+              try {
+                consumables.push(val.consumable);
+                localStorage.setItem('consumables', JSON.stringify(consumables));
+                updateConsumablesList();
+                let msg = `You have been gifted a consumable (${val.consumable.name}) by ${val.sender}!`;
+                const note = document.createElement('div');
+                note.innerText = msg;
+                note.style.position = 'fixed';
+                note.style.bottom = '140px';
+                note.style.left = '50%';
+                note.style.transform = 'translateX(-50%)';
+                note.style.background = '#21a9c4';
+                note.style.color = 'white';
+                note.style.padding = '22px 44px';
+                note.style.borderRadius = '16px';
+                note.style.fontWeight = 'bold';
+                note.style.fontSize = '2rem';
+                note.style.boxShadow = '0 4px 24px #21a9c4';
+                note.style.zIndex = '9999';
+                document.body.appendChild(note);
+                setTimeout(() => note.remove(), 5000);
+                set(userConsumableRef, "");
+              } catch (err) {
+                console.error('Error receiving gifted consumable:', err);
+                const dbg = document.createElement('div');
+                dbg.innerText = 'DEBUG: Error receiving gifted consumable: ' + err.message;
+                dbg.style.position = 'fixed';
+                dbg.style.bottom = '200px';
+                dbg.style.left = '50%';
+                dbg.style.transform = 'translateX(-50%)';
+                dbg.style.background = 'red';
+                dbg.style.color = 'white';
+                dbg.style.padding = '10px 20px';
+                dbg.style.borderRadius = '8px';
+                dbg.style.fontWeight = 'bold';
+                dbg.style.zIndex = '9999';
+                document.body.appendChild(dbg);
+                setTimeout(() => dbg.remove(), 6000);
+              }
+            }
+          });
+          // Listen for gifted luck
+          const userLuckRef = ref(db, `userLuck/${btoa(user.email)}`);
+          onValue(userLuckRef, (snap) => {
+            const val = snap.val();
+            if (val && val.multiplier && val.duration) {
+              try {
+                showLuckIndicator(val.multiplier, val.duration);
+                let msg = `You have been gifted ${val.multiplier}x luck for ${val.duration}s by ${val.sender}!`;
+                const note = document.createElement('div');
+                note.innerText = msg;
+                note.style.position = 'fixed';
+                note.style.bottom = '200px';
+                note.style.left = '50%';
+                note.style.transform = 'translateX(-50%)';
+                note.style.background = '#21a9c4';
+                note.style.color = 'white';
+                note.style.padding = '22px 44px';
+                note.style.borderRadius = '16px';
+                note.style.fontWeight = 'bold';
+                note.style.fontSize = '2rem';
+                note.style.boxShadow = '0 4px 24px #21a9c4';
+                note.style.zIndex = '9999';
+                document.body.appendChild(note);
+                setTimeout(() => note.remove(), 5000);
+                set(userLuckRef, "");
+              } catch (err) {
+                console.error('Error receiving gifted luck:', err);
+                const dbg = document.createElement('div');
+                dbg.innerText = 'DEBUG: Error receiving gifted luck: ' + err.message;
+                dbg.style.position = 'fixed';
+                dbg.style.bottom = '260px';
+                dbg.style.left = '50%';
+                dbg.style.transform = 'translateX(-50%)';
+                dbg.style.background = 'red';
+                dbg.style.color = 'white';
+                dbg.style.padding = '10px 20px';
+                dbg.style.borderRadius = '8px';
+                dbg.style.fontWeight = 'bold';
+                dbg.style.zIndex = '9999';
+                document.body.appendChild(dbg);
+                setTimeout(() => dbg.remove(), 6000);
+              }
+            }
+          });
+        });
+      }
       if (typeof auth !== "undefined") {
         onAuthStateChanged(auth, (user) => {
           if (!user) return;
