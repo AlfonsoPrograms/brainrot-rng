@@ -851,6 +851,7 @@
       <button class="close-btn" onclick="toggleSidebar('consumablesPanel')">&times;</button>
       <h2>Consumables</h2>
       <div id="consumablesList"></div>
+    <div id="activeBoostsList" style="margin-top:16px;"></div>
       <hr>
       <h3>Trade Brainrot for Consumable</h3>
       <form id="tradeConsumableForm">
@@ -1456,6 +1457,25 @@
       consumables.forEach((c, i) => {
         list.innerHTML += `<div>${c.name} <button class='use-btn' onclick="useConsumable(${i})">Use</button></div>`;
       });
+        // Show active boosts with time left
+        const boostsEl = document.getElementById('activeBoostsList');
+        let boostsHtml = '';
+        const now = Date.now();
+        if (window.activeLuckBoosts && window.activeLuckBoosts.length > 0) {
+          boostsHtml += '<b>Active Luck Boosts:</b>';
+          window.activeLuckBoosts.filter(b => b.end > now).forEach((b, idx) => {
+            const secs = Math.max(0, Math.ceil((b.end - now)/1000));
+            boostsHtml += `<div>${b.value}x Luck - ${secs}s left</div>`;
+          });
+        }
+        if (window.activeSpeedBoosts && window.activeSpeedBoosts.length > 0) {
+          boostsHtml += '<b>Active Roll Speed Boosts:</b>';
+          window.activeSpeedBoosts.filter(b => b.end > now).forEach((b, idx) => {
+            const secs = Math.max(0, Math.ceil((b.end - now)/1000));
+            boostsHtml += `<div>${b.value < 0 ? '-' : '+'}${Math.abs(b.value)}s - ${secs}s left</div>`;
+          });
+        }
+        boostsEl.innerHTML = boostsHtml || '<i>No active boosts</i>';
     }
 
     function updateTradeBrainrotSelect() {
@@ -1513,16 +1533,24 @@
       consumables.splice(idx, 1);
       localStorage.setItem('consumables', JSON.stringify(consumables));
       updateConsumablesList();
+        // Start interval to update boost times
+        if (!window.boostsInterval) {
+          window.boostsInterval = setInterval(updateConsumablesList, 1000);
+        }
     function getTotalLuckBoost() {
       if (!window.activeLuckBoosts) return 1;
       // Only count active boosts
-      return window.activeLuckBoosts.filter(b => b.end > Date.now()).reduce((acc, b) => acc * b.value, 1);
+    if (!window.activeLuckBoosts) return 1;
+    window.activeLuckBoosts = window.activeLuckBoosts.filter(b => b.end > Date.now());
+    return window.activeLuckBoosts.reduce((acc, b) => acc * b.value, 1);
     }
 
     function getTotalSpeedBoost() {
       if (!window.activeSpeedBoosts) return 0;
       // Only count active boosts
-      return window.activeSpeedBoosts.filter(b => b.end > Date.now()).reduce((acc, b) => acc + b.value, 0);
+    if (!window.activeSpeedBoosts) return 0;
+    window.activeSpeedBoosts = window.activeSpeedBoosts.filter(b => b.end > Date.now());
+    return window.activeSpeedBoosts.reduce((acc, b) => acc + b.value, 0);
     }
 
     // Patch roll cooldown calculation to clamp at 0.15s and apply speed boosts
