@@ -3,6 +3,40 @@
   <head>
   <link rel="icon" type="image/png" href="Images/Dice.png">
     <style>
+/* Consumables Sidebar Styles */
+#consumablesPanel select {
+  width: 90%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #21a9c4;
+  background: #182a3a;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px #21a9c433;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#consumablesPanel select:focus {
+  border-color: #168ba0;
+}
+#consumablesPanel button[type="submit"] {
+  padding: 10px 24px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #21a9c4 60%, #168ba0 100%);
+  color: #fff;
+  font-size: 1.1rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #21a9c433;
+  font-weight: bold;
+  margin-top: 4px;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+#consumablesPanel button[type="submit"]:hover {
+  background: linear-gradient(90deg, #168ba0 60%, #21a9c4 100%);
+  box-shadow: 0 4px 16px #21a9c455;
+}
     /* Luck Status Indicator */
     #luckStatus {
       position: fixed;
