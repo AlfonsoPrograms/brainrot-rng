@@ -892,6 +892,14 @@
     </div>
 
     <div class="topbar">
+  <a href="#statistics" id="statisticsTopbar" onclick="toggleSidebar('statisticsPanel')">Statistics</a>
+    <!-- STATISTICS SIDEBAR -->
+    <div id="statisticsPanel" class="sidebar">
+      <button class="close-btn" onclick="toggleSidebar('statisticsPanel')">&times;</button>
+      <h2>Statistics</h2>
+      <div id="statsContent"></div>
+    </div>
+    
   <a href="#admin" id="adminPanelTopbar" onclick="showAdminPanel()">Admin Panel</a>
   <a href="#consumables" id="consumablesTopbar" onclick="toggleSidebar('consumablesPanel')">Consumables</a>
     <!-- CONSUMABLES SIDEBAR -->
@@ -1751,12 +1759,31 @@
 
             saveGame();
 
-            // Stop AUTO on good drops if enabled
-            let currentUser =
-              user || (typeof auth !== "undefined" ? auth.currentUser : null);
-            // Make removeMsgBtn globally accessible
-            const removeMsgBtn = document.getElementById("removeGlobalMsgBtn");
-            // ...existing code...
+            // Stop AUTO on Mystical/Secret if enabled
+            if (isAuto && stopOnGoodDrops) {
+              if (msg.rarity === "MYSTICAL" || msg.rarity === "???") {
+                autoRollActive = false;
+                clearInterval(autoRollInterval);
+                document.getElementById("AutoRollButton").innerText = "AUTO";
+                // Optional: show notification
+                const note = document.createElement("div");
+                note.innerText = `Auto stopped: You rolled a ${msg.rarity}!`;
+                note.style.position = "fixed";
+                note.style.bottom = "120px";
+                note.style.left = "50%";
+                note.style.transform = "translateX(-50%)";
+                note.style.background = "#ff9800";
+                note.style.color = "black";
+                note.style.padding = "18px 36px";
+                note.style.borderRadius = "12px";
+                note.style.fontWeight = "bold";
+                note.style.fontSize = "1.5rem";
+                note.style.zIndex = "9999";
+                document.body.appendChild(note);
+                setTimeout(() => note.remove(), 4000);
+              }
+            }
+
             break;
           }
         }
@@ -2129,6 +2156,24 @@
           JSON.stringify(stopOnGoodDrops)
         );
       });
+
+      // ======= STATISTICS PANEL LOGIC =======
+    document.getElementById('statisticsTopbar').addEventListener('click', function() {
+      updateStatsPanel();
+    });
+
+    function updateStatsPanel() {
+      const stats = [];
+      stats.push(`<b>Total Rolls:</b> ${totalRolls}`);
+      stats.push(`<b>Rebirths:</b> ${rebirths}`);
+      stats.push(`<b>Inventory Size:</b> ${inventory.length}`);
+      stats.push(`<b>Luck Multiplier:</b> ${luckMultiplier.toFixed(2)}`);
+      stats.push(`<b>Auto Roll Unlocked:</b> ${autoRollUnlocked ? 'Yes' : 'No'}`);
+      stats.push(`<b>Current Roll Speed:</b> ${computeRollCooldownSeconds().toFixed(2)}s`);
+      stats.push(`<b>Consumables Owned:</b> ${consumables.length}`);
+      // Add more stats as needed
+      document.getElementById('statsContent').innerHTML = stats.join('<br>');
+    }
 
       // Make startGame globally accessible and fix event listener
       window.startGame = function () {
