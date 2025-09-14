@@ -887,6 +887,8 @@
       AUTO
     </button>
     <script type="text/javascript">
+  // Declare luckStatusInterval to fix ReferenceError
+  let luckStatusInterval = null;
     // Luck indicator logic
   
     function showLuckIndicator(multiplier, seconds) {
@@ -2441,34 +2443,77 @@
         .addEventListener("submit", async (e) => {
           e.preventDefault();
           const user = auth.currentUser;
-          const targetEmail = document
-            .getElementById("targetEmailInput")
-            .value.trim();
-          const brainrotName = document
-            .getElementById("brainrotInput")
-            .value.trim();
+          const targetEmail = document.getElementById("targetEmailInput").value.trim();
+          const brainrotName = document.getElementById("brainrotInput").value.trim();
           const msgSpan = document.getElementById("adminTopbarMsg");
-          if (!user || user.email !== "alfonsoovilchez52@gmail.com") {
-            msgSpan.innerText = "Only Alfonso can give brainrot.";
+          if (!user || !ADMIN_EMAILS.includes(user.email)) {
+            msgSpan.innerText = "Only admins can give brainrot.";
             return;
           }
           if (!targetEmail || !brainrotName) {
             msgSpan.innerText = "Enter target Gmail and brainrot name.";
             return;
           }
-          // Write to a special path in Firebase for the target user
+          // Remove brainrot from sender's inventory if present
+          let foundIdx = -1;
+          for (let i = 0; i < inventory.length; i++) {
+            if (inventory[i].includes(brainrotName)) {
+              foundIdx = i;
+              break;
+            }
+          }
+          if (foundIdx === -1) {
+            msgSpan.innerText = "You don't have that brainrot in your inventory.";
+            return;
+          }
+          const brainrotToGive = inventory[foundIdx];
+          inventory.splice(foundIdx, 1);
+          localStorage.setItem('inventory', JSON.stringify(inventory));
+          updateInventory();
+          // Write to a special path in Firebase for the target user, include sender info
           try {
             const db = getDatabase();
-            const userBrainrotRef = ref(
-              db,
-              `userBrainrot/${btoa(targetEmail)}`
-            );
-            await set(userBrainrotRef, brainrotName);
+            const senderName = ADMIN_PREFIXES[user.email] ? ADMIN_PREFIXES[user.email].replace(':','') : user.email;
+            const userBrainrotRef = ref(db, `userBrainrot/${btoa(targetEmail)}`);
+            await set(userBrainrotRef, { brainrot: brainrotToGive, sender: senderName });
             msgSpan.innerText = `Gave ${brainrotName} to ${targetEmail}!`;
           } catch (err) {
             msgSpan.innerText = err.message;
           }
         });
+      // Listen for gifted brainrots and add to inventory if received
+      if (typeof auth !== "undefined") {
+        onAuthStateChanged(auth, (user) => {
+          if (!user) return;
+          const userBrainrotRef = ref(db, `userBrainrot/${btoa(user.email)}`);
+          onValue(userBrainrotRef, (snap) => {
+            const val = snap.val();
+            if (val && val.brainrot && !inventory.includes(val.brainrot)) {
+              inventory.push(val.brainrot);
+              localStorage.setItem('inventory', JSON.stringify(inventory));
+              updateInventory();
+              // Show message to user
+              const msg = `You have been gifted ${val.brainrot.split('<br>')[0]} by ${val.sender}!`;
+              const note = document.createElement('div');
+              note.innerText = msg;
+              note.style.position = 'fixed';
+              note.style.bottom = '20px';
+              note.style.left = '50%';
+              note.style.transform = 'translateX(-50%)';
+              note.style.background = '#21a9c4';
+              note.style.color = 'white';
+              note.style.padding = '10px 20px';
+              note.style.borderRadius = '8px';
+              note.style.fontWeight = 'bold';
+              note.style.zIndex = '9999';
+              document.body.appendChild(note);
+              setTimeout(() => note.remove(), 4000);
+              // Clear the gift after receiving
+              set(userBrainrotRef, "");
+            }
+          });
+        });
+      }
     </script>
   </body>
 </html>
