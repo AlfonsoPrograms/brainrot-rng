@@ -807,6 +807,93 @@
     <!-- ADMIN TOPBAR (only for Eldrick) -->
   <div id="adminPanel" class="sidebar">
       <hr>
+      <h3>Admin Powers</h3>
+      <button id="unlockAutoRollBtn">Unlock Auto Roll</button>
+      <button id="getConsumableBtn">Get Consumable</button>
+      <form id="giftConsumableForm" style="margin-top:8px;">
+        <input type="email" id="giftConsumableEmail" placeholder="Target Gmail" required style="width:60%;margin-right:8px;">
+        <select id="giftConsumableType">
+          <option value="COMMON">Common</option>
+          <option value="UNCOMMON">Uncommon</option>
+          <option value="RARE">Rare</option>
+          <option value="EPIC">Epic</option>
+          <option value="LEGENDARY">Legendary</option>
+          <option value="MYSTICAL">Mystical</option>
+          <option value="???">Secret</option>
+        </select>
+        <button type="submit">Gift Consumable</button>
+      </form>
+      <form id="giftLuckForm" style="margin-top:8px;">
+        <input type="email" id="giftLuckEmail" placeholder="Target Gmail" required style="width:60%;margin-right:8px;">
+        <input type="number" id="giftLuckMultiplier" placeholder="Luck Multiplier (e.g. 2)" min="1" step="0.1" required style="width:20%;margin-right:8px;">
+        <input type="number" id="giftLuckDuration" placeholder="Seconds" min="1" step="1" required style="width:15%;margin-right:8px;">
+        <button type="submit">Gift Luck</button>
+      </form>
+      <button id="unlockEverythingBtn" style="margin-top:12px;background:#ff9800;">Unlock Everything</button>
+    // ======= ADMIN PANEL POWERS =======
+    document.getElementById('unlockAutoRollBtn').onclick = function() {
+      autoRollUnlocked = true;
+      localStorage.setItem('autoRollUnlocked', 'true');
+      document.getElementById('AutoRollButton').classList.add('unlocked');
+      document.getElementById('adminTopbarMsg').innerText = 'Auto Roll unlocked!';
+    };
+
+    document.getElementById('getConsumableBtn').onclick = function() {
+      const c = rarityToConsumable('LEGENDARY');
+      consumables.push(c);
+      localStorage.setItem('consumables', JSON.stringify(consumables));
+      updateConsumablesList();
+      document.getElementById('adminTopbarMsg').innerText = 'Legendary consumable added!';
+    };
+
+    document.getElementById('giftConsumableForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('giftConsumableEmail').value.trim();
+      const type = document.getElementById('giftConsumableType').value;
+      if (!email || !type) return;
+      const c = rarityToConsumable(type);
+      try {
+        const db = getDatabase();
+        const userConsumableRef = ref(db, `userConsumable/${btoa(email)}`);
+        await set(userConsumableRef, { consumable: c, sender: user ? user.email : 'admin' });
+        document.getElementById('adminTopbarMsg').innerText = `Gifted ${c.name} to ${email}!`;
+      } catch (err) {
+        document.getElementById('adminTopbarMsg').innerText = err.message;
+      }
+    };
+
+    document.getElementById('giftLuckForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('giftLuckEmail').value.trim();
+      const mult = parseFloat(document.getElementById('giftLuckMultiplier').value);
+      const secs = parseInt(document.getElementById('giftLuckDuration').value);
+      if (!email || !mult || !secs) return;
+      try {
+        const db = getDatabase();
+        const userLuckRef = ref(db, `userLuck/${btoa(email)}`);
+        await set(userLuckRef, { multiplier: mult, duration: secs, sender: user ? user.email : 'admin' });
+        document.getElementById('adminTopbarMsg').innerText = `Gifted ${mult}x luck for ${secs}s to ${email}!`;
+      } catch (err) {
+        document.getElementById('adminTopbarMsg').innerText = err.message;
+      }
+    };
+
+    document.getElementById('unlockEverythingBtn').onclick = function() {
+      // Unlock all rebirths, brainrots, boosts, etc.
+      rebirths = 3;
+      localStorage.setItem('rebirths', rebirths);
+      inventory = messages.map(m => `${m.text}<br><span class="${m.class}">${m.rarity}</span>`);
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+      autoRollUnlocked = true;
+      localStorage.setItem('autoRollUnlocked', 'true');
+      consumables = ['COMMON','UNCOMMON','RARE','EPIC','LEGENDARY','MYSTICAL','???'].map(rarityToConsumable);
+      localStorage.setItem('consumables', JSON.stringify(consumables));
+      updateInventory();
+      updateConsumablesList();
+      document.getElementById('AutoRollButton').classList.add('unlocked');
+      document.getElementById('adminTopbarMsg').innerText = 'Everything unlocked!';
+    };
+      <hr>
       <h3>Admin Chat</h3>
       <div id="adminChatBox" style="max-height:180px;overflow-y:auto;background:#222;color:#fff;padding:8px 12px;border-radius:8px;margin-bottom:8px;font-size:15px;"></div>
       <form id="adminChatForm" style="display:flex;gap:8px;">
@@ -2527,26 +2614,32 @@
           const userBrainrotRef = ref(db, `userBrainrot/${btoa(user.email)}`);
           onValue(userBrainrotRef, (snap) => {
             const val = snap.val();
-            if (val && val.brainrot && !inventory.includes(val.brainrot)) {
-              inventory.push(val.brainrot);
-              localStorage.setItem('inventory', JSON.stringify(inventory));
-              updateInventory();
-              // Show message to user
-              const msg = `You have been gifted ${val.brainrot.split('<br>')[0]} by ${val.sender}!`;
+            if (val && val.brainrot) {
+              let alreadyInInv = inventory.includes(val.brainrot);
+              if (!alreadyInInv) {
+                inventory.push(val.brainrot);
+                localStorage.setItem('inventory', JSON.stringify(inventory));
+                updateInventory();
+              }
+              // Show message to user (always)
+              let msg = `You have been gifted ${val.brainrot.split('<br>')[0]} by ${val.sender}!`;
+              if (alreadyInInv) msg += ' (already in your inv)';
               const note = document.createElement('div');
               note.innerText = msg;
               note.style.position = 'fixed';
-              note.style.bottom = '20px';
+              note.style.bottom = '80px';
               note.style.left = '50%';
               note.style.transform = 'translateX(-50%)';
               note.style.background = '#21a9c4';
               note.style.color = 'white';
-              note.style.padding = '10px 20px';
-              note.style.borderRadius = '8px';
+              note.style.padding = '22px 44px';
+              note.style.borderRadius = '16px';
               note.style.fontWeight = 'bold';
+              note.style.fontSize = '2rem';
+              note.style.boxShadow = '0 4px 24px #21a9c4';
               note.style.zIndex = '9999';
               document.body.appendChild(note);
-              setTimeout(() => note.remove(), 4000);
+              setTimeout(() => note.remove(), 5000);
               // Clear the gift after receiving
               set(userBrainrotRef, "");
             }
