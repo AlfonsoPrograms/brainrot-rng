@@ -3,6 +3,26 @@
   <head>
   <link rel="icon" type="image/png" href="Images/Dice.png">
     <style>
+/* Consumables Use Button Styling */
+#consumablesPanel .use-btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #21a9c4 60%, #168ba0 100%);
+  color: #fff;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #21a9c433;
+  font-weight: bold;
+  margin-left: 8px;
+  margin-top: 2px;
+  transition: background 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+#consumablesPanel .use-btn:hover {
+  background: linear-gradient(90deg, #168ba0 60%, #21a9c4 100%);
+  box-shadow: 0 4px 16px #21a9c455;
+  opacity: 0.85;
+}
 /* Consumables Sidebar Styles */
 #consumablesPanel select {
   width: 90%;
@@ -1414,13 +1434,13 @@
 
     function rarityToConsumable(rarity) {
       switch (rarity) {
-        case 'COMMON': return {type:'luck', value:2, duration:30, name:'2x Luck (30s)'};
-        case 'UNCOMMON': return {type:'luck', value:3, duration:45, name:'3x Luck (45s)'};
-        case 'RARE': return {type:'luck', value:4, duration:60, name:'4x Luck (60s)'};
-        case 'EPIC': return {type:'speed', value:0.7, duration:60, name:'Auto Roll Speed x0.7 (60s)'};
-        case 'LEGENDARY': return {type:'luck', value:5, duration:90, name:'5x Luck (90s)'};
-        case 'MYSTICAL': return {type:'speed', value:0.5, duration:120, name:'Auto Roll Speed x0.5 (120s)'};
-        case '???': return {type:'luck', value:10, duration:120, name:'10x Luck (120s)'};
+        case 'COMMON': return {type:'speed', value:-0.05, duration:30, name:'-0.05s Roll Speed (30s)'};
+        case 'UNCOMMON': return {type:'luck', value:1.5, duration:45, name:'1.5x Luck (45s)'};
+        case 'RARE': return {type:'speed', value:-0.1, duration:60, name:'-0.1s Roll Speed (60s)'};
+        case 'EPIC': return {type:'speed', value:-0.15, duration:60, name:'-0.15s Roll Speed (60s)'};
+        case 'LEGENDARY': return {type:'luck', value:2, duration:90, name:'2x Luck (90s)'};
+        case 'MYSTICAL': return {type:'luck', value:3, duration:120, name:'3x Luck (120s)'};
+        case '???': return {type:'luck', value:4, duration:120, name:'4x Luck (120s)'};
         default: return {type:'luck', value:1, duration:15, name:'1x Luck (15s)'};
       }
     }
@@ -1434,7 +1454,7 @@
       }
       list.innerHTML = '';
       consumables.forEach((c, i) => {
-        list.innerHTML += `<div>${c.name} <button onclick="useConsumable(${i})">Use</button></div>`;
+        list.innerHTML += `<div>${c.name} <button class='use-btn' onclick="useConsumable(${i})">Use</button></div>`;
       });
     }
 
@@ -1475,14 +1495,43 @@
       const c = consumables[idx];
       if (!c) return;
       if (c.type === 'luck') {
-        showLuckIndicator(c.value, c.duration);
+        // Luck can stack
+        if (!window.activeLuckBoosts) window.activeLuckBoosts = [];
+        window.activeLuckBoosts.push({value: c.value, duration: c.duration, end: Date.now() + c.duration * 1000});
+        showLuckIndicator(getTotalLuckBoost(), c.duration);
+        setTimeout(() => {
+          window.activeLuckBoosts = window.activeLuckBoosts.filter(b => b.end > Date.now());
+        }, c.duration * 1000);
       } else if (c.type === 'speed') {
-        // For demo: just show a message, you can wire to auto roll speed logic
-        alert(`Auto Roll Speed Boost: x${c.value} for ${c.duration}s!`);
+        // Roll speed boost, clamp to 0.15s minimum
+        if (!window.activeSpeedBoosts) window.activeSpeedBoosts = [];
+        window.activeSpeedBoosts.push({value: c.value, duration: c.duration, end: Date.now() + c.duration * 1000});
+        setTimeout(() => {
+          window.activeSpeedBoosts = window.activeSpeedBoosts.filter(b => b.end > Date.now());
+        }, c.duration * 1000);
       }
       consumables.splice(idx, 1);
       localStorage.setItem('consumables', JSON.stringify(consumables));
       updateConsumablesList();
+    function getTotalLuckBoost() {
+      if (!window.activeLuckBoosts) return 1;
+      // Only count active boosts
+      return window.activeLuckBoosts.filter(b => b.end > Date.now()).reduce((acc, b) => acc * b.value, 1);
+    }
+
+    function getTotalSpeedBoost() {
+      if (!window.activeSpeedBoosts) return 0;
+      // Only count active boosts
+      return window.activeSpeedBoosts.filter(b => b.end > Date.now()).reduce((acc, b) => acc + b.value, 0);
+    }
+
+    // Patch roll cooldown calculation to clamp at 0.15s and apply speed boosts
+    const origComputeRollCooldownSeconds = computeRollCooldownSeconds;
+    computeRollCooldownSeconds = function() {
+      let base = origComputeRollCooldownSeconds ? origComputeRollCooldownSeconds() : 1.0;
+      base += getTotalSpeedBoost();
+      return Math.max(0.15, parseFloat(base.toFixed(3)));
+    }
     }
 
     // Update UI on sidebar open
