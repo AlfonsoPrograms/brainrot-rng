@@ -806,6 +806,13 @@
   <div id="luckStatus"></div>
     <!-- ADMIN TOPBAR (only for Eldrick) -->
   <div id="adminPanel" class="sidebar">
+      <hr>
+      <h3>Admin Chat</h3>
+      <div id="adminChatBox" style="max-height:180px;overflow-y:auto;background:#222;color:#fff;padding:8px 12px;border-radius:8px;margin-bottom:8px;font-size:15px;"></div>
+      <form id="adminChatForm" style="display:flex;gap:8px;">
+        <input id="adminChatInput" type="text" placeholder="Type message..." style="flex:1;padding:8px;border-radius:6px;border:1px solid #21a9c4;background:#13202b;color:#fff;">
+        <button type="submit" style="padding:8px 16px;border-radius:6px;background:#21a9c4;color:#fff;border:none;cursor:pointer;">Send</button>
+      </form>
       <button class="close-btn" onclick="toggleSidebar('adminPanel')">
         &times;
         </button>
@@ -2235,6 +2242,8 @@
         ref,
         set,
         onValue,
+        push,
+        serverTimestamp
       } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
       import {
         getAuth,
@@ -2315,46 +2324,66 @@
           loginStatus.innerText = `Signed in as: ${
             user.displayName || user.email
           }`;
-          // Show admin controls only for Alfonso and Eldrick (not Adam)
-          if (
-            [
-              "alfonsoovilchez52@gmail.com",
-              "imabosslikerickross13@gmail.com",
-            ].includes(user.email)
-          ) {
+          // Show admin controls for all admins (including Adam)
+          if (ADMIN_EMAILS.includes(user.email)) {
             adminControls.style.display = "block";
             if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
             var adminPanel = document.getElementById("adminPanel");
             if (adminPanel && !window.adminPanelClosed)
               adminPanel.style.display = "block";
-            // Add logic to close admin panel with X button
             window.closeAdminPanel = function () {
               if (adminPanel) adminPanel.style.display = "none";
               window.adminPanelClosed = true;
             };
-            document.getElementById("luck2xBtn").style.display = "inline-block";
-            document.getElementById("luck3xBtn").style.display = "inline-block";
-            document.getElementById("luck4xBtn").style.display = "inline-block";
-            document.getElementById("giveBrainrotForm").style.display = "block";
+            // Only Alfonso/Eldrick get luck/give controls
+            if (["alfonsoovilchez52@gmail.com","imabosslikerickross13@gmail.com"].includes(user.email)) {
+              document.getElementById("luck2xBtn").style.display = "inline-block";
+              document.getElementById("luck3xBtn").style.display = "inline-block";
+              document.getElementById("luck4xBtn").style.display = "inline-block";
+              document.getElementById("giveBrainrotForm").style.display = "block";
+            } else {
+              document.getElementById("luck2xBtn").style.display = "none";
+              document.getElementById("luck3xBtn").style.display = "none";
+              document.getElementById("luck4xBtn").style.display = "none";
+              document.getElementById("giveBrainrotForm").style.display = "none";
+            }
             loginStatus.innerText += ` (Admin access: ${user.email})`;
-          } else if (user.email === "work2013@myyahoo.com") {
-            adminControls.style.display = "block";
-            if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
-            var adminPanelTopbar = document.getElementById("adminPanelTopbar");
-            var adminPanel = document.getElementById("adminPanel");
-            if (adminPanelTopbar) adminPanelTopbar.style.display = "none";
-            if (adminPanel) adminPanel.style.display = "none";
-            document.getElementById("luck2xBtn").style.display = "none";
-            document.getElementById("luck3xBtn").style.display = "none";
-            document.getElementById("luck4xBtn").style.display = "none";
-            document.getElementById("giveBrainrotForm").style.display = "none";
-            loginStatus.innerText += ` (Admin access: ${user.email}, global message only)`;
           } else {
             adminControls.style.display = "none";
             if (removeMsgBtn) removeMsgBtn.style.display = "none";
             document.getElementById("adminPanelTopbar").style.display = "none";
             document.getElementById("adminPanel").style.display = "none";
           }
+      // ======= ADMIN CHAT LOGIC =======
+      
+      const adminChatRef = ref(db, "adminChat");
+      const adminChatBox = document.getElementById("adminChatBox");
+      const adminChatForm = document.getElementById("adminChatForm");
+      const adminChatInput = document.getElementById("adminChatInput");
+
+      // Listen for chat updates
+      onValue(adminChatRef, (snap) => {
+        const val = snap.val() || {};
+        const messages = Object.values(val).sort((a,b)=>a.ts-b.ts);
+        let html = "";
+        messages.slice(-30).forEach(msg => {
+          html += `<div style='margin-bottom:4px;'><b style='color:#ffe066;'>${msg.sender}:</b> ${msg.text}</div>`;
+        });
+        adminChatBox.innerHTML = html;
+        adminChatBox.scrollTop = adminChatBox.scrollHeight;
+      });
+
+      // Send chat message
+      adminChatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const user = auth.currentUser;
+        if (!user || !ADMIN_EMAILS.includes(user.email)) return;
+        const sender = ADMIN_PREFIXES[user.email] ? ADMIN_PREFIXES[user.email].replace(':','') : user.email;
+        const text = adminChatInput.value.trim();
+        if (!text) return;
+        await push(adminChatRef, { sender, text, ts: Date.now() });
+        adminChatInput.value = "";
+      });
         } else {
           loginStatus.innerText = "Not signed in.";
           adminControls.style.display = "none";
