@@ -830,69 +830,6 @@
         <button type="submit">Gift Luck</button>
       </form>
       <button id="unlockEverythingBtn" style="margin-top:12px;background:#ff9800;">Unlock Everything</button>
-    // ======= ADMIN PANEL POWERS =======
-    document.getElementById('unlockAutoRollBtn').onclick = function() {
-      autoRollUnlocked = true;
-      localStorage.setItem('autoRollUnlocked', 'true');
-      document.getElementById('AutoRollButton').classList.add('unlocked');
-      document.getElementById('adminTopbarMsg').innerText = 'Auto Roll unlocked!';
-    };
-
-    document.getElementById('getConsumableBtn').onclick = function() {
-      const c = rarityToConsumable('LEGENDARY');
-      consumables.push(c);
-      localStorage.setItem('consumables', JSON.stringify(consumables));
-      updateConsumablesList();
-      document.getElementById('adminTopbarMsg').innerText = 'Legendary consumable added!';
-    };
-
-    document.getElementById('giftConsumableForm').onsubmit = async function(e) {
-      e.preventDefault();
-      const email = document.getElementById('giftConsumableEmail').value.trim();
-      const type = document.getElementById('giftConsumableType').value;
-      if (!email || !type) return;
-      const c = rarityToConsumable(type);
-      try {
-        const db = getDatabase();
-        const userConsumableRef = ref(db, `userConsumable/${btoa(email)}`);
-        await set(userConsumableRef, { consumable: c, sender: user ? user.email : 'admin' });
-        document.getElementById('adminTopbarMsg').innerText = `Gifted ${c.name} to ${email}!`;
-      } catch (err) {
-        document.getElementById('adminTopbarMsg').innerText = err.message;
-      }
-    };
-
-    document.getElementById('giftLuckForm').onsubmit = async function(e) {
-      e.preventDefault();
-      const email = document.getElementById('giftLuckEmail').value.trim();
-      const mult = parseFloat(document.getElementById('giftLuckMultiplier').value);
-      const secs = parseInt(document.getElementById('giftLuckDuration').value);
-      if (!email || !mult || !secs) return;
-      try {
-        const db = getDatabase();
-        const userLuckRef = ref(db, `userLuck/${btoa(email)}`);
-        await set(userLuckRef, { multiplier: mult, duration: secs, sender: user ? user.email : 'admin' });
-        document.getElementById('adminTopbarMsg').innerText = `Gifted ${mult}x luck for ${secs}s to ${email}!`;
-      } catch (err) {
-        document.getElementById('adminTopbarMsg').innerText = err.message;
-      }
-    };
-
-    document.getElementById('unlockEverythingBtn').onclick = function() {
-      // Unlock all rebirths, brainrots, boosts, etc.
-      rebirths = 3;
-      localStorage.setItem('rebirths', rebirths);
-      inventory = messages.map(m => `${m.text}<br><span class="${m.class}">${m.rarity}</span>`);
-      localStorage.setItem('inventory', JSON.stringify(inventory));
-      autoRollUnlocked = true;
-      localStorage.setItem('autoRollUnlocked', 'true');
-      consumables = ['COMMON','UNCOMMON','RARE','EPIC','LEGENDARY','MYSTICAL','???'].map(rarityToConsumable);
-      localStorage.setItem('consumables', JSON.stringify(consumables));
-      updateInventory();
-      updateConsumablesList();
-      document.getElementById('AutoRollButton').classList.add('unlocked');
-      document.getElementById('adminTopbarMsg').innerText = 'Everything unlocked!';
-    };
       <hr>
       <h3>Admin Chat</h3>
       <div id="adminChatBox" style="max-height:180px;overflow-y:auto;background:#222;color:#fff;padding:8px 12px;border-radius:8px;margin-bottom:8px;font-size:15px;"></div>
@@ -2372,6 +2309,70 @@
         .addEventListener("click", () => {
           set(msgRef, "");
         });
+
+        // ======= ADMIN PANEL POWERS =======
+    document.getElementById('unlockAutoRollBtn').onclick = function() {
+      autoRollUnlocked = true;
+      localStorage.setItem('autoRollUnlocked', 'true');
+      document.getElementById('AutoRollButton').classList.add('unlocked');
+      document.getElementById('adminTopbarMsg').innerText = 'Auto Roll unlocked!';
+    };
+
+    document.getElementById('getConsumableBtn').onclick = function() {
+      const c = rarityToConsumable('LEGENDARY');
+      consumables.push(c);
+      localStorage.setItem('consumables', JSON.stringify(consumables));
+      updateConsumablesList();
+      document.getElementById('adminTopbarMsg').innerText = 'Legendary consumable added!';
+    };
+
+    document.getElementById('giftConsumableForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('giftConsumableEmail').value.trim();
+      const type = document.getElementById('giftConsumableType').value;
+      if (!email || !type) return;
+      const c = rarityToConsumable(type);
+      try {
+        const db = getDatabase();
+        const userConsumableRef = ref(db, `userConsumable/${btoa(email)}`);
+        await set(userConsumableRef, { consumable: c, sender: user ? user.email : 'admin' });
+        document.getElementById('adminTopbarMsg').innerText = `Gifted ${c.name} to ${email}!`;
+      } catch (err) {
+        document.getElementById('adminTopbarMsg').innerText = err.message;
+      }
+    };
+
+    document.getElementById('giftLuckForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('giftLuckEmail').value.trim();
+      const mult = parseFloat(document.getElementById('giftLuckMultiplier').value);
+      const secs = parseInt(document.getElementById('giftLuckDuration').value);
+      if (!email || !mult || !secs) return;
+      try {
+        const db = getDatabase();
+        const userLuckRef = ref(db, `userLuck/${btoa(email)}`);
+        await set(userLuckRef, { multiplier: mult, duration: secs, sender: user ? user.email : 'admin' });
+        document.getElementById('adminTopbarMsg').innerText = `Gifted ${mult}x luck for ${secs}s to ${email}!`;
+      } catch (err) {
+        document.getElementById('adminTopbarMsg').innerText = err.message;
+      }
+    };
+
+    document.getElementById('unlockEverythingBtn').onclick = function() {
+      // Unlock all rebirths, brainrots, boosts, etc.
+      rebirths = 3;
+      localStorage.setItem('rebirths', rebirths);
+      inventory = messages.map(m => `${m.text}<br><span class="${m.class}">${m.rarity}</span>`);
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+      autoRollUnlocked = true;
+      localStorage.setItem('autoRollUnlocked', 'true');
+      consumables = ['COMMON','UNCOMMON','RARE','EPIC','LEGENDARY','MYSTICAL','???'].map(rarityToConsumable);
+      localStorage.setItem('consumables', JSON.stringify(consumables));
+      updateInventory();
+      updateConsumablesList();
+      document.getElementById('AutoRollButton').classList.add('unlocked');
+      document.getElementById('adminTopbarMsg').innerText = 'Everything unlocked!';
+    };
 
       // Send admin message
       function sendMessage() {
