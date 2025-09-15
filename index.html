@@ -827,6 +827,14 @@
       <h3>Admin Powers</h3>
       <button id="unlockAutoRollBtn">Unlock Auto Roll</button>
       <button id="getConsumableBtn">Get Consumable</button>
+      <hr>
+      <h3>Mutation Events</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+        <button class="mutation-btn" data-mutation="toxic" style="background:#3adf3a;">Start Toxic</button>
+        <button class="mutation-btn" data-mutation="volcanic" style="background:#ff4c2b;">Start Volcanic</button>
+        <button class="mutation-btn" data-mutation="leafy" style="background:#4caf50;">Start Leafy</button>
+        <button class="mutation-btn" data-mutation="none" style="background:#888;">End Mutation</button>
+      </div>
       <form id="giftConsumableForm" style="margin-top:8px;">
         <input type="email" id="giftConsumableEmail" placeholder="Target Gmail" required style="width:60%;margin-right:8px;">
         <select id="giftConsumableType">
@@ -942,6 +950,29 @@
       AUTO
     </button>
     <script type="text/javascript">
+  // --- Mutation Event State ---
+  let mutationEvent = null; // null, 'toxic', 'volcanic', 'leafy'
+  function setMutationEvent(type) {
+    mutationEvent = type === 'none' ? null : type;
+    document.body.classList.remove('mutation-toxic','mutation-volcanic','mutation-leafy');
+    if (mutationEvent) document.body.classList.add('mutation-' + mutationEvent);
+  }
+  // Admin panel mutation buttons
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.querySelectorAll('.mutation-btn').forEach(btn=>{
+      btn.onclick = ()=>setMutationEvent(btn.getAttribute('data-mutation'));
+    });
+  });
+
+  // Mutation event CSS
+  const mutationStyle = document.createElement('style');
+  mutationStyle.innerHTML = `
+    body.mutation-toxic { background: linear-gradient(135deg,#1a3a1a 60%,#3adf3a 100%) !important; }
+    body.mutation-volcanic { background: linear-gradient(135deg,#3a1a1a 60%,#ff4c2b 100%) !important; }
+    body.mutation-leafy { background: linear-gradient(135deg,#1a3a2a 60%,#4caf50 100%) !important; }
+    .mutated-indicator { display:block; color:yellow; font-weight:bold; font-size:1.1em; margin-bottom:2px; text-shadow:0 2px 8px #000; }
+  `;
+  document.head.appendChild(mutationStyle);
   // Declare luckStatusInterval to fix ReferenceError
   let luckStatusInterval = null;
     // Luck indicator logic
@@ -1127,7 +1158,6 @@
       <ul>
         <li>TIM CHEESE - 40%</li>
         <li>BRR BRR PATAPIM - 35%</li>
-        <li>TUNG TUNG TUNG SAHUR - 35%</li>
         <li>Lirili Larila - 35%</li>
         <li>Capuccino Assasino - 35%</li>
         <li>Fluri Flura - 35%</li>
@@ -1255,12 +1285,6 @@
       const messages = [
         {
           text: "Brr Brr Patapim!",
-          rarity: "COMMON",
-          class: "rarity-common",
-          weight: 35,
-        },
-        {
-          text: "Tung Tung Tung Sahur!",
           rarity: "COMMON",
           class: "rarity-common",
           weight: 35,
@@ -1719,7 +1743,26 @@
         invList.innerHTML = "";
         for (const item of inventory) {
           const li = document.createElement("li");
-          li.innerHTML = item;
+          if (typeof item === 'object') {
+            // Improved UI: show mutation indicator, name, rarity, mutation badge
+            let html = '';
+            if (item.mutated && item.mutation) {
+              html += `<span class='mutated-indicator'>${item.mutation.toUpperCase()} MUTATION</span>`;
+            }
+            html += `<span class='brainrot-name' style='font-weight:bold;'>${item.text}</span> <span class='${item.class}'>${item.rarity}</span>`;
+            li.innerHTML = html;
+            li.style.marginBottom = '10px';
+            li.style.padding = '8px 12px';
+            li.style.borderRadius = '8px';
+            li.style.background = item.mutated ? (item.mutation==='toxic'?'#2e4':item.mutation==='volcanic'?'#a22':'#2a4') : '#222';
+            li.style.color = item.mutated ? '#fff' : '#eee';
+            li.style.boxShadow = item.mutated ? '0 2px 12px #0008' : 'none';
+            li.style.display = 'flex';
+            li.style.flexDirection = 'column';
+            li.style.alignItems = 'flex-start';
+          } else {
+            li.innerHTML = item;
+          }
           invList.appendChild(li);
         }
       }
@@ -1746,11 +1789,19 @@
         for (let msg of messages) {
           rand -= getWeighted(msg);
           if (rand < 0) {
-            const result = `${msg.text}<br><span class="${msg.class}">${msg.rarity}</span>`;
+            // --- Mutated logic ---
+            let isMutated = Math.random() < (1/35);
+            let mutationType = mutationEvent ? mutationEvent : null;
+            let mutatedIndicator = isMutated && mutationType ? `<span class='mutated-indicator'>${mutationType.toUpperCase()} MUTATION</span>` : '';
+            const result = mutatedIndicator + `${msg.text}<br><span class="${msg.class}">${msg.rarity}</span>`;
             document.getElementById("message").innerHTML = result;
 
-            if (!inventory.includes(result)) {
-              inventory.push(result);
+            // Store as object for inventory UI rework
+            let invObj = { html: result, mutated: isMutated, mutation: mutationType, text: msg.text, rarity: msg.rarity, class: msg.class };
+            // Backward compatibility: check if already in inventory by text+mutation
+            let alreadyInInv = inventory.some(i => (typeof i === 'object' ? (i.text === msg.text && i.mutated === isMutated && i.mutation === mutationType) : i === result));
+            if (!alreadyInInv) {
+              inventory.push(invObj);
               updateInventory();
             }
 
@@ -2555,10 +2606,7 @@
 
       // Ensure admin topbar is shown for Alfonso on page load if logged in
       window.addEventListener("DOMContentLoaded", () => {
-        const user = auth.currentUser;
-        if (user && user.email === ADMIN_EMAIL) {
-          document.getElementById("adminTopbar").style.display = "flex";
-        }
+        // Admin topbar logic can be handled in updateLoginPanel
       });
 
       googleSignInBtn.addEventListener("click", async () => {
@@ -2575,9 +2623,7 @@
         }
       });
 
-      onAuthStateChanged(auth, (user) => {
-        updateLoginPanel(user);
-      });
+
 
       // Email/password auth wiring
       const emailAuthForm = document.getElementById("emailAuthForm");
@@ -2618,7 +2664,7 @@
         }
         try {
           await signInWithEmailAndPassword(auth, email, password);
-          updateLoginPanel(auth.currentUser);
+          // updateLoginPanel will be called by onAuthStateChanged
         } catch (err) {
           emailAuthError.innerText = err.message;
         } finally {
@@ -2783,7 +2829,6 @@
               let msg = `You have been gifted ${val.brainrot.split('<br>')[0]} by ${val.sender}!`;
               if (alreadyInInv) msg += ' (already in your inv)';
               const note = document.createElement('div');
-              note.innerText = msg;
               note.style.position = 'fixed';
               note.style.bottom = '80px';
               note.style.left = '50%';
@@ -2796,6 +2841,26 @@
               note.style.fontSize = '2rem';
               note.style.boxShadow = '0 4px 24px #21a9c4';
               note.style.zIndex = '9999';
+              note.style.display = 'flex';
+              note.style.alignItems = 'center';
+              note.style.gap = '24px';
+              // Message span
+              const msgSpan = document.createElement('span');
+              msgSpan.innerText = msg;
+              note.appendChild(msgSpan);
+              // Close button
+              const closeBtn = document.createElement('button');
+              closeBtn.innerText = '✖';
+              closeBtn.style.marginLeft = '16px';
+              closeBtn.style.background = 'transparent';
+              closeBtn.style.border = 'none';
+              closeBtn.style.color = 'white';
+              closeBtn.style.fontSize = '2rem';
+              closeBtn.style.cursor = 'pointer';
+              closeBtn.style.fontWeight = 'bold';
+              closeBtn.setAttribute('aria-label', 'Close notification');
+              closeBtn.onclick = () => note.remove();
+              note.appendChild(closeBtn);
               document.body.appendChild(note);
               setTimeout(() => note.remove(), 5000);
               // Clear the gift after receiving
