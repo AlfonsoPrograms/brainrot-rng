@@ -827,14 +827,6 @@
       <h3>Admin Powers</h3>
       <button id="unlockAutoRollBtn">Unlock Auto Roll</button>
       <button id="getConsumableBtn">Get Consumable</button>
-      <hr>
-      <h3>Mutation Events</h3>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-        <button class="mutation-btn" data-mutation="toxic" style="background:#3adf3a;">Start Toxic</button>
-        <button class="mutation-btn" data-mutation="volcanic" style="background:#ff4c2b;">Start Volcanic</button>
-        <button class="mutation-btn" data-mutation="leafy" style="background:#4caf50;">Start Leafy</button>
-        <button class="mutation-btn" data-mutation="none" style="background:#888;">End Mutation</button>
-      </div>
       <form id="giftConsumableForm" style="margin-top:8px;">
         <input type="email" id="giftConsumableEmail" placeholder="Target Gmail" required style="width:60%;margin-right:8px;">
         <select id="giftConsumableType">
@@ -900,12 +892,13 @@
     </div>
 
     <div class="topbar">
-  <a href="#statistics" id="statisticsTopbar" onclick="toggleSidebar('statisticsPanel')">Statistics</a>
-    <!-- STATISTICS SIDEBAR -->
-    <div id="statisticsPanel" class="sidebar">
-      <button class="close-btn" onclick="toggleSidebar('statisticsPanel')">&times;</button>
-      <h2>Statistics</h2>
-      <div id="statsContent"></div>
+
+  <a href="#leaderboards" id="leaderboardsTopbar" onclick="toggleSidebar('leaderboardsPanel')">Leaderboards</a>
+    <!-- LEADERBOARDS SIDEBAR -->
+    <div id="leaderboardsPanel" class="sidebar">
+      <button class="close-btn" onclick="toggleSidebar('leaderboardsPanel')">&times;</button>
+      <h2>Leaderboards</h2>
+      <div id="leaderboardsContent"></div>
     </div>
     
   <a href="#admin" id="adminPanelTopbar" onclick="showAdminPanel()">Admin Panel</a>
@@ -950,29 +943,6 @@
       AUTO
     </button>
     <script type="text/javascript">
-  // --- Mutation Event State ---
-  let mutationEvent = null; // null, 'toxic', 'volcanic', 'leafy'
-  function setMutationEvent(type) {
-    mutationEvent = type === 'none' ? null : type;
-    document.body.classList.remove('mutation-toxic','mutation-volcanic','mutation-leafy');
-    if (mutationEvent) document.body.classList.add('mutation-' + mutationEvent);
-  }
-  // Admin panel mutation buttons
-  document.addEventListener('DOMContentLoaded',()=>{
-    document.querySelectorAll('.mutation-btn').forEach(btn=>{
-      btn.onclick = ()=>setMutationEvent(btn.getAttribute('data-mutation'));
-    });
-  });
-
-  // Mutation event CSS
-  const mutationStyle = document.createElement('style');
-  mutationStyle.innerHTML = `
-    body.mutation-toxic { background: linear-gradient(135deg,#1a3a1a 60%,#3adf3a 100%) !important; }
-    body.mutation-volcanic { background: linear-gradient(135deg,#3a1a1a 60%,#ff4c2b 100%) !important; }
-    body.mutation-leafy { background: linear-gradient(135deg,#1a3a2a 60%,#4caf50 100%) !important; }
-    .mutated-indicator { display:block; color:yellow; font-weight:bold; font-size:1.1em; margin-bottom:2px; text-shadow:0 2px 8px #000; }
-  `;
-  document.head.appendChild(mutationStyle);
   // Declare luckStatusInterval to fix ReferenceError
   let luckStatusInterval = null;
     // Luck indicator logic
@@ -1158,6 +1128,7 @@
       <ul>
         <li>TIM CHEESE - 40%</li>
         <li>BRR BRR PATAPIM - 35%</li>
+        <li>TUNG TUNG TUNG SAHUR - 35%</li>
         <li>Lirili Larila - 35%</li>
         <li>Capuccino Assasino - 35%</li>
         <li>Fluri Flura - 35%</li>
@@ -1285,6 +1256,12 @@
       const messages = [
         {
           text: "Brr Brr Patapim!",
+          rarity: "COMMON",
+          class: "rarity-common",
+          weight: 35,
+        },
+        {
+          text: "Tung Tung Tung Sahur!",
           rarity: "COMMON",
           class: "rarity-common",
           weight: 35,
@@ -1743,26 +1720,7 @@
         invList.innerHTML = "";
         for (const item of inventory) {
           const li = document.createElement("li");
-          if (typeof item === 'object') {
-            // Improved UI: show mutation indicator, name, rarity, mutation badge
-            let html = '';
-            if (item.mutated && item.mutation) {
-              html += `<span class='mutated-indicator'>${item.mutation.toUpperCase()} MUTATION</span>`;
-            }
-            html += `<span class='brainrot-name' style='font-weight:bold;'>${item.text}</span> <span class='${item.class}'>${item.rarity}</span>`;
-            li.innerHTML = html;
-            li.style.marginBottom = '10px';
-            li.style.padding = '8px 12px';
-            li.style.borderRadius = '8px';
-            li.style.background = item.mutated ? (item.mutation==='toxic'?'#2e4':item.mutation==='volcanic'?'#a22':'#2a4') : '#222';
-            li.style.color = item.mutated ? '#fff' : '#eee';
-            li.style.boxShadow = item.mutated ? '0 2px 12px #0008' : 'none';
-            li.style.display = 'flex';
-            li.style.flexDirection = 'column';
-            li.style.alignItems = 'flex-start';
-          } else {
-            li.innerHTML = item;
-          }
+          li.innerHTML = item;
           invList.appendChild(li);
         }
       }
@@ -1789,19 +1747,11 @@
         for (let msg of messages) {
           rand -= getWeighted(msg);
           if (rand < 0) {
-            // --- Mutated logic ---
-            let isMutated = Math.random() < (1/35);
-            let mutationType = mutationEvent ? mutationEvent : null;
-            let mutatedIndicator = isMutated && mutationType ? `<span class='mutated-indicator'>${mutationType.toUpperCase()} MUTATION</span>` : '';
-            const result = mutatedIndicator + `${msg.text}<br><span class="${msg.class}">${msg.rarity}</span>`;
+            const result = `${msg.text}<br><span class="${msg.class}">${msg.rarity}</span>`;
             document.getElementById("message").innerHTML = result;
 
-            // Store as object for inventory UI rework
-            let invObj = { html: result, mutated: isMutated, mutation: mutationType, text: msg.text, rarity: msg.rarity, class: msg.class };
-            // Backward compatibility: check if already in inventory by text+mutation
-            let alreadyInInv = inventory.some(i => (typeof i === 'object' ? (i.text === msg.text && i.mutated === isMutated && i.mutation === mutationType) : i === result));
-            if (!alreadyInInv) {
-              inventory.push(invObj);
+            if (!inventory.includes(result)) {
+              inventory.push(result);
               updateInventory();
             }
 
@@ -2209,21 +2159,92 @@
       });
 
       // ======= STATISTICS PANEL LOGIC =======
-    document.getElementById('statisticsTopbar').addEventListener('click', function() {
-      updateStatsPanel();
+
+    document.getElementById('leaderboardsTopbar').addEventListener('click', function() {
+      updateLeaderboardsPanel();
     });
 
-    function updateStatsPanel() {
-      const stats = [];
-      stats.push(`<b>Total Rolls:</b> ${totalRolls}`);
-      stats.push(`<b>Rebirths:</b> ${rebirths}`);
-      stats.push(`<b>Inventory Size:</b> ${inventory.length}`);
-      stats.push(`<b>Luck Multiplier:</b> ${luckMultiplier.toFixed(2)}`);
-      stats.push(`<b>Auto Roll Unlocked:</b> ${autoRollUnlocked ? 'Yes' : 'No'}`);
-      stats.push(`<b>Current Roll Speed:</b> ${computeRollCooldownSeconds().toFixed(2)}s`);
-      stats.push(`<b>Consumables Owned:</b> ${consumables.length}`);
-      // Add more stats as needed
-      document.getElementById('statsContent').innerHTML = stats.join('<br>');
+    // --- Leaderboards logic ---
+    // We'll use localStorage for demo, but in production use Firebase for global leaderboards
+    // Manual roll clicks leaderboard (store as array of {name, rolls, week})
+    // All rolls leaderboard (store as array of {name, rolls, week})
+    // For now, use user.displayName or user.email as name
+    function getCurrentWeek() {
+      // Returns a string like '2025-W37'
+      const now = new Date();
+      const year = now.getFullYear();
+      const week = Math.ceil((((now - new Date(year,0,1)) / 86400000) + new Date(year,0,1).getDay()+1)/7);
+      return `${year}-W${week}`;
+    }
+
+    function updateLeaderboardsPanel() {
+      // Get leaderboards from localStorage (simulate global for demo)
+      const manual = JSON.parse(localStorage.getItem('manualRollsLeaderboard')||'[]');
+      const all = JSON.parse(localStorage.getItem('allRollsLeaderboard')||'[]');
+      const week = getCurrentWeek();
+      // Sort descending
+      manual.sort((a,b)=>b.rolls-a.rolls);
+      all.sort((a,b)=>b.rolls-a.rolls);
+      let html = `<h3>Manual Roll Clicks (This Week)</h3><ol>`;
+      manual.filter(e=>e.week===week).slice(0,10).forEach((e,i)=>{
+        html += `<li>${e.name}: ${e.rolls}</li>`;
+      });
+      html += `</ol><h3>All Rolls (This Week)</h3><ol>`;
+      all.filter(e=>e.week===week).slice(0,10).forEach((e,i)=>{
+        html += `<li>${e.name}: ${e.rolls}</li>`;
+      });
+      html += `</ol>`;
+      // Show weekly winner for each
+      if (manual.length>0) {
+        const top = manual.filter(e=>e.week===week)[0];
+        if (top) html += `<div style='margin-top:16px;color:gold;font-weight:bold;'>Manual Roll Winner: ${top.name} (awarded Dragon Canneoli)</div>`;
+      }
+      if (all.length>0) {
+        const top = all.filter(e=>e.week===week)[0];
+        if (top) html += `<div style='margin-top:8px;color:gold;font-weight:bold;'>All Rolls Winner: ${top.name} (awarded Dragon Canneoli)</div>`;
+      }
+      document.getElementById('leaderboardsContent').innerHTML = html;
+    }
+
+    // Track manual and all rolls
+    let manualRollClicks = parseInt(localStorage.getItem('manualRollClicks')||'0');
+    function recordManualRoll() {
+      manualRollClicks++;
+      localStorage.setItem('manualRollClicks', manualRollClicks);
+      // Update leaderboard
+      const week = getCurrentWeek();
+      let arr = JSON.parse(localStorage.getItem('manualRollsLeaderboard')||'[]');
+      let name = (user && (user.displayName||user.email)) || 'Anonymous';
+      let entry = arr.find(e=>e.name===name && e.week===week);
+      if (entry) entry.rolls = manualRollClicks;
+      else arr.push({name,rolls:manualRollClicks,week});
+      localStorage.setItem('manualRollsLeaderboard', JSON.stringify(arr));
+    }
+    // All rolls
+    let allRollsCount = parseInt(localStorage.getItem('allRollsCount')||'0');
+    function recordAllRoll() {
+      allRollsCount++;
+      localStorage.setItem('allRollsCount', allRollsCount);
+      // Update leaderboard
+      const week = getCurrentWeek();
+      let arr = JSON.parse(localStorage.getItem('allRollsLeaderboard')||'[]');
+      let name = (user && (user.displayName||user.email)) || 'Anonymous';
+      let entry = arr.find(e=>e.name===name && e.week===week);
+      if (entry) entry.rolls = allRollsCount;
+      else arr.push({name,rolls:allRollsCount,week});
+      localStorage.setItem('allRollsLeaderboard', JSON.stringify(arr));
+    }
+    // Patch rollClicked and getRandomBrainrot to record rolls
+    const origRollClicked = rollClicked;
+    rollClicked = function() {
+      recordManualRoll();
+      recordAllRoll();
+      origRollClicked();
+    }
+    const origGetRandomBrainrot = getRandomBrainrot;
+    getRandomBrainrot = function(isAuto) {
+      if (isAuto) recordAllRoll();
+      origGetRandomBrainrot(isAuto);
     }
 
       // Make startGame globally accessible and fix event listener
@@ -2535,18 +2556,17 @@
               if (adminPanel) adminPanel.style.display = "none";
               window.adminPanelClosed = true;
             };
-            // Only Alfonso/Eldrick get luck/give controls
+            // Only Alfonso/Eldrick get luck controls, but all admins get give brainrot
             if (["alfonsoovilchez52@gmail.com","imabosslikerickross13@gmail.com"].includes(user.email)) {
               document.getElementById("luck2xBtn").style.display = "inline-block";
               document.getElementById("luck3xBtn").style.display = "inline-block";
               document.getElementById("luck4xBtn").style.display = "inline-block";
-              document.getElementById("giveBrainrotForm").style.display = "block";
             } else {
               document.getElementById("luck2xBtn").style.display = "none";
               document.getElementById("luck3xBtn").style.display = "none";
               document.getElementById("luck4xBtn").style.display = "none";
-              document.getElementById("giveBrainrotForm").style.display = "none";
             }
+            document.getElementById("giveBrainrotForm").style.display = "block";
             loginStatus.innerText += ` (Admin access: ${user.email})`;
           } else {
             adminControls.style.display = "none";
@@ -2606,7 +2626,10 @@
 
       // Ensure admin topbar is shown for Alfonso on page load if logged in
       window.addEventListener("DOMContentLoaded", () => {
-        // Admin topbar logic can be handled in updateLoginPanel
+        const user = auth.currentUser;
+        if (user && user.email === ADMIN_EMAIL) {
+          document.getElementById("adminTopbar").style.display = "flex";
+        }
       });
 
       googleSignInBtn.addEventListener("click", async () => {
@@ -2624,6 +2647,70 @@
       });
 
 
+      // === CLOUD SYNC ===
+      async function saveUserDataToCloud(user) {
+        if (!user) return;
+        const db = getDatabase();
+        const userKey = btoa(user.email);
+        const userRef = ref(db, `userData/${userKey}`);
+        const data = {
+          inventory,
+          quests,
+          rebirths,
+          totalRolls,
+          questsExclusive,
+          questsExclusiveCompleted,
+          questsSpeedBonus,
+          luckMultiplier,
+          autoRollUnlocked,
+          consumables,
+        };
+        await set(userRef, data);
+      }
+
+      async function loadUserDataFromCloud(user) {
+        if (!user) return;
+        const db = getDatabase();
+        const userKey = btoa(user.email);
+        const userRef = ref(db, `userData/${userKey}`);
+        return new Promise((resolve) => {
+          onValue(userRef, (snap) => {
+            const val = snap.val();
+            if (val) {
+              inventory = val.inventory || [];
+              quests = val.quests || {patapim:0,cacto:0,bombardino:0,grande:0,completed:{}};
+              rebirths = val.rebirths || 0;
+              totalRolls = val.totalRolls || 0;
+              questsExclusive = val.questsExclusive || {};
+              questsExclusiveCompleted = val.questsExclusiveCompleted || {};
+              questsSpeedBonus = val.questsSpeedBonus || 0.0;
+              luckMultiplier = val.luckMultiplier || 1.0;
+              autoRollUnlocked = val.autoRollUnlocked || false;
+              consumables = val.consumables || [];
+              // Save to localStorage for offline
+              saveGame();
+              updateInventory();
+              updateQuestList();
+              updateRebirthPanel();
+            }
+            resolve();
+          }, {onlyOnce:true});
+        });
+      }
+
+      // On login, load from cloud
+      onAuthStateChanged(auth, async (user) => {
+        await loadUserDataFromCloud(user);
+        updateLoginPanel(user);
+      });
+
+      // Save to cloud on key changes
+      function saveGameAndCloud() {
+        saveGame();
+        if (auth.currentUser) saveUserDataToCloud(auth.currentUser);
+      }
+      // Patch saveGame calls
+      window.saveGame = saveGameAndCloud;
 
       // Email/password auth wiring
       const emailAuthForm = document.getElementById("emailAuthForm");
@@ -2664,7 +2751,7 @@
         }
         try {
           await signInWithEmailAndPassword(auth, email, password);
-          // updateLoginPanel will be called by onAuthStateChanged
+          updateLoginPanel(auth.currentUser);
         } catch (err) {
           emailAuthError.innerText = err.message;
         } finally {
@@ -2822,8 +2909,19 @@
               let alreadyInInv = inventory.includes(val.brainrot);
               if (!alreadyInInv) {
                 inventory.push(val.brainrot);
-                localStorage.setItem('inventory', JSON.stringify(inventory));
                 updateInventory();
+                // Also update quests for the gifted brainrot
+                // Extract plain text and rarity from the gifted brainrot HTML
+                let tempDiv = document.createElement('div');
+                tempDiv.innerHTML = val.brainrot;
+                let itemText = tempDiv.textContent.split('\n')[0];
+                let raritySpan = tempDiv.querySelector('span');
+                let itemRarity = raritySpan ? raritySpan.textContent : '';
+                updateQuests(itemText, itemRarity);
+                saveGame();
+              } else {
+                // Still save in case other state changed
+                saveGame();
               }
               // Show message to user (always)
               let msg = `You have been gifted ${val.brainrot.split('<br>')[0]} by ${val.sender}!`;
