@@ -1193,7 +1193,22 @@
       const MIN_CLICK_COOLDOWN = 0.35; // anti-spam/autoclickers (seconds)
   let lastRollTs = 0;
   // Reset roll cooldown on page load (fix stuck cooldown bug)
-  window.addEventListener('load', () => { lastRollTs = 0; });
+  window.addEventListener('load', () => {
+    lastRollTs = 0;
+    const btn = document.getElementById('RollButton');
+    if (btn) btn.disabled = false;
+  });
+
+  // Failsafe: Periodically check and re-enable roll button if cooldown is over
+  setInterval(() => {
+    const btn = document.getElementById('RollButton');
+    if (!btn) return;
+    const now = Date.now();
+    const cd = computeRollCooldownSeconds ? computeRollCooldownSeconds() * 1000 : 1000;
+    if (btn.disabled && (now - lastRollTs > cd + 100)) {
+      btn.disabled = false;
+    }
+  }, 500);
 
       let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
       let quests = JSON.parse(localStorage.getItem("quests")) || {
@@ -2101,6 +2116,8 @@
           document.getElementById("stopOnGoodDropsSwitch").checked = true;
           // Reset roll cooldown after rebirth/reset
           lastRollTs = 0;
+          const btn = document.getElementById('RollButton');
+          if (btn) btn.disabled = false;
 
           updateInventory();
           updateQuestList();
