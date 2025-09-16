@@ -108,9 +108,16 @@
     <script>
       // Ensure login panel updates on page load for persistent login
       window.addEventListener("DOMContentLoaded", () => {
-        if (typeof auth !== "undefined") {
-          updateLoginPanel(auth.currentUser);
-        }
+          // Auto sign-in if account info is in localStorage
+          const email = localStorage.getItem('autoEmail');
+          const password = localStorage.getItem('autoPassword');
+          if (email && password) {
+            signInWithEmailAndPassword(auth, email, password)
+              .then(() => updateLoginPanel(auth.currentUser))
+              .catch(() => updateLoginPanel(null));
+          } else {
+            updateLoginPanel(auth.currentUser);
+          }
       });
       // Show the admin panel sidebar
         function showAdminPanel() {
@@ -822,7 +829,7 @@
   <body>
   <div id="luckStatus"></div>
     <!-- ADMIN TOPBAR (only for Eldrick) -->
-  <div id="adminPanel" class="sidebar">
+  <div id="adminPanel" class="sidebar" style="display:none;">
       <hr>
       <h3>Admin Powers</h3>
       <button id="unlockAutoRollBtn">Unlock Auto Roll</button>
@@ -901,7 +908,7 @@
       <div id="leaderboardsContent"></div>
     </div>
     
-  <a href="#admin" id="adminPanelTopbar" onclick="showAdminPanel()">Admin Panel</a>
+  <a href="#admin" id="adminPanelTopbar" onclick="showAdminPanel()" style="display:none;">Admin Panel</a>
   <a href="#consumables" id="consumablesTopbar" onclick="toggleSidebar('consumablesPanel')">Consumables</a>
     <!-- CONSUMABLES SIDEBAR -->
     <div id="consumablesPanel" class="sidebar">
@@ -1040,6 +1047,23 @@
         ><input type="checkbox" id="stopOnGoodDropsSwitch" checked /> Stop AUTO
         on Mystical/Secret</label
       >
+
+      <button id="logoutBtn" style="margin-top:12px;background:#e74c3c;color:#fff;padding:10px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">Log Out</button>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          var logoutBtn = document.getElementById('logoutBtn');
+          if (logoutBtn) {
+            logoutBtn.onclick = function() {
+              if (typeof auth !== 'undefined' && auth.signOut) auth.signOut();
+              localStorage.removeItem('autoEmail');
+              localStorage.removeItem('autoPassword');
+              updateLoginPanel(null);
+              alert('You have been logged out.');
+              toggleSidebar('settingsPanel');
+            };
+          }
+        });
+      </script>
       <button class="dataResetButton" onclick="resetData()">Reset Data</button>
 
       <!-- Password management -->
@@ -1101,6 +1125,12 @@
       <hr />
       <form id="emailAuthForm" style="margin-top: 10px">
         <input
+          type="text"
+          id="usernameInput"
+          placeholder="Username"
+          required
+        /><br />
+        <input
           type="email"
           id="emailInput"
           placeholder="Email"
@@ -1117,6 +1147,16 @@
       </form>
       <div id="emailAuthError" style="color: red; margin-top: 8px"></div>
       <div id="emailAuthError"></div>
+      <script>
+        // Store username in localStorage on sign up or login
+        const usernameInput = document.getElementById('usernameInput');
+        emailSignUpBtn.addEventListener('click', function() {
+          if (usernameInput.value) localStorage.setItem('username', usernameInput.value);
+        });
+        emailLogInBtn.addEventListener('click', function() {
+          if (usernameInput.value) localStorage.setItem('username', usernameInput.value);
+        });
+      </script>
     </div>
 
     <!-- INDEX -->
@@ -2181,8 +2221,18 @@
 
       // ======= STATISTICS PANEL LOGIC =======
 
+    let leaderboardInterval = null;
     document.getElementById('leaderboardsTopbar').addEventListener('click', function() {
       updateLeaderboardsPanel();
+      // Start real-time update
+      if (leaderboardInterval) clearInterval(leaderboardInterval);
+      leaderboardInterval = setInterval(() => {
+        if (document.getElementById('leaderboardsPanel').classList.contains('active')) {
+          updateLeaderboardsPanel();
+        } else {
+          clearInterval(leaderboardInterval);
+        }
+      }, 2000);
     });
 
     // --- Leaderboards logic ---
@@ -2196,6 +2246,61 @@
       const year = now.getFullYear();
       const week = Math.ceil((((now - new Date(year,0,1)) / 86400000) + new Date(year,0,1).getDay()+1)/7);
       return `${year}-W${week}`;
+    }
+
+    function getNextAwardTime() {
+      // Returns a Date object for next Sunday 11:59 PM
+      const now = new Date();
+      const day = now.getDay(); // 0=Sunday
+      const diff = (7 - day) % 7; // days until next Sunday
+      let nextSunday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff, 23, 59, 0, 0);
+      if (now > nextSunday) nextSunday.setDate(nextSunday.getDate() + 7);
+      return nextSunday;
+    }
+
+    // Award Dragon Canneoli to weekly winner at Sunday 11:59 PM
+    setInterval(function() {
+      const now = new Date();
+      const week = getCurrentWeek();
+      const lastAwardedWeek = localStorage.getItem('lastAwardedWeek');
+      const nextAward = getNextAwardTime();
+      // If it's Sunday 11:59 PM or later and not already awarded this week
+      if (now >= nextAward && lastAwardedWeek !== week) {
+        // Award to manual and all rolls winners
+        const manual = JSON.parse(localStorage.getItem('manualRollsLeaderboard')||'[]');
+        const all = JSON.parse(localStorage.getItem('allRollsLeaderboard')||'[]');
+        const manualWinner = manual.filter(e=>e.week===week)[0];
+        const allWinner = all.filter(e=>e.week===week)[0];
+        // Only award if not already in inventory
+        if (manualWinner && localStorage.getItem('username') === manualWinner.name) {
+          let inv = JSON.parse(localStorage.getItem('inventory')||'[]');
+          if (!inv.includes('Dragon Canneoli')) {
+            inv.push('Dragon Canneoli');
+            localStorage.setItem('inventory', JSON.stringify(inv));
+          }
+        }
+        if (allWinner && localStorage.getItem('username') === allWinner.name) {
+          let inv = JSON.parse(localStorage.getItem('inventory')||'[]');
+          if (!inv.includes('Dragon Canneoli')) {
+            inv.push('Dragon Canneoli');
+            localStorage.setItem('inventory', JSON.stringify(inv));
+          }
+        }
+        localStorage.setItem('lastAwardedWeek', week);
+      }
+    }, 60000); // check every minute
+
+    function getTimeLeftString(dt) {
+      const now = new Date();
+      let diff = Math.max(0, dt - now);
+      const days = Math.floor(diff / (1000*60*60*24));
+      diff -= days * (1000*60*60*24);
+      const hours = Math.floor(diff / (1000*60*60));
+      diff -= hours * (1000*60*60);
+      const mins = Math.floor(diff / (1000*60));
+      diff -= mins * (1000*60);
+      const secs = Math.floor(diff / 1000);
+      return `${days}d ${hours}h ${mins}m ${secs}s`;
     }
 
     function updateLeaderboardsPanel() {
@@ -2224,7 +2329,17 @@
         const top = all.filter(e=>e.week===week)[0];
         if (top) html += `<div style='margin-top:8px;color:gold;font-weight:bold;'>All Rolls Winner: ${top.name} (awarded Dragon Canneoli)</div>`;
       }
+      // Add timer for next award
+      const nextAward = getNextAwardTime();
+      html += `<div style='margin-top:18px;font-size:1.1em;color:#21a9c4;'>Next Dragon Canneoli awarded in: <span id='awardTimer'></span> (Sunday 11:59 PM)</div>`;
       document.getElementById('leaderboardsContent').innerHTML = html;
+      // Start/update timer
+      function updateTimer() {
+        document.getElementById('awardTimer').innerText = getTimeLeftString(nextAward);
+      }
+      updateTimer();
+      if (window.awardTimerInterval) clearInterval(window.awardTimerInterval);
+      window.awardTimerInterval = setInterval(updateTimer, 1000);
     }
 
     // Track manual and all rolls
@@ -2753,7 +2868,10 @@
         const password = passwordInput.value;
         if (!email || !password) return;
         try {
-          await createUserWithEmailAndPassword(auth, email, password);
+            await createUserWithEmailAndPassword(auth, email, password);
+            // Store for auto sign-in
+            localStorage.setItem('autoEmail', email);
+            localStorage.setItem('autoPassword', password);
         } catch (err) {
           emailAuthError.innerText = err.message;
         }
@@ -2772,7 +2890,10 @@
           return;
         }
         try {
-          await signInWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth, email, password);
+            // Store for auto sign-in
+            localStorage.setItem('autoEmail', email);
+            localStorage.setItem('autoPassword', password);
           updateLoginPanel(auth.currentUser);
         } catch (err) {
           emailAuthError.innerText = err.message;
