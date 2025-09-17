@@ -1056,14 +1056,14 @@
       style="
         display: none;
         position: fixed;
-        top: 0;
+        top: 80px; /* Move modal down a bit */
         left: 0;
         width: 100vw;
-        height: 100vh;
+        height: calc(100vh - 80px);
         background: rgba(0, 0, 0, 0.85);
         z-index: 99999;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         flex-direction: column;
       "
     >
@@ -1179,6 +1179,7 @@
         const adCountdown = document.getElementById("adCountdown");
         const claimLuckBtn = document.getElementById("claimLuckBtn");
         const closeAdModalBtn = document.getElementById("closeAdModalBtn");
+        const adSmartlinkInfo = document.getElementById("adSmartlinkInfo");
         // Adsterra Smartlink URL
         const SMARTLINK_URL =
           "https://www.revenuecpmgate.com/qrmreh19f?key=75b54ff785f2d57b039ee7b0824b40b4";
@@ -1188,13 +1189,23 @@
         let adWindow = null;
 
         watchAdBtn.addEventListener("click", function () {
-          // Open Smartlink in new tab
+          // Try to open Smartlink in new tab
           adWindow = window.open(SMARTLINK_URL, "_blank");
           adModal.style.display = "flex";
           adTimeLeft = 15;
           adCountdown.innerText = adTimeLeft;
           claimLuckBtn.style.display = "none";
           adWatched = false;
+          // If popup blocked or connection fails, show error
+          setTimeout(() => {
+            if (!adWindow || adWindow.closed) {
+              adSmartlinkInfo.innerText =
+                "Ad could not be loaded. Please disable your popup blocker or try again later.";
+            } else {
+              adSmartlinkInfo.innerText =
+                "Please keep the ad window open for 15 seconds to claim your reward.";
+            }
+          }, 1000);
           // Start countdown
           adTimer = setInterval(() => {
             adTimeLeft--;
@@ -2117,6 +2128,14 @@
 
       // ======= USER VARIABLE =======
       let user = null;
+      // Listen for auth state changes and set user globally, update UI
+      if (typeof auth !== "undefined") {
+        onAuthStateChanged(auth, (u) => {
+          user = u;
+          updateLoginPanel(user);
+          updateLeaderboardsPanel();
+        });
+      }
 
       // ======= INVENTORY UI UPDATE =======
       function updateInventory() {
@@ -2680,120 +2699,129 @@
       }
 
       function updateLeaderboardsPanel() {
-        // Get leaderboards from localStorage (simulate global for demo)
-        const manual = JSON.parse(
-          localStorage.getItem("manualRollsLeaderboard") || "[]"
-        );
-        const all = JSON.parse(
-          localStorage.getItem("allRollsLeaderboard") || "[]"
-        );
+        // Use Firebase for global leaderboards
+        const db = getDatabase();
         const week = getCurrentWeek();
-        // Sort descending
-        manual.sort((a, b) => b.rolls - a.rolls);
-        all.sort((a, b) => b.rolls - a.rolls);
-        let html = `<h3>Manual Roll Clicks (This Week)</h3><ol id="manualLeaderboardList">`;
-        const user = auth && auth.currentUser;
-        const manualWeek = manual.filter((e) => e.week === week);
-        let userIndex = -1;
-        if (user)
-          userIndex = manualWeek.findIndex(
-            (e) => e.name === (user.displayName || user.email)
-          );
-        manualWeek.slice(0, 10).forEach((e, i) => {
-          const highlight =
-            user && e.name === (user.displayName || user.email)
-              ? ' style="background: #ffe066; color: #222; font-weight: bold;"'
-              : "";
-          html += `<li${highlight}>${i + 1}. ${e.name}: ${e.rolls}</li>`;
+        const manualRef = ref(db, `leaderboards/manual`);
+        const allRef = ref(db, `leaderboards/all`);
+        Promise.all([
+          new Promise((resolve) =>
+            onValue(manualRef, (snap) => resolve(snap.val()))
+          ),
+          new Promise((resolve) =>
+            onValue(allRef, (snap) => resolve(snap.val()))
+          ),
+        ]).then(([manualData, allData]) => {
+          let manual = [];
+          let all = [];
+          if (manualData) {
+            Object.values(manualData).forEach((userObj) => {
+              Object.values(userObj).forEach((entry) => {
+                if (entry.week === week) manual.push(entry);
+              });
+            });
+          }
+          if (allData) {
+            Object.values(allData).forEach((userObj) => {
+              Object.values(userObj).forEach((entry) => {
+                if (entry.week === week) all.push(entry);
+              });
+            });
+          }
+          manual.sort((a, b) => b.rolls - a.rolls);
+          all.sort((a, b) => b.rolls - a.rolls);
+          let html = `<h3>Manual Roll Clicks (This Week)</h3><ol id="manualLeaderboardList">`;
+          let userIndex = -1;
+          if (user)
+            userIndex = manual.findIndex(
+              (e) => e.name === (user.displayName || user.email)
+            );
+          manual.slice(0, 10).forEach((e, i) => {
+            const highlight =
+              user && e.name === (user.displayName || user.email)
+                ? ' style="background: #ffe066; color: #222; font-weight: bold;"'
+                : "";
+            html += `<li${highlight}>${i + 1}. ${e.name}: ${e.rolls}</li>`;
+          });
+          if (user && userIndex >= 10) {
+            const e = manual[userIndex];
+            html += `<li style="background: #ffe066; color: #222; font-weight: bold;">${
+              userIndex + 1
+            }. ${e.name}: ${e.rolls}</li>`;
+          }
+          html += `</ol><h3>All Rolls (This Week)</h3><ol id="allLeaderboardList">`;
+          let userIndexAll = -1;
+          if (user)
+            userIndexAll = all.findIndex(
+              (e) => e.name === (user.displayName || user.email)
+            );
+          all.slice(0, 10).forEach((e, i) => {
+            const highlight =
+              user && e.name === (user.displayName || user.email)
+                ? ' style="background: #ffe066; color: #222; font-weight: bold;"'
+                : "";
+            html += `<li${highlight}>${i + 1}. ${e.name}: ${e.rolls}</li>`;
+          });
+          if (user && userIndexAll >= 10) {
+            const e = all[userIndexAll];
+            html += `<li style="background: #ffe066; color: #222; font-weight: bold;">${
+              userIndexAll + 1
+            }. ${e.name}: ${e.rolls}</li>`;
+          }
+          html += `</ol>`;
+          // Show weekly winner for each
+          if (manual.length > 0) {
+            const top = manual[0];
+            if (top)
+              html += `<div style='margin-top:16px;color:gold;font-weight:bold;'>Manual Roll Winner: ${top.name} (awarded Dragon Canneoli)</div>`;
+          }
+          if (all.length > 0) {
+            const top = all[0];
+            if (top)
+              html += `<div style='margin-top:8px;color:gold;font-weight:bold;'>All Rolls Winner: ${top.name} (awarded Dragon Canneoli)</div>`;
+          }
+          const nextAward = getNextAwardTime();
+          html += `<div style='margin-top:18px;font-size:1.1em;color:#21a9c4;'>Next Dragon Canneoli awarded in: <span id='awardTimer'></span> (Sunday 11:59 PM)</div>`;
+          document.getElementById("leaderboardsContent").innerHTML = html;
+          function updateTimer() {
+            document.getElementById("awardTimer").innerText =
+              getTimeLeftString(nextAward);
+          }
+          updateTimer();
+          if (window.awardTimerInterval)
+            clearInterval(window.awardTimerInterval);
+          window.awardTimerInterval = setInterval(updateTimer, 1000);
         });
-        // If user not in top 10 but on leaderboard, show them at the bottom
-        if (user && userIndex >= 10) {
-          const e = manualWeek[userIndex];
-          html += `<li style="background: #ffe066; color: #222; font-weight: bold;">${
-            userIndex + 1
-          }. ${e.name}: ${e.rolls}</li>`;
-        }
-        html += `</ol><h3>All Rolls (This Week)</h3><ol id="allLeaderboardList">`;
-        const allWeek = all.filter((e) => e.week === week);
-        let userIndexAll = -1;
-        if (user)
-          userIndexAll = allWeek.findIndex(
-            (e) => e.name === (user.displayName || user.email)
-          );
-        allWeek.slice(0, 10).forEach((e, i) => {
-          const highlight =
-            user && e.name === (user.displayName || user.email)
-              ? ' style="background: #ffe066; color: #222; font-weight: bold;"'
-              : "";
-          html += `<li${highlight}>${i + 1}. ${e.name}: ${e.rolls}</li>`;
-        });
-        if (user && userIndexAll >= 10) {
-          const e = allWeek[userIndexAll];
-          html += `<li style="background: #ffe066; color: #222; font-weight: bold;">${
-            userIndexAll + 1
-          }. ${e.name}: ${e.rolls}</li>`;
-        }
-        html += `</ol>`;
-        // Show weekly winner for each
-        if (manual.length > 0) {
-          const top = manual.filter((e) => e.week === week)[0];
-          if (top)
-            html += `<div style='margin-top:16px;color:gold;font-weight:bold;'>Manual Roll Winner: ${top.name} (awarded Dragon Canneoli)</div>`;
-        }
-        if (all.length > 0) {
-          const top = all.filter((e) => e.week === week)[0];
-          if (top)
-            html += `<div style='margin-top:8px;color:gold;font-weight:bold;'>All Rolls Winner: ${top.name} (awarded Dragon Canneoli)</div>`;
-        }
-        // Add timer for next award
-        const nextAward = getNextAwardTime();
-        html += `<div style='margin-top:18px;font-size:1.1em;color:#21a9c4;'>Next Dragon Canneoli awarded in: <span id='awardTimer'></span> (Sunday 11:59 PM)</div>`;
-        document.getElementById("leaderboardsContent").innerHTML = html;
-        // Start/update timer
-        function updateTimer() {
-          document.getElementById("awardTimer").innerText =
-            getTimeLeftString(nextAward);
-        }
-        updateTimer();
-        if (window.awardTimerInterval) clearInterval(window.awardTimerInterval);
-        window.awardTimerInterval = setInterval(updateTimer, 1000);
       }
 
       // Track manual and all rolls
-      let manualRollClicks = parseInt(
-        localStorage.getItem("manualRollClicks") || "0"
-      );
+      let manualRollClicks = 0;
+      let allRollsCount = 0;
       function recordManualRoll() {
         manualRollClicks++;
-        localStorage.setItem("manualRollClicks", manualRollClicks);
-        // Update leaderboard
         const week = getCurrentWeek();
-        let arr = JSON.parse(
-          localStorage.getItem("manualRollsLeaderboard") || "[]"
-        );
-        let name = (user && (user.displayName || user.email)) || "Anonymous";
-        let entry = arr.find((e) => e.name === name && e.week === week);
-        if (entry) entry.rolls = manualRollClicks;
-        else arr.push({ name, rolls: manualRollClicks, week });
-        localStorage.setItem("manualRollsLeaderboard", JSON.stringify(arr));
+        if (user && user.email) {
+          const db = getDatabase();
+          const refPath = `leaderboards/manual/${btoa(user.email)}/${week}`;
+          set(ref(db, refPath), {
+            name: user.displayName || user.email,
+            rolls: manualRollClicks,
+            week,
+          });
+        }
       }
-      // All rolls
-      let allRollsCount = parseInt(
-        localStorage.getItem("allRollsCount") || "0"
-      );
       function recordAllRoll() {
         allRollsCount++;
-        localStorage.setItem("allRollsCount", allRollsCount);
-        // Update leaderboard
         const week = getCurrentWeek();
-        let arr = JSON.parse(
-          localStorage.getItem("allRollsLeaderboard") || "[]"
-        );
-        let name = (user && (user.displayName || user.email)) || "Anonymous";
-        let entry = arr.find((e) => e.name === name && e.week === week);
-        if (entry) entry.rolls = allRollsCount;
-        else arr.push({ name, rolls: allRollsCount, week });
-        localStorage.setItem("allRollsLeaderboard", JSON.stringify(arr));
+        if (user && user.email) {
+          const db = getDatabase();
+          const refPath = `leaderboards/all/${btoa(user.email)}/${week}`;
+          set(ref(db, refPath), {
+            name: user.displayName || user.email,
+            rolls: allRollsCount,
+            week,
+          });
+        }
       }
       // Patch rollClicked and getRandomBrainrot to record rolls
       const origRollClicked = rollClicked;
