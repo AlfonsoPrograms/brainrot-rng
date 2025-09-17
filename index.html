@@ -2788,76 +2788,65 @@
           questsExclusive,
           questsExclusiveCompleted,
           questsSpeedBonus,
-          luckMultiplier,
-          autoRollUnlocked,
-          consumables,
+          luckMultiplier
         };
-        await set(userRef, data);
+        // ...existing code...
       }
 
-      async function loadUserDataFromCloud(user) {
-        if (!user) return;
-        const db = getDatabase();
-        const userKey = btoa(user.email);
-        const userRef = ref(db, `userData/${userKey}`);
-        return new Promise((resolve) => {
-          onValue(userRef, (snap) => {
-            const val = snap.val();
-            if (val) {
-              inventory = val.inventory || [];
-              quests = val.quests || {patapim:0,cacto:0,bombardino:0,grande:0,completed:{}};
-              rebirths = val.rebirths || 0;
-              totalRolls = val.totalRolls || 0;
-              questsExclusive = val.questsExclusive || {};
-              questsExclusiveCompleted = val.questsExclusiveCompleted || {};
-              questsSpeedBonus = val.questsSpeedBonus || 0.0;
-              luckMultiplier = val.luckMultiplier || 1.0;
-              autoRollUnlocked = val.autoRollUnlocked || false;
-              consumables = val.consumables || [];
-              // Save to localStorage for offline
-              saveGame();
-              updateInventory();
-              updateQuestList();
-              updateRebirthPanel();
-            }
-            resolve();
-          }, {onlyOnce:true});
-        });
+// Standalone updateLoginPanel function
+function updateLoginPanel(user) {
+  if (user) {
+    console.log('[DEBUG] updateLoginPanel: user signed in:', user.email);
+    loginStatus.innerText = `Signed in as: ${user.displayName || user.email}`;
+    var adminPanelTopbar = document.getElementById("adminPanelTopbar");
+    if (ADMIN_EMAILS.includes(user.email)) {
+      console.log('[DEBUG] User is admin, showing admin panel and topbar.');
+      adminControls.style.display = "block";
+      if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
+      var adminPanel = document.getElementById("adminPanel");
+      if (adminPanel) {
+        adminPanel.style.display = "block";
+        adminPanel.classList.add('active');
       }
-
-      // On login, load from cloud
-      onAuthStateChanged(auth, async (user) => {
-        // Auto-login if credentials are in localStorage and not already signed in
-        if (!user) {
-          const email = localStorage.getItem('autoEmail');
-          const password = localStorage.getItem('autoPassword');
-          if (email && password) {
-            try {
-              console.log('[DEBUG] Attempting auto-login with', email);
-              await signInWithEmailAndPassword(auth, email, password);
-              user = auth.currentUser;
-              console.log('[DEBUG] Auto-login success:', user.email);
-            } catch (e) {
-              console.log('[DEBUG] Auto-login failed:', e.message);
-              localStorage.removeItem('autoEmail');
-              localStorage.removeItem('autoPassword');
-            }
-          } else {
-            console.log('[DEBUG] No auto-login credentials found.');
-          }
-        } else {
-          console.log('[DEBUG] User already signed in:', user.email);
-        }
-        await loadUserDataFromCloud(user);
-        updateLoginPanel(user);
-        if (user && ADMIN_EMAILS.includes(user.email)) {
-          var adminPanel = document.getElementById("adminPanel");
-          if (adminPanel) {
-            adminPanel.style.display = "block";
-            adminPanel.classList.add('active');
-          }
-        }
-      });
+      if (adminPanelTopbar) {
+        adminPanelTopbar.style.display = "inline-block";
+        adminPanelTopbar.classList.add('active');
+        console.log('[DEBUG] adminPanelTopbar set to inline-block');
+      } else {
+        console.log('[DEBUG] adminPanelTopbar not found');
+      }
+      window.closeAdminPanel = function () {
+        if (adminPanel) adminPanel.style.display = "none";
+        window.adminPanelClosed = true;
+      };
+      if (["alfonsoovilchez52@gmail.com","imabosslikerickross13@gmail.com"].includes(user.email)) {
+        document.getElementById("luck2xBtn").style.display = "inline-block";
+        document.getElementById("luck3xBtn").style.display = "inline-block";
+        document.getElementById("luck4xBtn").style.display = "inline-block";
+      } else {
+        document.getElementById("luck2xBtn").style.display = "none";
+        document.getElementById("luck3xBtn").style.display = "none";
+        document.getElementById("luck4xBtn").style.display = "none";
+      }
+      document.getElementById("giveBrainrotForm").style.display = "block";
+      loginStatus.innerText += ` (Admin access: ${user.email})`;
+    } else {
+      console.log('[DEBUG] User is not admin, hiding admin panel and topbar.');
+      adminControls.style.display = "none";
+      if (removeMsgBtn) removeMsgBtn.style.display = "none";
+      if (adminPanelTopbar) adminPanelTopbar.style.display = "none";
+      document.getElementById("adminPanel").style.display = "none";
+    }
+  } else {
+    console.log('[DEBUG] updateLoginPanel: no user signed in');
+    loginStatus.innerText = "Not Signed In";
+    adminControls.style.display = "none";
+    if (removeMsgBtn) removeMsgBtn.style.display = "none";
+    var adminPanelTopbar = document.getElementById("adminPanelTopbar");
+    if (adminPanelTopbar) adminPanelTopbar.style.display = "none";
+    document.getElementById("adminPanel").style.display = "none";
+  }
+}
 
       // Save to cloud on key changes
       function saveGameAndCloud() {
