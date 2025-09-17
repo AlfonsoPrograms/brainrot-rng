@@ -2793,60 +2793,7 @@
         // ...existing code...
       }
 
-// Standalone updateLoginPanel function
-function updateLoginPanel(user) {
-  if (user) {
-    console.log('[DEBUG] updateLoginPanel: user signed in:', user.email);
-    loginStatus.innerText = `Signed in as: ${user.displayName || user.email}`;
-    var adminPanelTopbar = document.getElementById("adminPanelTopbar");
-    if (ADMIN_EMAILS.includes(user.email)) {
-      console.log('[DEBUG] User is admin, showing admin panel and topbar.');
-      adminControls.style.display = "block";
-      if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
-      var adminPanel = document.getElementById("adminPanel");
-      if (adminPanel) {
-        adminPanel.style.display = "block";
-        adminPanel.classList.add('active');
-      }
-      if (adminPanelTopbar) {
-        adminPanelTopbar.style.display = "inline-block";
-        adminPanelTopbar.classList.add('active');
-        console.log('[DEBUG] adminPanelTopbar set to inline-block');
-      } else {
-        console.log('[DEBUG] adminPanelTopbar not found');
-      }
-      window.closeAdminPanel = function () {
-        if (adminPanel) adminPanel.style.display = "none";
-        window.adminPanelClosed = true;
-      };
-      if (["alfonsoovilchez52@gmail.com","imabosslikerickross13@gmail.com"].includes(user.email)) {
-        document.getElementById("luck2xBtn").style.display = "inline-block";
-        document.getElementById("luck3xBtn").style.display = "inline-block";
-        document.getElementById("luck4xBtn").style.display = "inline-block";
-      } else {
-        document.getElementById("luck2xBtn").style.display = "none";
-        document.getElementById("luck3xBtn").style.display = "none";
-        document.getElementById("luck4xBtn").style.display = "none";
-      }
-      document.getElementById("giveBrainrotForm").style.display = "block";
-      loginStatus.innerText += ` (Admin access: ${user.email})`;
-    } else {
-      console.log('[DEBUG] User is not admin, hiding admin panel and topbar.');
-      adminControls.style.display = "none";
-      if (removeMsgBtn) removeMsgBtn.style.display = "none";
-      if (adminPanelTopbar) adminPanelTopbar.style.display = "none";
-      document.getElementById("adminPanel").style.display = "none";
-    }
-  } else {
-    console.log('[DEBUG] updateLoginPanel: no user signed in');
-    loginStatus.innerText = "Not Signed In";
-    adminControls.style.display = "none";
-    if (removeMsgBtn) removeMsgBtn.style.display = "none";
-    var adminPanelTopbar = document.getElementById("adminPanelTopbar");
-    if (adminPanelTopbar) adminPanelTopbar.style.display = "none";
-    document.getElementById("adminPanel").style.display = "none";
-  }
-}
+// ...existing code...
 
       // Save to cloud on key changes
       function saveGameAndCloud() {
