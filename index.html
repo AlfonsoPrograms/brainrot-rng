@@ -833,7 +833,7 @@
   <body>
   <div id="luckStatus"></div>
     <!-- ADMIN TOPBAR (only for Eldrick) -->
-  <div id="adminPanel" class="sidebar" style="display:none;">
+  <div id="adminPanel" class="sidebar">
       <hr>
       <h3>Admin Powers</h3>
       <button id="unlockAutoRollBtn">Unlock Auto Roll</button>
@@ -2687,8 +2687,7 @@
             adminControls.style.display = "block";
             if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
             var adminPanel = document.getElementById("adminPanel");
-            if (adminPanel && !window.adminPanelClosed)
-              adminPanel.style.display = "block";
+            if (adminPanel) adminPanel.style.display = "block";
             window.closeAdminPanel = function () {
               if (adminPanel) adminPanel.style.display = "none";
               window.adminPanelClosed = true;
