@@ -2670,14 +2670,21 @@
         if (user) {
           console.log('[DEBUG] updateLoginPanel: user signed in:', user.email);
           loginStatus.innerText = `Signed in as: ${user.displayName || user.email}`;
+          var adminPanelTopbar = document.getElementById("adminPanelTopbar");
           if (ADMIN_EMAILS.includes(user.email)) {
-            console.log('[DEBUG] User is admin, showing admin panel.');
+            console.log('[DEBUG] User is admin, forcing admin panel and topbar visible.');
             adminControls.style.display = "block";
             if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
             var adminPanel = document.getElementById("adminPanel");
             if (adminPanel) {
               adminPanel.style.display = "block";
               adminPanel.classList.add('active');
+              console.log('[DEBUG] adminPanel forced visible');
+            }
+            if (adminPanelTopbar) {
+              adminPanelTopbar.style.display = "inline-block";
+              adminPanelTopbar.classList.add('active');
+              console.log('[DEBUG] adminPanelTopbar forced visible');
             }
             window.closeAdminPanel = function () {
               if (adminPanel) adminPanel.style.display = "none";
@@ -2695,10 +2702,10 @@
             document.getElementById("giveBrainrotForm").style.display = "block";
             loginStatus.innerText += ` (Admin access: ${user.email})`;
           } else {
-            console.log('[DEBUG] User is not admin, hiding admin panel.');
+            console.log('[DEBUG] User is not admin, hiding admin panel and topbar.');
             adminControls.style.display = "none";
             if (removeMsgBtn) removeMsgBtn.style.display = "none";
-            document.getElementById("adminPanelTopbar").style.display = "none";
+            if (adminPanelTopbar) adminPanelTopbar.style.display = "none";
             document.getElementById("adminPanel").style.display = "none";
           }
       // ======= ADMIN CHAT LOGIC =======
