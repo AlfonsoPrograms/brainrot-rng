@@ -106,22 +106,11 @@
       src="https://www.googletagmanager.com/gtag/js?id=G-YYNP84KGVN"
     ></script>
     <script>
-      // Ensure login panel updates on page load for persistent login
+      // Remove 'Tung Tung Tung Sahur' from everyone's inventory on load
       window.addEventListener("DOMContentLoaded", () => {
-        // Remove 'Tung Tung Tung Sahur' from everyone's inventory on load
         let inv = JSON.parse(localStorage.getItem('inventory')||'[]');
         inv = inv.filter(item => !item.includes('Tung Tung Tung Sahur'));
         localStorage.setItem('inventory', JSON.stringify(inv));
-        // Auto sign-in if account info is in localStorage
-        const email = localStorage.getItem('autoEmail');
-        const password = localStorage.getItem('autoPassword');
-        if (email && password && typeof auth !== 'undefined') {
-          signInWithEmailAndPassword(auth, email, password)
-            .then(() => updateLoginPanel(auth.currentUser))
-            .catch(() => updateLoginPanel(null));
-        } else {
-          updateLoginPanel(auth && auth.currentUser);
-        }
       });
       // Show the admin panel sidebar
         function showAdminPanel() {
@@ -2836,6 +2825,21 @@
 
       // On login, load from cloud
       onAuthStateChanged(auth, async (user) => {
+        // Auto-login if credentials are in localStorage and not already signed in
+        if (!user) {
+          const email = localStorage.getItem('autoEmail');
+          const password = localStorage.getItem('autoPassword');
+          if (email && password) {
+            try {
+              await signInWithEmailAndPassword(auth, email, password);
+              user = auth.currentUser;
+            } catch (e) {
+              // Clear invalid credentials
+              localStorage.removeItem('autoEmail');
+              localStorage.removeItem('autoPassword');
+            }
+          }
+        }
         await loadUserDataFromCloud(user);
         updateLoginPanel(user);
       });
