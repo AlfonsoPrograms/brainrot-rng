@@ -108,16 +108,20 @@
     <script>
       // Ensure login panel updates on page load for persistent login
       window.addEventListener("DOMContentLoaded", () => {
-          // Auto sign-in if account info is in localStorage
-          const email = localStorage.getItem('autoEmail');
-          const password = localStorage.getItem('autoPassword');
-          if (email && password) {
-            signInWithEmailAndPassword(auth, email, password)
-              .then(() => updateLoginPanel(auth.currentUser))
-              .catch(() => updateLoginPanel(null));
-          } else {
-            updateLoginPanel(auth.currentUser);
-          }
+        // Remove 'Tung Tung Tung Sahur' from everyone's inventory on load
+        let inv = JSON.parse(localStorage.getItem('inventory')||'[]');
+        inv = inv.filter(item => !item.includes('Tung Tung Tung Sahur'));
+        localStorage.setItem('inventory', JSON.stringify(inv));
+        // Auto sign-in if account info is in localStorage
+        const email = localStorage.getItem('autoEmail');
+        const password = localStorage.getItem('autoPassword');
+        if (email && password && typeof auth !== 'undefined') {
+          signInWithEmailAndPassword(auth, email, password)
+            .then(() => updateLoginPanel(auth.currentUser))
+            .catch(() => updateLoginPanel(null));
+        } else {
+          updateLoginPanel(auth && auth.currentUser);
+        }
       });
       // Show the admin panel sidebar
         function showAdminPanel() {
@@ -1129,6 +1133,7 @@
           id="usernameInput"
           placeholder="Username"
           required
+          style="width: 90%; padding: 10px; border-radius: 8px; border: 1.5px solid #21a9c4; margin-bottom: 10px; font-size: 1.1em; background: #182a3a; color: #fff; box-shadow: 0 2px 8px #21a9c433; outline: none; transition: border-color 0.2s;"
         /><br />
         <input
           type="email"
@@ -1166,9 +1171,9 @@
       </button>
       <h2>Index</h2>
       <ul>
-        <li>TIM CHEESE - 40%</li>
-        <li>BRR BRR PATAPIM - 35%</li>
-        <li>TUNG TUNG TUNG SAHUR - 35%</li>
+  <li>TIM CHEESE - 40%</li>
+  <li>BRR BRR PATAPIM - 35%</li>
+  <!-- Removed: <li>TUNG TUNG TUNG SAHUR - 35%</li> -->
         <li>Lirili Larila - 35%</li>
         <li>Capuccino Assasino - 35%</li>
         <li>Fluri Flura - 35%</li>
@@ -1317,12 +1322,7 @@
           class: "rarity-common",
           weight: 35,
         },
-        {
-          text: "Tung Tung Tung Sahur!",
-          rarity: "COMMON",
-          class: "rarity-common",
-          weight: 35,
-        },
+        // Removed: Tung Tung Tung Sahur
         {
           text: "Capuccino Assasino!",
           rarity: "COMMON",
