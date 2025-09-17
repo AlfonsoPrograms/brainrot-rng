@@ -1,105 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-  <link rel="icon" type="image/png" href="Images/Dice.png">
+    <link rel="icon" type="image/png" href="Images/Dice.png" />
     <style>
-/* Styled dropdown for admin gift consumable */
-#giftConsumableType {
-  width: 120px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #21a9c4;
-  background: #182a3a;
-  color: #fff;
-  font-size: 1rem;
-  margin-right: 8px;
-  box-shadow: 0 2px 8px #21a9c433;
-  outline: none;
-  transition: border-color 0.2s;
-}
-#giftConsumableType:focus {
-  border-color: #168ba0;
-}
-/* Consumables Use Button Styling */
-#consumablesPanel .use-btn {
-  padding: 8px 18px;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #21a9c4 60%, #168ba0 100%);
-  color: #fff;
-  font-size: 1rem;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #21a9c433;
-  font-weight: bold;
-  margin-left: 8px;
-  margin-top: 2px;
-  transition: background 0.2s, box-shadow 0.2s, opacity 0.2s;
-}
-#consumablesPanel .use-btn:hover {
-  background: linear-gradient(90deg, #168ba0 60%, #21a9c4 100%);
-  box-shadow: 0 4px 16px #21a9c455;
-  opacity: 0.85;
-}
-/* Consumables Sidebar Styles */
-#consumablesPanel select {
-  width: 90%;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #21a9c4;
-  background: #182a3a;
-  color: #fff;
-  font-size: 1rem;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 8px #21a9c433;
-  outline: none;
-  transition: border-color 0.2s;
-}
-#consumablesPanel select:focus {
-  border-color: #168ba0;
-}
-#consumablesPanel button[type="submit"] {
-  padding: 10px 24px;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #21a9c4 60%, #168ba0 100%);
-  color: #fff;
-  font-size: 1.1rem;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #21a9c433;
-  font-weight: bold;
-  margin-top: 4px;
-  transition: background 0.2s, box-shadow 0.2s;
-}
-#consumablesPanel button[type="submit"]:hover {
-  background: linear-gradient(90deg, #168ba0 60%, #21a9c4 100%);
-  box-shadow: 0 4px 16px #21a9c455;
-}
-    /* Luck Status Indicator */
-    #luckStatus {
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      background: rgba(33,169,196,0.85);
-      color: #fff;
-      font-size: 15px;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      padding: 6px 14px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px #21a9c4;
-      z-index: 2100;
-      min-width: 120px;
-      text-align: center;
-      pointer-events: none;
-      opacity: 0.92;
-      transition: opacity 0.2s;
-      display: none;
-    }
+      /* Styled dropdown for admin gift consumable */
+      #giftConsumableType {
+        width: 120px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #21a9c4;
+        background: #182a3a;
+        color: #fff;
+        font-size: 1rem;
+        margin-right: 8px;
+        box-shadow: 0 2px 8px #21a9c433;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      #giftConsumableType:focus {
+        border-color: #168ba0;
+      }
+      /* Consumables Use Button Styling */
+      #consumablesPanel .use-btn {
+        padding: 8px 18px;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #21a9c4 60%, #168ba0 100%);
+        color: #fff;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 2px 8px #21a9c433;
+        font-weight: bold;
+        margin-left: 8px;
+        margin-top: 2px;
+        transition: background 0.2s, box-shadow 0.2s, opacity 0.2s;
+      }
+      #consumablesPanel .use-btn:hover {
+        background: linear-gradient(90deg, #168ba0 60%, #21a9c4 100%);
+        box-shadow: 0 4px 16px #21a9c455;
+        opacity: 0.85;
+      }
+      /* Consumables Sidebar Styles */
+      #consumablesPanel select {
+        width: 90%;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #21a9c4;
+        background: #182a3a;
+        color: #fff;
+        font-size: 1rem;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px #21a9c433;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      #consumablesPanel select:focus {
+        border-color: #168ba0;
+      }
+      #consumablesPanel button[type="submit"] {
+        padding: 10px 24px;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #21a9c4 60%, #168ba0 100%);
+        color: #fff;
+        font-size: 1.1rem;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 2px 8px #21a9c433;
+        font-weight: bold;
+        margin-top: 4px;
+        transition: background 0.2s, box-shadow 0.2s;
+      }
+      #consumablesPanel button[type="submit"]:hover {
+        background: linear-gradient(90deg, #168ba0 60%, #21a9c4 100%);
+        box-shadow: 0 4px 16px #21a9c455;
+      }
+      /* Luck Status Indicator */
+      #luckStatus {
+        position: fixed;
+        top: 18px;
+        right: 18px;
+        background: rgba(33, 169, 196, 0.85);
+        color: #fff;
+        font-size: 15px;
+        font-family: "Segoe UI", Arial, sans-serif;
+        padding: 6px 14px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px #21a9c4;
+        z-index: 2100;
+        min-width: 120px;
+        text-align: center;
+        pointer-events: none;
+        opacity: 0.92;
+        transition: opacity 0.2s;
+        display: none;
+      }
     </style>
-    <script
-      <meta
-      name="monetag"
-      content="5f92cacc928c2105b4bbf62828724c2f"
-    ></script>
+    <meta name="monetag" content="5f92cacc928c2105b4bbf62828724c2f" />
     <!-- Google tag (gtag.js) -->
     <script
       async
@@ -108,31 +104,30 @@
     <script>
       // Remove 'Tung Tung Tung Sahur' from everyone's inventory on load
       window.addEventListener("DOMContentLoaded", () => {
-        let inv = JSON.parse(localStorage.getItem('inventory')||'[]');
-        inv = inv.filter(item => !item.includes('Tung Tung Tung Sahur'));
-        localStorage.setItem('inventory', JSON.stringify(inv));
+        let inv = JSON.parse(localStorage.getItem("inventory") || "[]");
+        inv = inv.filter((item) => !item.includes("Tung Tung Tung Sahur"));
+        localStorage.setItem("inventory", JSON.stringify(inv));
       });
       // Show the admin panel sidebar
-        function showAdminPanel() {
-          var panel = document.getElementById("adminPanel");
-          if (panel) {
-            panel.classList.add("active");
-            window.adminPanelClosed = false;
-          }
+      function showAdminPanel() {
+        var panel = document.getElementById("adminPanel");
+        if (panel) {
+          panel.classList.add("active");
+          window.adminPanelClosed = false;
         }
-        function closeAdminPanel() {
-          var panel = document.getElementById("adminPanel");
-          if (panel) {
-            panel.classList.remove("active");
-            window.adminPanelClosed = true;
-          }
+      }
+      function closeAdminPanel() {
+        var panel = document.getElementById("adminPanel");
+        if (panel) {
+          panel.classList.remove("active");
+          window.adminPanelClosed = true;
         }
+      }
       window.dataLayer = window.dataLayer || [];
       function gtag() {
         dataLayer.push(arguments);
       }
       gtag("js", new Date());
-
       gtag("config", "G-YYNP84KGVN");
     </script>
     <meta
@@ -149,61 +144,61 @@
     <title>Brainrot RNG</title>
 
     <style>
-    /* Improved Admin Panel Styles */
-    #adminPanel.sidebar {
-      background: linear-gradient(135deg, #1a2a3a 60%, #21a9c4 100%);
-      color: #fff;
-      border-radius: 18px;
-      box-shadow: 0 4px 24px rgba(33,169,196,0.25);
-      padding: 32px 24px 24px 24px;
-      min-width: 320px;
-      max-width: 360px;
-      margin-top: 32px;
-      font-family: 'Segoe UI', Arial, sans-serif;
-    }
-    #adminPanel h2 {
-      font-size: 2rem;
-      margin-bottom: 18px;
-      color: #fff;
-      letter-spacing: 1px;
-      text-shadow: 0 2px 8px #168ba0;
-    }
-    #adminPanel button:not(.close-btn) {
-      background: #21a9c4;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      font-size: 1rem;
-      margin: 8px 0;
-      box-shadow: 0 2px 8px #168ba033;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    #adminPanel button:not(.close-btn):hover {
-      background: #168ba0;
-    }
-    #adminPanel input {
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #21a9c4;
-      margin-bottom: 10px;
-      font-size: 1rem;
-      width: 95%;
-      background: #13202b;
-      color: #fff;
-    }
-    #adminPanel form {
-      margin-top: 18px;
-      margin-bottom: 8px;
-    }
-    #adminPanel .admin-msg {
-      color: #ffe066;
-      font-weight: bold;
-      margin-top: 12px;
-      display: block;
-      text-shadow: 0 1px 4px #168ba0;
-    }
+      /* Improved Admin Panel Styles */
+      #adminPanel.sidebar {
+        background: linear-gradient(135deg, #1a2a3a 60%, #21a9c4 100%);
+        color: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(33, 169, 196, 0.25);
+        padding: 32px 24px 24px 24px;
+        min-width: 320px;
+        max-width: 360px;
+        margin-top: 32px;
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+      #adminPanel h2 {
+        font-size: 2rem;
+        margin-bottom: 18px;
+        color: #fff;
+        letter-spacing: 1px;
+        text-shadow: 0 2px 8px #168ba0;
+      }
+      #adminPanel button:not(.close-btn) {
+        background: #21a9c4;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        margin: 8px 0;
+        box-shadow: 0 2px 8px #168ba033;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      #adminPanel button:not(.close-btn):hover {
+        background: #168ba0;
+      }
+      #adminPanel input {
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #21a9c4;
+        margin-bottom: 10px;
+        font-size: 1rem;
+        width: 95%;
+        background: #13202b;
+        color: #fff;
+      }
+      #adminPanel form {
+        margin-top: 18px;
+        margin-bottom: 8px;
+      }
+      #adminPanel .admin-msg {
+        color: #ffe066;
+        font-weight: bold;
+        margin-top: 12px;
+        display: block;
+        text-shadow: 0 1px 4px #168ba0;
+      }
       /* Admin Topbar Styles */
       #adminTopbar {
         position: fixed;
@@ -668,23 +663,23 @@
 
       /* Sidebar */
       .sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 300px;
-  height: 100%;
-  background-color: #111;
-  color: white;
-  padding: 20px;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-  z-index: 2000;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
-  display: none;
-  overflow-y: auto;
-  overflow-x: auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 300px;
+        height: 100%;
+        background-color: #111;
+        color: white;
+        padding: 20px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        z-index: 2000;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        display: none;
+        overflow-y: auto;
+        overflow-x: auto;
       }
 
       .sidebar::-webkit-scrollbar {
@@ -820,15 +815,21 @@
     </style>
   </head>
   <body>
-  <div id="luckStatus"></div>
+    <div id="luckStatus"></div>
     <!-- ADMIN TOPBAR (only for Eldrick) -->
-  <div id="adminPanel" class="sidebar">
-      <hr>
+    <div id="adminPanel" class="sidebar">
+      <hr />
       <h3>Admin Powers</h3>
       <button id="unlockAutoRollBtn">Unlock Auto Roll</button>
       <button id="getConsumableBtn">Get Consumable</button>
-      <form id="giftConsumableForm" style="margin-top:8px;">
-        <input type="email" id="giftConsumableEmail" placeholder="Target Gmail" required style="width:60%;margin-right:8px;">
+      <form id="giftConsumableForm" style="margin-top: 8px">
+        <input
+          type="email"
+          id="giftConsumableEmail"
+          placeholder="Target Gmail"
+          required
+          style="width: 60%; margin-right: 8px"
+        />
         <select id="giftConsumableType">
           <option value="COMMON">Common</option>
           <option value="UNCOMMON">Uncommon</option>
@@ -840,27 +841,90 @@
         </select>
         <button type="submit">Gift Consumable</button>
       </form>
-      <form id="giftLuckForm" style="margin-top:8px;">
-        <input type="email" id="giftLuckEmail" placeholder="Target Gmail" required style="width:60%;margin-right:8px;">
-        <input type="number" id="giftLuckMultiplier" placeholder="Luck Multiplier (e.g. 2)" min="1" step="0.1" required style="width:20%;margin-right:8px;">
-        <input type="number" id="giftLuckDuration" placeholder="Seconds" min="1" step="1" required style="width:15%;margin-right:8px;">
+      <form id="giftLuckForm" style="margin-top: 8px">
+        <input
+          type="email"
+          id="giftLuckEmail"
+          placeholder="Target Gmail"
+          required
+          style="width: 60%; margin-right: 8px"
+        />
+        <input
+          type="number"
+          id="giftLuckMultiplier"
+          placeholder="Luck Multiplier (e.g. 2)"
+          min="1"
+          step="0.1"
+          required
+          style="width: 20%; margin-right: 8px"
+        />
+        <input
+          type="number"
+          id="giftLuckDuration"
+          placeholder="Seconds"
+          min="1"
+          step="1"
+          required
+          style="width: 15%; margin-right: 8px"
+        />
         <button type="submit">Gift Luck</button>
       </form>
-      <button id="unlockEverythingBtn" style="margin-top:12px;background:#ff9800;">Unlock Everything</button>
-      <hr>
+      <button
+        id="unlockEverythingBtn"
+        style="margin-top: 12px; background: #ff9800"
+      >
+        Unlock Everything
+      </button>
+      <hr />
       <h3>Admin Chat</h3>
-      <div id="adminChatBox" style="max-height:180px;overflow-y:auto;background:#222;color:#fff;padding:8px 12px;border-radius:8px;margin-bottom:8px;font-size:15px;"></div>
-      <form id="adminChatForm" style="display:flex;gap:8px;">
-        <input id="adminChatInput" type="text" placeholder="Type message..." style="flex:1;padding:8px;border-radius:6px;border:1px solid #21a9c4;background:#13202b;color:#fff;">
-        <button type="submit" style="padding:8px 16px;border-radius:6px;background:#21a9c4;color:#fff;border:none;cursor:pointer;">Send</button>
+      <div
+        id="adminChatBox"
+        style="
+          max-height: 180px;
+          overflow-y: auto;
+          background: #222;
+          color: #fff;
+          padding: 8px 12px;
+          border-radius: 8px;
+          margin-bottom: 8px;
+          font-size: 15px;
+        "
+      ></div>
+      <form id="adminChatForm" style="display: flex; gap: 8px">
+        <input
+          id="adminChatInput"
+          type="text"
+          placeholder="Type message..."
+          style="
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #21a9c4;
+            background: #13202b;
+            color: #fff;
+          "
+        />
+        <button
+          type="submit"
+          style="
+            padding: 8px 16px;
+            border-radius: 6px;
+            background: #21a9c4;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+          "
+        >
+          Send
+        </button>
       </form>
       <button class="close-btn" onclick="toggleSidebar('adminPanel')">
         &times;
-        </button>
-        <script>
-          document.querySelector('#adminPanel .close-btn').onclick = closeAdminPanel;
-        </script>
       </button>
+      <script>
+        document.querySelector("#adminPanel .close-btn").onclick =
+          closeAdminPanel;
+      </script>
       <h2>Admin Panel</h2>
       <button id="luck2xBtn">Activate 2x Luck (60s)</button>
       <button id="luck3xBtn">Activate 3x Luck (60s)</button>
@@ -892,31 +956,53 @@
     </div>
 
     <div class="topbar">
+      <a
+        href="#leaderboards"
+        id="leaderboardsTopbar"
+        onclick="toggleSidebar('leaderboardsPanel')"
+        >Leaderboards</a
+      >
+      <!-- LEADERBOARDS SIDEBAR -->
+      <div id="leaderboardsPanel" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar('leaderboardsPanel')">
+          &times;
+        </button>
+        <h2>Leaderboards</h2>
+        <div id="leaderboardsContent"></div>
+      </div>
 
-  <a href="#leaderboards" id="leaderboardsTopbar" onclick="toggleSidebar('leaderboardsPanel')">Leaderboards</a>
-    <!-- LEADERBOARDS SIDEBAR -->
-    <div id="leaderboardsPanel" class="sidebar">
-      <button class="close-btn" onclick="toggleSidebar('leaderboardsPanel')">&times;</button>
-      <h2>Leaderboards</h2>
-      <div id="leaderboardsContent"></div>
-    </div>
-    
-  <a href="#admin" id="adminPanelTopbar" onclick="showAdminPanel()" style="display:none;">Admin Panel</a>
-  <a href="#consumables" id="consumablesTopbar" onclick="toggleSidebar('consumablesPanel')">Consumables</a>
-    <!-- CONSUMABLES SIDEBAR -->
-    <div id="consumablesPanel" class="sidebar">
-      <button class="close-btn" onclick="toggleSidebar('consumablesPanel')">&times;</button>
-      <h2>Consumables</h2>
-      <div id="consumablesList"></div>
-    <div id="activeBoostsList" style="margin-top:16px;"></div>
-      <hr>
-      <h3>Trade Brainrot for Consumable</h3>
-      <form id="tradeConsumableForm">
-        <select id="tradeBrainrotSelect"></select>
-        <button type="submit">Trade</button>
-      </form>
-      <div id="tradeConsumableMsg" style="color:yellow;margin-top:8px;"></div>
-    </div>
+      <a
+        href="#admin"
+        id="adminPanelTopbar"
+        onclick="showAdminPanel()"
+        style="display: none"
+        >Admin Panel</a
+      >
+      <a
+        href="#consumables"
+        id="consumablesTopbar"
+        onclick="toggleSidebar('consumablesPanel')"
+        >Consumables</a
+      >
+      <!-- CONSUMABLES SIDEBAR -->
+      <div id="consumablesPanel" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar('consumablesPanel')">
+          &times;
+        </button>
+        <h2>Consumables</h2>
+        <div id="consumablesList"></div>
+        <div id="activeBoostsList" style="margin-top: 16px"></div>
+        <hr />
+        <h3>Trade Brainrot for Consumable</h3>
+        <form id="tradeConsumableForm">
+          <select id="tradeBrainrotSelect"></select>
+          <button type="submit">Trade</button>
+        </form>
+        <div
+          id="tradeConsumableMsg"
+          style="color: yellow; margin-top: 8px"
+        ></div>
+      </div>
       <a href="#settings" onclick="toggleSidebar('settingsPanel')">Settings</a>
       <a href="#inventory" onclick="toggleSidebar('inventoryPanel')"
         >Inventory</a
@@ -942,37 +1028,200 @@
     >
       AUTO
     </button>
+    <!-- Watch Ad for Luck Button -->
+    <button
+      id="watchAdBtn"
+      style="
+        display: block;
+        margin: 24px auto 0 auto;
+        padding: 14px 32px;
+        background: linear-gradient(90deg, #21a9c4, #168ba0);
+        color: #fff;
+        font-size: 1.1em;
+        font-family: Impact, sans-serif;
+        border-radius: 12px;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 0 2px 8px #21a9c4;
+        font-weight: bold;
+        max-width: 320px;
+      "
+    >
+      🎥 Watch Ad for 2.5x Luck (15s)
+    </button>
+
+    <!-- Ad Modal -->
+    <div
+      id="adModal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 99999;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      "
+    >
+      <div
+        style="
+          background: #222;
+          padding: 24px 32px;
+          border-radius: 18px;
+          box-shadow: 0 4px 24px #21a9c4;
+          max-width: 90vw;
+          max-height: 90vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        "
+      >
+        <h2 style="color: #21a9c4; margin-bottom: 12px">
+          Watch Ad to Get 2.5x Luck!
+        </h2>
+        <div
+          id="adSmartlinkInfo"
+          style="
+            width: 400px;
+            max-width: 80vw;
+            height: 60px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            color: #fff;
+            font-size: 1.1em;
+            text-align: center;
+          "
+        >
+          Please keep the ad window open for 15 seconds to claim your reward.
+        </div>
+        <div
+          id="adCountdown"
+          style="color: #ffe066; font-size: 1.2em; margin-bottom: 10px"
+        >
+          15
+        </div>
+        <button
+          id="claimLuckBtn"
+          style="
+            display: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            background: #21a9c4;
+            color: #fff;
+            font-size: 1.1em;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+          "
+        >
+          Claim 2.5x Luck (60s)
+        </button>
+        <button
+          id="closeAdModalBtn"
+          style="
+            margin-top: 10px;
+            background: transparent;
+            color: #fff;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+          "
+        >
+          &times; Close
+        </button>
+      </div>
+    </div>
     <script type="text/javascript">
-  // Declare luckStatusInterval to fix ReferenceError
-  let luckStatusInterval = null;
-    // Luck indicator logic
-  
-    function showLuckIndicator(multiplier, seconds) {
-      luckBoostMultiplier = multiplier;
-      luckBoostEndTime = Date.now() + seconds * 1000;
-      updateLuckStatus();
-      document.getElementById('luckStatus').style.display = 'block';
-      if (luckStatusInterval) clearInterval(luckStatusInterval);
-      luckStatusInterval = setInterval(function() {
+      // Declare luckStatusInterval to fix ReferenceError
+      let luckStatusInterval = null;
+      // Luck indicator logic
+
+      function showLuckIndicator(multiplier, seconds) {
+        luckBoostMultiplier = multiplier;
+        luckBoostEndTime = Date.now() + seconds * 1000;
         updateLuckStatus();
-        if (Date.now() > luckBoostEndTime) {
-          luckBoostMultiplier = 1;
-          luckBoostEndTime = null;
-          document.getElementById('luckStatus').style.display = 'none';
-          clearInterval(luckStatusInterval);
-        }
-      }, 1000);
-    }
-    function updateLuckStatus() {
-      var el = document.getElementById('luckStatus');
-      if (luckBoostMultiplier > 1 && luckBoostEndTime) {
-        var secondsLeft = Math.max(0, Math.ceil((luckBoostEndTime - Date.now()) / 1000));
-        el.innerText = luckBoostMultiplier + 'x luck active for ' + secondsLeft + 's';
-      } else {
-        el.innerText = '';
+        document.getElementById("luckStatus").style.display = "block";
+        if (luckStatusInterval) clearInterval(luckStatusInterval);
+        luckStatusInterval = setInterval(function () {
+          updateLuckStatus();
+          if (Date.now() > luckBoostEndTime) {
+            luckBoostMultiplier = 1;
+            luckBoostEndTime = null;
+            document.getElementById("luckStatus").style.display = "none";
+            clearInterval(luckStatusInterval);
+          }
+        }, 1000);
       }
-    }
-    // Example usage: showLuckIndicator(4, 60); // Shows 4x luck for 60 seconds
+      function updateLuckStatus() {
+        var el = document.getElementById("luckStatus");
+        if (luckBoostMultiplier > 1 && luckBoostEndTime) {
+          var secondsLeft = Math.max(
+            0,
+            Math.ceil((luckBoostEndTime - Date.now()) / 1000)
+          );
+          el.innerText =
+            luckBoostMultiplier + "x luck active for " + secondsLeft + "s";
+        } else {
+          el.innerText = "";
+        }
+      }
+      // --- Watch Ad for Luck Logic ---
+      (function () {
+        const watchAdBtn = document.getElementById("watchAdBtn");
+        const adModal = document.getElementById("adModal");
+        const adCountdown = document.getElementById("adCountdown");
+        const claimLuckBtn = document.getElementById("claimLuckBtn");
+        const closeAdModalBtn = document.getElementById("closeAdModalBtn");
+        // Adsterra Smartlink URL
+        const SMARTLINK_URL =
+          "https://www.revenuecpmgate.com/qrmreh19f?key=75b54ff785f2d57b039ee7b0824b40b4";
+        let adTimer = null;
+        let adTimeLeft = 15;
+        let adWatched = false;
+        let adWindow = null;
+
+        watchAdBtn.addEventListener("click", function () {
+          // Open Smartlink in new tab
+          adWindow = window.open(SMARTLINK_URL, "_blank");
+          adModal.style.display = "flex";
+          adTimeLeft = 15;
+          adCountdown.innerText = adTimeLeft;
+          claimLuckBtn.style.display = "none";
+          adWatched = false;
+          // Start countdown
+          adTimer = setInterval(() => {
+            adTimeLeft--;
+            adCountdown.innerText = adTimeLeft;
+            if (adTimeLeft <= 0) {
+              clearInterval(adTimer);
+              claimLuckBtn.style.display = "inline-block";
+              adCountdown.innerText = "Ad complete!";
+              adWatched = true;
+            }
+          }, 1000);
+        });
+
+        claimLuckBtn.addEventListener("click", function () {
+          if (!adWatched) return;
+          showLuckIndicator(2.5, 60); // 2.5x luck for 60s
+          adModal.style.display = "none";
+          if (adWindow && !adWindow.closed) adWindow.close();
+        });
+
+        closeAdModalBtn.addEventListener("click", function () {
+          adModal.style.display = "none";
+          if (adTimer) clearInterval(adTimer);
+          if (adWindow && !adWindow.closed) adWindow.close();
+        });
+      })();
+      // Example usage: showLuckIndicator(4, 60); // Shows 4x luck for 60 seconds
       atOptions = {
         key: "8bf6d2dff83a56fccfca81a01327b7b9",
         format: "iframe",
@@ -982,12 +1231,9 @@
       };
     </script>
     <script
-      <script
       type="text/javascript"
       src="https://www.highperformanceformat.com/8bf6d2dff83a56fccfca81a01327b7b9/invoke.js"
     ></script>
-
-    
 
     <audio
       id="Music1"
@@ -1041,18 +1287,32 @@
         on Mystical/Secret</label
       >
 
-      <button id="logoutBtn" style="margin-top:12px;background:#e74c3c;color:#fff;padding:10px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">Log Out</button>
+      <button
+        id="logoutBtn"
+        style="
+          margin-top: 12px;
+          background: #e74c3c;
+          color: #fff;
+          padding: 10px 24px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: bold;
+        "
+      >
+        Log Out
+      </button>
       <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          var logoutBtn = document.getElementById('logoutBtn');
+        document.addEventListener("DOMContentLoaded", function () {
+          var logoutBtn = document.getElementById("logoutBtn");
           if (logoutBtn) {
-            logoutBtn.onclick = function() {
-              if (typeof auth !== 'undefined' && auth.signOut) auth.signOut();
-              localStorage.removeItem('autoEmail');
-              localStorage.removeItem('autoPassword');
+            logoutBtn.onclick = function () {
+              if (typeof auth !== "undefined" && auth.signOut) auth.signOut();
+              localStorage.removeItem("autoEmail");
+              localStorage.removeItem("autoPassword");
               updateLoginPanel(null);
-              alert('You have been logged out.');
-              toggleSidebar('settingsPanel');
+              alert("You have been logged out.");
+              toggleSidebar("settingsPanel");
             };
           }
         });
@@ -1122,7 +1382,19 @@
           id="usernameInput"
           placeholder="Username"
           required
-          style="width: 90%; padding: 10px; border-radius: 8px; border: 1.5px solid #21a9c4; margin-bottom: 10px; font-size: 1.1em; background: #182a3a; color: #fff; box-shadow: 0 2px 8px #21a9c433; outline: none; transition: border-color 0.2s;"
+          style="
+            width: 90%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1.5px solid #21a9c4;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            background: #182a3a;
+            color: #fff;
+            box-shadow: 0 2px 8px #21a9c433;
+            outline: none;
+            transition: border-color 0.2s;
+          "
         /><br />
         <input
           type="email"
@@ -1143,12 +1415,14 @@
       <div id="emailAuthError"></div>
       <script>
         // Store username in localStorage on sign up or login
-        const usernameInput = document.getElementById('usernameInput');
-        emailSignUpBtn.addEventListener('click', function() {
-          if (usernameInput.value) localStorage.setItem('username', usernameInput.value);
+        const usernameInput = document.getElementById("usernameInput");
+        emailSignUpBtn.addEventListener("click", function () {
+          if (usernameInput.value)
+            localStorage.setItem("username", usernameInput.value);
         });
-        emailLogInBtn.addEventListener('click', function() {
-          if (usernameInput.value) localStorage.setItem('username', usernameInput.value);
+        emailLogInBtn.addEventListener("click", function () {
+          if (usernameInput.value)
+            localStorage.setItem("username", usernameInput.value);
         });
       </script>
     </div>
@@ -1160,9 +1434,9 @@
       </button>
       <h2>Index</h2>
       <ul>
-  <li>TIM CHEESE - 40%</li>
-  <li>BRR BRR PATAPIM - 35%</li>
-  <!-- Removed: <li>TUNG TUNG TUNG SAHUR - 35%</li> -->
+        <li>TIM CHEESE - 40%</li>
+        <li>BRR BRR PATAPIM - 35%</li>
+        <!-- Removed: <li>TUNG TUNG TUNG SAHUR - 35%</li> -->
         <li>Lirili Larila - 35%</li>
         <li>Capuccino Assasino - 35%</li>
         <li>Fluri Flura - 35%</li>
@@ -1225,24 +1499,26 @@
 
       // ======= GAME DATA =======
       const MIN_CLICK_COOLDOWN = 0.35; // anti-spam/autoclickers (seconds)
-  let lastRollTs = 0;
-  // Reset roll cooldown on page load (fix stuck cooldown bug)
-  window.addEventListener('load', () => {
-    lastRollTs = 0;
-    const btn = document.getElementById('RollButton');
-    if (btn) btn.disabled = false;
-  });
+      let lastRollTs = 0;
+      // Reset roll cooldown on page load (fix stuck cooldown bug)
+      window.addEventListener("load", () => {
+        lastRollTs = 0;
+        const btn = document.getElementById("RollButton");
+        if (btn) btn.disabled = false;
+      });
 
-  // Failsafe: Periodically check and re-enable roll button if cooldown is over
-  setInterval(() => {
-    const btn = document.getElementById('RollButton');
-    if (!btn) return;
-    const now = Date.now();
-    const cd = computeRollCooldownSeconds ? computeRollCooldownSeconds() * 1000 : 1000;
-    if (btn.disabled && (now - lastRollTs > cd + 100)) {
-      btn.disabled = false;
-    }
-  }, 500);
+      // Failsafe: Periodically check and re-enable roll button if cooldown is over
+      setInterval(() => {
+        const btn = document.getElementById("RollButton");
+        if (!btn) return;
+        const now = Date.now();
+        const cd = computeRollCooldownSeconds
+          ? computeRollCooldownSeconds() * 1000
+          : 1000;
+        if (btn.disabled && now - lastRollTs > cd + 100) {
+          btn.disabled = false;
+        }
+      }, 500);
 
       let inventory = JSON.parse(localStorage.getItem("inventory")) || [];
       let quests = JSON.parse(localStorage.getItem("quests")) || {
@@ -1535,143 +1811,225 @@
       };
 
       // ======= CONSUMABLES SYSTEM =======
-    let consumables = JSON.parse(localStorage.getItem('consumables')) || [];
+      let consumables = JSON.parse(localStorage.getItem("consumables")) || [];
 
-    function rarityToConsumable(rarity) {
-      switch (rarity) {
-        case 'COMMON': return {type:'speed', value:-0.05, duration:30, name:'-0.05s Roll Speed (30s)'};
-        case 'UNCOMMON': return {type:'luck', value:1.5, duration:45, name:'1.5x Luck (45s)'};
-        case 'RARE': return {type:'speed', value:-0.1, duration:60, name:'-0.1s Roll Speed (60s)'};
-        case 'EPIC': return {type:'speed', value:-0.15, duration:60, name:'-0.15s Roll Speed (60s)'};
-        case 'LEGENDARY': return {type:'luck', value:2, duration:90, name:'2x Luck (90s)'};
-        case 'MYSTICAL': return {type:'luck', value:3, duration:120, name:'3x Luck (120s)'};
-        case '???': return {type:'luck', value:4, duration:120, name:'4x Luck (120s)'};
-        default: return {type:'luck', value:1, duration:15, name:'1x Luck (15s)'};
+      function rarityToConsumable(rarity) {
+        switch (rarity) {
+          case "COMMON":
+            return {
+              type: "speed",
+              value: -0.05,
+              duration: 30,
+              name: "-0.05s Roll Speed (30s)",
+            };
+          case "UNCOMMON":
+            return {
+              type: "luck",
+              value: 1.5,
+              duration: 45,
+              name: "1.5x Luck (45s)",
+            };
+          case "RARE":
+            return {
+              type: "speed",
+              value: -0.1,
+              duration: 60,
+              name: "-0.1s Roll Speed (60s)",
+            };
+          case "EPIC":
+            return {
+              type: "speed",
+              value: -0.15,
+              duration: 60,
+              name: "-0.15s Roll Speed (60s)",
+            };
+          case "LEGENDARY":
+            return {
+              type: "luck",
+              value: 2,
+              duration: 90,
+              name: "2x Luck (90s)",
+            };
+          case "MYSTICAL":
+            return {
+              type: "luck",
+              value: 3,
+              duration: 120,
+              name: "3x Luck (120s)",
+            };
+          case "???":
+            return {
+              type: "luck",
+              value: 4,
+              duration: 120,
+              name: "4x Luck (120s)",
+            };
+          default:
+            return {
+              type: "luck",
+              value: 1,
+              duration: 15,
+              name: "1x Luck (15s)",
+            };
+        }
       }
-    }
 
-    function updateConsumablesList() {
-      const list = document.getElementById('consumablesList');
-      if (!list) return;
-      if (consumables.length === 0) {
-        list.innerHTML = '<div>No consumables. Trade a brainrot to get one!</div>';
-        return;
-      }
-      list.innerHTML = '';
-      consumables.forEach((c, i) => {
-        list.innerHTML += `<div>${c.name} <button class='use-btn' onclick="useConsumable(${i})">Use</button></div>`;
-      });
+      function updateConsumablesList() {
+        const list = document.getElementById("consumablesList");
+        if (!list) return;
+        if (consumables.length === 0) {
+          list.innerHTML =
+            "<div>No consumables. Trade a brainrot to get one!</div>";
+          return;
+        }
+        list.innerHTML = "";
+        consumables.forEach((c, i) => {
+          list.innerHTML += `<div>${c.name} <button class='use-btn' onclick="useConsumable(${i})">Use</button></div>`;
+        });
         // Show active boosts with time left
-        const boostsEl = document.getElementById('activeBoostsList');
-        let boostsHtml = '';
+        const boostsEl = document.getElementById("activeBoostsList");
+        let boostsHtml = "";
         const now = Date.now();
         if (window.activeLuckBoosts && window.activeLuckBoosts.length > 0) {
-          boostsHtml += '<b>Active Luck Boosts:</b>';
-          window.activeLuckBoosts.filter(b => b.end > now).forEach((b, idx) => {
-            const secs = Math.max(0, Math.ceil((b.end - now)/1000));
-            boostsHtml += `<div>${b.value}x Luck - ${secs}s left</div>`;
-          });
+          boostsHtml += "<b>Active Luck Boosts:</b>";
+          window.activeLuckBoosts
+            .filter((b) => b.end > now)
+            .forEach((b, idx) => {
+              const secs = Math.max(0, Math.ceil((b.end - now) / 1000));
+              boostsHtml += `<div>${b.value}x Luck - ${secs}s left</div>`;
+            });
         }
         if (window.activeSpeedBoosts && window.activeSpeedBoosts.length > 0) {
-          boostsHtml += '<b>Active Roll Speed Boosts:</b>';
-          window.activeSpeedBoosts.filter(b => b.end > now).forEach((b, idx) => {
-            const secs = Math.max(0, Math.ceil((b.end - now)/1000));
-            boostsHtml += `<div>${b.value < 0 ? '-' : '+'}${Math.abs(b.value)}s - ${secs}s left</div>`;
-          });
+          boostsHtml += "<b>Active Roll Speed Boosts:</b>";
+          window.activeSpeedBoosts
+            .filter((b) => b.end > now)
+            .forEach((b, idx) => {
+              const secs = Math.max(0, Math.ceil((b.end - now) / 1000));
+              boostsHtml += `<div>${b.value < 0 ? "-" : "+"}${Math.abs(
+                b.value
+              )}s - ${secs}s left</div>`;
+            });
         }
-        boostsEl.innerHTML = boostsHtml || '<i>No active boosts</i>';
-    }
-
-    function updateTradeBrainrotSelect() {
-      const select = document.getElementById('tradeBrainrotSelect');
-      if (!select) return;
-      select.innerHTML = '';
-      inventory.forEach((item, idx) => {
-        // Extract rarity from item HTML
-        const match = item.match(/class="(rarity-[a-zA-Z]+)">([A-Z?]+)/);
-        const rarity = match ? match[2] : 'COMMON';
-        select.innerHTML += `<option value="${idx}">${item.replace(/<br>.*/, '')} (${rarity})</option>`;
-      });
-    }
-
-    document.getElementById('tradeConsumableForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const select = document.getElementById('tradeBrainrotSelect');
-      const msg = document.getElementById('tradeConsumableMsg');
-      if (!select.value) { msg.innerText = 'Select a brainrot to trade.'; return; }
-      const idx = parseInt(select.value);
-      const item = inventory[idx];
-      // Extract rarity
-      const match = item.match(/class="(rarity-[a-zA-Z]+)">([A-Z?]+)/);
-      const rarity = match ? match[2] : 'COMMON';
-      const consumable = rarityToConsumable(rarity);
-      consumables.push(consumable);
-      inventory.splice(idx, 1);
-      localStorage.setItem('consumables', JSON.stringify(consumables));
-      localStorage.setItem('inventory', JSON.stringify(inventory));
-      updateInventory();
-      updateConsumablesList();
-      updateTradeBrainrotSelect();
-      msg.innerText = `Traded for: ${consumable.name}`;
-    });
-
-    function useConsumable(idx) {
-      const c = consumables[idx];
-      if (!c) return;
-      if (c.type === 'luck') {
-        // Luck can stack
-        if (!window.activeLuckBoosts) window.activeLuckBoosts = [];
-        window.activeLuckBoosts.push({value: c.value, duration: c.duration, end: Date.now() + c.duration * 1000});
-        showLuckIndicator(getTotalLuckBoost(), c.duration);
-        setTimeout(() => {
-          window.activeLuckBoosts = window.activeLuckBoosts.filter(b => b.end > Date.now());
-        }, c.duration * 1000);
-      } else if (c.type === 'speed') {
-        // Roll speed boost, clamp to 0.15s minimum
-        if (!window.activeSpeedBoosts) window.activeSpeedBoosts = [];
-        window.activeSpeedBoosts.push({value: c.value, duration: c.duration, end: Date.now() + c.duration * 1000});
-        setTimeout(() => {
-          window.activeSpeedBoosts = window.activeSpeedBoosts.filter(b => b.end > Date.now());
-        }, c.duration * 1000);
+        boostsEl.innerHTML = boostsHtml || "<i>No active boosts</i>";
       }
-      consumables.splice(idx, 1);
-      localStorage.setItem('consumables', JSON.stringify(consumables));
-      updateConsumablesList();
+
+      function updateTradeBrainrotSelect() {
+        const select = document.getElementById("tradeBrainrotSelect");
+        if (!select) return;
+        select.innerHTML = "";
+        inventory.forEach((item, idx) => {
+          // Extract rarity from item HTML
+          const match = item.match(/class="(rarity-[a-zA-Z]+)">([A-Z?]+)/);
+          const rarity = match ? match[2] : "COMMON";
+          select.innerHTML += `<option value="${idx}">${item.replace(
+            /<br>.*/,
+            ""
+          )} (${rarity})</option>`;
+        });
+      }
+
+      document
+        .getElementById("tradeConsumableForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const select = document.getElementById("tradeBrainrotSelect");
+          const msg = document.getElementById("tradeConsumableMsg");
+          if (!select.value) {
+            msg.innerText = "Select a brainrot to trade.";
+            return;
+          }
+          const idx = parseInt(select.value);
+          const item = inventory[idx];
+          // Extract rarity
+          const match = item.match(/class="(rarity-[a-zA-Z]+)">([A-Z?]+)/);
+          const rarity = match ? match[2] : "COMMON";
+          const consumable = rarityToConsumable(rarity);
+          consumables.push(consumable);
+          inventory.splice(idx, 1);
+          localStorage.setItem("consumables", JSON.stringify(consumables));
+          localStorage.setItem("inventory", JSON.stringify(inventory));
+          updateInventory();
+          updateConsumablesList();
+          updateTradeBrainrotSelect();
+          msg.innerText = `Traded for: ${consumable.name}`;
+        });
+
+      function useConsumable(idx) {
+        const c = consumables[idx];
+        if (!c) return;
+        if (c.type === "luck") {
+          // Luck can stack
+          if (!window.activeLuckBoosts) window.activeLuckBoosts = [];
+          window.activeLuckBoosts.push({
+            value: c.value,
+            duration: c.duration,
+            end: Date.now() + c.duration * 1000,
+          });
+          showLuckIndicator(getTotalLuckBoost(), c.duration);
+          setTimeout(() => {
+            window.activeLuckBoosts = window.activeLuckBoosts.filter(
+              (b) => b.end > Date.now()
+            );
+          }, c.duration * 1000);
+        } else if (c.type === "speed") {
+          // Roll speed boost, clamp to 0.15s minimum
+          if (!window.activeSpeedBoosts) window.activeSpeedBoosts = [];
+          window.activeSpeedBoosts.push({
+            value: c.value,
+            duration: c.duration,
+            end: Date.now() + c.duration * 1000,
+          });
+          setTimeout(() => {
+            window.activeSpeedBoosts = window.activeSpeedBoosts.filter(
+              (b) => b.end > Date.now()
+            );
+          }, c.duration * 1000);
+        }
+        consumables.splice(idx, 1);
+        localStorage.setItem("consumables", JSON.stringify(consumables));
+        updateConsumablesList();
         // Start interval to update boost times
         if (!window.boostsInterval) {
           window.boostsInterval = setInterval(updateConsumablesList, 1000);
         }
-    function getTotalLuckBoost() {
-      if (!window.activeLuckBoosts) return 1;
-      // Only count active boosts
-    if (!window.activeLuckBoosts) return 1;
-    window.activeLuckBoosts = window.activeLuckBoosts.filter(b => b.end > Date.now());
-    return window.activeLuckBoosts.reduce((acc, b) => acc * b.value, 1);
-    }
+      } // <-- This closes useConsumable
 
-    function getTotalSpeedBoost() {
-      if (!window.activeSpeedBoosts) return 0;
-      // Only count active boosts
-    if (!window.activeSpeedBoosts) return 0;
-    window.activeSpeedBoosts = window.activeSpeedBoosts.filter(b => b.end > Date.now());
-    return window.activeSpeedBoosts.reduce((acc, b) => acc + b.value, 0);
-    }
+      function getTotalLuckBoost() {
+        if (!window.activeLuckBoosts) return 1;
+        // Only count active boosts
+        window.activeLuckBoosts = window.activeLuckBoosts.filter(
+          (b) => b.end > Date.now()
+        );
+        return window.activeLuckBoosts.reduce((acc, b) => acc * b.value, 1);
+      }
 
-    // Patch roll cooldown calculation to clamp at 0.15s and apply speed boosts
-    const origComputeRollCooldownSeconds = computeRollCooldownSeconds;
-    computeRollCooldownSeconds = function() {
-      let base = origComputeRollCooldownSeconds ? origComputeRollCooldownSeconds() : 1.0;
-      base += getTotalSpeedBoost();
-      return Math.max(0.15, parseFloat(base.toFixed(3)));
-    }
-    }
+      function getTotalSpeedBoost() {
+        if (!window.activeSpeedBoosts) return 0;
+        // Only count active boosts
+        window.activeSpeedBoosts = window.activeSpeedBoosts.filter(
+          (b) => b.end > Date.now()
+        );
+        return window.activeSpeedBoosts.reduce((acc, b) => acc + b.value, 0);
+      }
 
-    // Update UI on sidebar open
-    document.getElementById('consumablesTopbar').addEventListener('click', function() {
-      updateConsumablesList();
-      updateTradeBrainrotSelect();
-      document.getElementById('tradeConsumableMsg').innerText = '';
-    });
+      // Patch roll cooldown calculation to clamp at 0.15s and apply speed boosts
+      const origComputeRollCooldownSeconds = computeRollCooldownSeconds;
+      computeRollCooldownSeconds = function () {
+        let base = origComputeRollCooldownSeconds
+          ? origComputeRollCooldownSeconds()
+          : 1.0;
+        base += getTotalSpeedBoost();
+        return Math.max(0.15, parseFloat(base.toFixed(3)));
+      };
+
+      // Update UI on sidebar open
+      document
+        .getElementById("consumablesTopbar")
+        .addEventListener("click", function () {
+          updateConsumablesList();
+          updateTradeBrainrotSelect();
+          document.getElementById("tradeConsumableMsg").innerText = "";
+        });
 
       // ======= CORE HELPERS =======
       function computeRollCooldownSeconds() {
@@ -2145,7 +2503,7 @@
           document.getElementById("stopOnGoodDropsSwitch").checked = true;
           // Reset roll cooldown after rebirth/reset
           lastRollTs = 0;
-          const btn = document.getElementById('RollButton');
+          const btn = document.getElementById("RollButton");
           if (btn) btn.disabled = false;
 
           updateInventory();
@@ -2210,167 +2568,245 @@
 
       // ======= STATISTICS PANEL LOGIC =======
 
-    let leaderboardInterval = null;
-    document.getElementById('leaderboardsTopbar').addEventListener('click', function() {
-      updateLeaderboardsPanel();
-      // Start real-time update
-      if (leaderboardInterval) clearInterval(leaderboardInterval);
-      leaderboardInterval = setInterval(() => {
-        if (document.getElementById('leaderboardsPanel').classList.contains('active')) {
+      let leaderboardInterval = null;
+      document
+        .getElementById("leaderboardsTopbar")
+        .addEventListener("click", function () {
           updateLeaderboardsPanel();
-        } else {
-          clearInterval(leaderboardInterval);
-        }
-      }, 2000);
-    });
+          // Start real-time update
+          if (leaderboardInterval) clearInterval(leaderboardInterval);
+          leaderboardInterval = setInterval(() => {
+            if (
+              document
+                .getElementById("leaderboardsPanel")
+                .classList.contains("active")
+            ) {
+              updateLeaderboardsPanel();
+            } else {
+              clearInterval(leaderboardInterval);
+            }
+          }, 2000);
+        });
 
-    // --- Leaderboards logic ---
-    // We'll use localStorage for demo, but in production use Firebase for global leaderboards
-    // Manual roll clicks leaderboard (store as array of {name, rolls, week})
-    // All rolls leaderboard (store as array of {name, rolls, week})
-    // For now, use user.displayName or user.email as name
-    function getCurrentWeek() {
-      // Returns a string like '2025-W37'
-      const now = new Date();
-      const year = now.getFullYear();
-      const week = Math.ceil((((now - new Date(year,0,1)) / 86400000) + new Date(year,0,1).getDay()+1)/7);
-      return `${year}-W${week}`;
-    }
+      // --- Leaderboards logic ---
+      // We'll use localStorage for demo, but in production use Firebase for global leaderboards
+      // Manual roll clicks leaderboard (store as array of {name, rolls, week})
+      // All rolls leaderboard (store as array of {name, rolls, week})
+      // For now, use user.displayName or user.email as name
+      function getCurrentWeek() {
+        // Returns a string like '2025-W37'
+        const now = new Date();
+        const year = now.getFullYear();
+        const week = Math.ceil(
+          ((now - new Date(year, 0, 1)) / 86400000 +
+            new Date(year, 0, 1).getDay() +
+            1) /
+            7
+        );
+        return `${year}-W${week}`;
+      }
 
-    function getNextAwardTime() {
-      // Returns a Date object for next Sunday 11:59 PM
-      const now = new Date();
-      const day = now.getDay(); // 0=Sunday
-      const diff = (7 - day) % 7; // days until next Sunday
-      let nextSunday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff, 23, 59, 0, 0);
-      if (now > nextSunday) nextSunday.setDate(nextSunday.getDate() + 7);
-      return nextSunday;
-    }
+      function getNextAwardTime() {
+        // Returns a Date object for next Sunday 11:59 PM
+        const now = new Date();
+        const day = now.getDay(); // 0=Sunday
+        const diff = (7 - day) % 7; // days until next Sunday
+        let nextSunday = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() + diff,
+          23,
+          59,
+          0,
+          0
+        );
+        if (now > nextSunday) nextSunday.setDate(nextSunday.getDate() + 7);
+        return nextSunday;
+      }
 
-    // Award Dragon Canneoli to weekly winner at Sunday 11:59 PM
-    setInterval(function() {
-      const now = new Date();
-      const week = getCurrentWeek();
-      const lastAwardedWeek = localStorage.getItem('lastAwardedWeek');
-      const nextAward = getNextAwardTime();
-      // If it's Sunday 11:59 PM or later and not already awarded this week
-      if (now >= nextAward && lastAwardedWeek !== week) {
-        // Award to manual and all rolls winners
-        const manual = JSON.parse(localStorage.getItem('manualRollsLeaderboard')||'[]');
-        const all = JSON.parse(localStorage.getItem('allRollsLeaderboard')||'[]');
-        const manualWinner = manual.filter(e=>e.week===week)[0];
-        const allWinner = all.filter(e=>e.week===week)[0];
-        // Only award if not already in inventory
-        if (manualWinner && localStorage.getItem('username') === manualWinner.name) {
-          let inv = JSON.parse(localStorage.getItem('inventory')||'[]');
-          if (!inv.includes('Dragon Canneoli')) {
-            inv.push('Dragon Canneoli');
-            localStorage.setItem('inventory', JSON.stringify(inv));
+      // Award Dragon Canneoli to weekly winner at Sunday 11:59 PM
+      setInterval(function () {
+        const now = new Date();
+        const week = getCurrentWeek();
+        const lastAwardedWeek = localStorage.getItem("lastAwardedWeek");
+        const nextAward = getNextAwardTime();
+        // If it's Sunday 11:59 PM or later and not already awarded this week
+        if (now >= nextAward && lastAwardedWeek !== week) {
+          // Award to manual and all rolls winners
+          const manual = JSON.parse(
+            localStorage.getItem("manualRollsLeaderboard") || "[]"
+          );
+          const all = JSON.parse(
+            localStorage.getItem("allRollsLeaderboard") || "[]"
+          );
+          const manualWinner = manual.filter((e) => e.week === week)[0];
+          const allWinner = all.filter((e) => e.week === week)[0];
+          // Only award if not already in inventory
+          if (
+            manualWinner &&
+            localStorage.getItem("username") === manualWinner.name
+          ) {
+            let inv = JSON.parse(localStorage.getItem("inventory") || "[]");
+            if (!inv.includes("Dragon Canneoli")) {
+              inv.push("Dragon Canneoli");
+              localStorage.setItem("inventory", JSON.stringify(inv));
+            }
           }
-        }
-        if (allWinner && localStorage.getItem('username') === allWinner.name) {
-          let inv = JSON.parse(localStorage.getItem('inventory')||'[]');
-          if (!inv.includes('Dragon Canneoli')) {
-            inv.push('Dragon Canneoli');
-            localStorage.setItem('inventory', JSON.stringify(inv));
+          if (
+            allWinner &&
+            localStorage.getItem("username") === allWinner.name
+          ) {
+            let inv = JSON.parse(localStorage.getItem("inventory") || "[]");
+            if (!inv.includes("Dragon Canneoli")) {
+              inv.push("Dragon Canneoli");
+              localStorage.setItem("inventory", JSON.stringify(inv));
+            }
           }
+          localStorage.setItem("lastAwardedWeek", week);
         }
-        localStorage.setItem('lastAwardedWeek', week);
-      }
-    }, 60000); // check every minute
+      }, 60000); // check every minute
 
-    function getTimeLeftString(dt) {
-      const now = new Date();
-      let diff = Math.max(0, dt - now);
-      const days = Math.floor(diff / (1000*60*60*24));
-      diff -= days * (1000*60*60*24);
-      const hours = Math.floor(diff / (1000*60*60));
-      diff -= hours * (1000*60*60);
-      const mins = Math.floor(diff / (1000*60));
-      diff -= mins * (1000*60);
-      const secs = Math.floor(diff / 1000);
-      return `${days}d ${hours}h ${mins}m ${secs}s`;
-    }
+      function getTimeLeftString(dt) {
+        const now = new Date();
+        let diff = Math.max(0, dt - now);
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        diff -= days * (1000 * 60 * 60 * 24);
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        diff -= hours * (1000 * 60 * 60);
+        const mins = Math.floor(diff / (1000 * 60));
+        diff -= mins * (1000 * 60);
+        const secs = Math.floor(diff / 1000);
+        return `${days}d ${hours}h ${mins}m ${secs}s`;
+      }
 
-    function updateLeaderboardsPanel() {
-      // Get leaderboards from localStorage (simulate global for demo)
-      const manual = JSON.parse(localStorage.getItem('manualRollsLeaderboard')||'[]');
-      const all = JSON.parse(localStorage.getItem('allRollsLeaderboard')||'[]');
-      const week = getCurrentWeek();
-      // Sort descending
-      manual.sort((a,b)=>b.rolls-a.rolls);
-      all.sort((a,b)=>b.rolls-a.rolls);
-      let html = `<h3>Manual Roll Clicks (This Week)</h3><ol>`;
-      manual.filter(e=>e.week===week).slice(0,10).forEach((e,i)=>{
-        html += `<li>${e.name}: ${e.rolls}</li>`;
-      });
-      html += `</ol><h3>All Rolls (This Week)</h3><ol>`;
-      all.filter(e=>e.week===week).slice(0,10).forEach((e,i)=>{
-        html += `<li>${e.name}: ${e.rolls}</li>`;
-      });
-      html += `</ol>`;
-      // Show weekly winner for each
-      if (manual.length>0) {
-        const top = manual.filter(e=>e.week===week)[0];
-        if (top) html += `<div style='margin-top:16px;color:gold;font-weight:bold;'>Manual Roll Winner: ${top.name} (awarded Dragon Canneoli)</div>`;
+      function updateLeaderboardsPanel() {
+        // Get leaderboards from localStorage (simulate global for demo)
+        const manual = JSON.parse(
+          localStorage.getItem("manualRollsLeaderboard") || "[]"
+        );
+        const all = JSON.parse(
+          localStorage.getItem("allRollsLeaderboard") || "[]"
+        );
+        const week = getCurrentWeek();
+        // Sort descending
+        manual.sort((a, b) => b.rolls - a.rolls);
+        all.sort((a, b) => b.rolls - a.rolls);
+        let html = `<h3>Manual Roll Clicks (This Week)</h3><ol id="manualLeaderboardList">`;
+        const user = auth && auth.currentUser;
+        const manualWeek = manual.filter((e) => e.week === week);
+        let userIndex = -1;
+        if (user)
+          userIndex = manualWeek.findIndex(
+            (e) => e.name === (user.displayName || user.email)
+          );
+        manualWeek.slice(0, 10).forEach((e, i) => {
+          const highlight =
+            user && e.name === (user.displayName || user.email)
+              ? ' style="background: #ffe066; color: #222; font-weight: bold;"'
+              : "";
+          html += `<li${highlight}>${i + 1}. ${e.name}: ${e.rolls}</li>`;
+        });
+        // If user not in top 10 but on leaderboard, show them at the bottom
+        if (user && userIndex >= 10) {
+          const e = manualWeek[userIndex];
+          html += `<li style="background: #ffe066; color: #222; font-weight: bold;">${
+            userIndex + 1
+          }. ${e.name}: ${e.rolls}</li>`;
+        }
+        html += `</ol><h3>All Rolls (This Week)</h3><ol id="allLeaderboardList">`;
+        const allWeek = all.filter((e) => e.week === week);
+        let userIndexAll = -1;
+        if (user)
+          userIndexAll = allWeek.findIndex(
+            (e) => e.name === (user.displayName || user.email)
+          );
+        allWeek.slice(0, 10).forEach((e, i) => {
+          const highlight =
+            user && e.name === (user.displayName || user.email)
+              ? ' style="background: #ffe066; color: #222; font-weight: bold;"'
+              : "";
+          html += `<li${highlight}>${i + 1}. ${e.name}: ${e.rolls}</li>`;
+        });
+        if (user && userIndexAll >= 10) {
+          const e = allWeek[userIndexAll];
+          html += `<li style="background: #ffe066; color: #222; font-weight: bold;">${
+            userIndexAll + 1
+          }. ${e.name}: ${e.rolls}</li>`;
+        }
+        html += `</ol>`;
+        // Show weekly winner for each
+        if (manual.length > 0) {
+          const top = manual.filter((e) => e.week === week)[0];
+          if (top)
+            html += `<div style='margin-top:16px;color:gold;font-weight:bold;'>Manual Roll Winner: ${top.name} (awarded Dragon Canneoli)</div>`;
+        }
+        if (all.length > 0) {
+          const top = all.filter((e) => e.week === week)[0];
+          if (top)
+            html += `<div style='margin-top:8px;color:gold;font-weight:bold;'>All Rolls Winner: ${top.name} (awarded Dragon Canneoli)</div>`;
+        }
+        // Add timer for next award
+        const nextAward = getNextAwardTime();
+        html += `<div style='margin-top:18px;font-size:1.1em;color:#21a9c4;'>Next Dragon Canneoli awarded in: <span id='awardTimer'></span> (Sunday 11:59 PM)</div>`;
+        document.getElementById("leaderboardsContent").innerHTML = html;
+        // Start/update timer
+        function updateTimer() {
+          document.getElementById("awardTimer").innerText =
+            getTimeLeftString(nextAward);
+        }
+        updateTimer();
+        if (window.awardTimerInterval) clearInterval(window.awardTimerInterval);
+        window.awardTimerInterval = setInterval(updateTimer, 1000);
       }
-      if (all.length>0) {
-        const top = all.filter(e=>e.week===week)[0];
-        if (top) html += `<div style='margin-top:8px;color:gold;font-weight:bold;'>All Rolls Winner: ${top.name} (awarded Dragon Canneoli)</div>`;
-      }
-      // Add timer for next award
-      const nextAward = getNextAwardTime();
-      html += `<div style='margin-top:18px;font-size:1.1em;color:#21a9c4;'>Next Dragon Canneoli awarded in: <span id='awardTimer'></span> (Sunday 11:59 PM)</div>`;
-      document.getElementById('leaderboardsContent').innerHTML = html;
-      // Start/update timer
-      function updateTimer() {
-        document.getElementById('awardTimer').innerText = getTimeLeftString(nextAward);
-      }
-      updateTimer();
-      if (window.awardTimerInterval) clearInterval(window.awardTimerInterval);
-      window.awardTimerInterval = setInterval(updateTimer, 1000);
-    }
 
-    // Track manual and all rolls
-    let manualRollClicks = parseInt(localStorage.getItem('manualRollClicks')||'0');
-    function recordManualRoll() {
-      manualRollClicks++;
-      localStorage.setItem('manualRollClicks', manualRollClicks);
-      // Update leaderboard
-      const week = getCurrentWeek();
-      let arr = JSON.parse(localStorage.getItem('manualRollsLeaderboard')||'[]');
-      let name = (user && (user.displayName||user.email)) || 'Anonymous';
-      let entry = arr.find(e=>e.name===name && e.week===week);
-      if (entry) entry.rolls = manualRollClicks;
-      else arr.push({name,rolls:manualRollClicks,week});
-      localStorage.setItem('manualRollsLeaderboard', JSON.stringify(arr));
-    }
-    // All rolls
-    let allRollsCount = parseInt(localStorage.getItem('allRollsCount')||'0');
-    function recordAllRoll() {
-      allRollsCount++;
-      localStorage.setItem('allRollsCount', allRollsCount);
-      // Update leaderboard
-      const week = getCurrentWeek();
-      let arr = JSON.parse(localStorage.getItem('allRollsLeaderboard')||'[]');
-      let name = (user && (user.displayName||user.email)) || 'Anonymous';
-      let entry = arr.find(e=>e.name===name && e.week===week);
-      if (entry) entry.rolls = allRollsCount;
-      else arr.push({name,rolls:allRollsCount,week});
-      localStorage.setItem('allRollsLeaderboard', JSON.stringify(arr));
-    }
-    // Patch rollClicked and getRandomBrainrot to record rolls
-    const origRollClicked = rollClicked;
-    rollClicked = function() {
-      recordManualRoll();
-      recordAllRoll();
-      origRollClicked();
-    }
-    const origGetRandomBrainrot = getRandomBrainrot;
-    getRandomBrainrot = function(isAuto) {
-      if (isAuto) recordAllRoll();
-      origGetRandomBrainrot(isAuto);
-    }
+      // Track manual and all rolls
+      let manualRollClicks = parseInt(
+        localStorage.getItem("manualRollClicks") || "0"
+      );
+      function recordManualRoll() {
+        manualRollClicks++;
+        localStorage.setItem("manualRollClicks", manualRollClicks);
+        // Update leaderboard
+        const week = getCurrentWeek();
+        let arr = JSON.parse(
+          localStorage.getItem("manualRollsLeaderboard") || "[]"
+        );
+        let name = (user && (user.displayName || user.email)) || "Anonymous";
+        let entry = arr.find((e) => e.name === name && e.week === week);
+        if (entry) entry.rolls = manualRollClicks;
+        else arr.push({ name, rolls: manualRollClicks, week });
+        localStorage.setItem("manualRollsLeaderboard", JSON.stringify(arr));
+      }
+      // All rolls
+      let allRollsCount = parseInt(
+        localStorage.getItem("allRollsCount") || "0"
+      );
+      function recordAllRoll() {
+        allRollsCount++;
+        localStorage.setItem("allRollsCount", allRollsCount);
+        // Update leaderboard
+        const week = getCurrentWeek();
+        let arr = JSON.parse(
+          localStorage.getItem("allRollsLeaderboard") || "[]"
+        );
+        let name = (user && (user.displayName || user.email)) || "Anonymous";
+        let entry = arr.find((e) => e.name === name && e.week === week);
+        if (entry) entry.rolls = allRollsCount;
+        else arr.push({ name, rolls: allRollsCount, week });
+        localStorage.setItem("allRollsLeaderboard", JSON.stringify(arr));
+      }
+      // Patch rollClicked and getRandomBrainrot to record rolls
+      const origRollClicked = rollClicked;
+      rollClicked = function () {
+        recordManualRoll();
+        recordAllRoll();
+        origRollClicked();
+      };
+      const origGetRandomBrainrot = getRandomBrainrot;
+      getRandomBrainrot = function (isAuto) {
+        if (isAuto) recordAllRoll();
+        origGetRandomBrainrot(isAuto);
+      };
 
       // Make startGame globally accessible and fix event listener
       window.startGame = function () {
@@ -2415,662 +2851,743 @@
       updateInventory();
       updateQuestList();
       updateRebirthPanel();
-  // ensure roll button is enabled and respects cooldown from now on
-  document.getElementById("RollButton").disabled = false;
-  lastRollTs = 0; // fix: always reset cooldown after rebirth panel update
+      // ensure roll button is enabled and respects cooldown from now on
+      document.getElementById("RollButton").disabled = false;
+      lastRollTs = 0; // fix: always reset cooldown after rebirth panel update
     </script>
     <script type="module">
-      // New admin config
-      const ADMIN_EMAILS = [
-        "alfonsoovilchez52@gmail.com",
-        "imabosslikerickross13@gmail.com",
-        "work2013@myyahoo.com",
-      ];
-      const ADMIN_PREFIXES = {
-        "alfonsoovilchez52@gmail.com": "Alfonso:",
-        "imabosslikerickross13@gmail.com": "Eldrick:",
-        "work2013@myyahoo.com": "Adam:",
-      };
-      // Password management logic
-      const viewPasswordBtn = document.getElementById("viewPasswordBtn");
-      const passwordDisplay = document.getElementById("passwordDisplay");
-      const changePasswordBtn = document.getElementById("changePasswordBtn");
-      const changePasswordForm = document.getElementById("changePasswordForm");
-      const newPasswordInput = document.getElementById("newPasswordInput");
-      const sendVerificationCodeBtn = document.getElementById(
-        "sendVerificationCodeBtn"
-      );
-      const verificationCodeInput = document.getElementById(
-        "verificationCodeInput"
-      );
-      const submitPasswordChangeBtn = document.getElementById(
-        "submitPasswordChangeBtn"
-      );
-      const passwordManagerMsg = document.getElementById("passwordManagerMsg");
+            // Firebase imports must be at the top of the module
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+            import {
+              getDatabase,
+              ref,
+              set,
+              onValue,
+              push,
+              serverTimestamp
+            } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+            import {
+              getAuth,
+              signInWithPopup,
+              GoogleAuthProvider,
+              onAuthStateChanged,
+              signInWithEmailAndPassword,
+              createUserWithEmailAndPassword
+            } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-      let verificationId = null;
-
-      viewPasswordBtn.addEventListener("click", async () => {
-        passwordManagerMsg.innerText = "";
-        const user = auth.currentUser;
-        if (!user) {
-          passwordDisplay.innerText = "Not signed in.";
-          return;
-        }
-        // For security, you cannot view the password directly. Show info instead.
-        passwordDisplay.innerText =
-          "Your password is securely stored and cannot be viewed. You may change it below.";
-      });
-
-      changePasswordBtn.addEventListener("click", () => {
-        changePasswordForm.style.display = "block";
-        passwordManagerMsg.innerText = "";
-      });
-
-      sendVerificationCodeBtn.addEventListener("click", async () => {
-        passwordManagerMsg.innerText = "";
-        const user = auth.currentUser;
-        if (!user) {
-          passwordManagerMsg.innerText = "Not signed in.";
-          return;
-        }
-        // Only allow verification for email/password users
-        if (user.providerData[0].providerId === "password") {
-          try {
-            await user.sendEmailVerification();
-            passwordManagerMsg.innerText =
-              "Verification code sent to your email. Please check your inbox.";
-          } catch (err) {
-            passwordManagerMsg.innerText = err.message;
-          }
-        } else {
-          passwordManagerMsg.innerText =
-            "Google accounts are already verified.";
-        }
-      });
-
-      submitPasswordChangeBtn.addEventListener("click", async () => {
-        passwordManagerMsg.innerText = "";
-        const user = auth.currentUser;
-        const newPassword = newPasswordInput.value;
-        const code = verificationCodeInput.value;
-        if (!user) {
-          passwordManagerMsg.innerText = "Not signed in.";
-          return;
-        }
-        if (!newPassword || !code) {
-          passwordManagerMsg.innerText =
-            "Enter new password and verification code.";
-          return;
-        }
-        // For demo: check if user is verified
-        await user.reload();
-        if (!user.emailVerified) {
-          passwordManagerMsg.innerText =
-            "Email not verified. Please verify your email first.";
-          return;
-        }
-        try {
-          await user.updatePassword(newPassword);
-          passwordManagerMsg.innerText = "Password changed successfully.";
-          changePasswordForm.style.display = "none";
-        } catch (err) {
-          passwordManagerMsg.innerText = err.message;
-        }
-      });
-      // === Firebase Admin Abuse Integration ===
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-      import {
-        getDatabase,
-        ref,
-        set,
-        onValue,
-        push,
-        serverTimestamp
-      } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-      import {
-        getAuth,
-        signInWithPopup,
-        GoogleAuthProvider,
-        onAuthStateChanged,
-        createUserWithEmailAndPassword,
-        signInWithEmailAndPassword,
-      } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-
-      // Firebase config
-      const firebaseConfig = {
-        apiKey: "AIzaSyAOxoFFZxc3_0P2mLlllLLri1YLpO17ZK4",
-        authDomain: "brainrot-rng-1d9a1.firebaseapp.com",
-        databaseURL: "https://brainrot-rng-1d9a1-default-rtdb.firebaseio.com",
-        projectId: "brainrot-rng-1d9a1",
-        storageBucket: "brainrot-rng-1d9a1.appspot.com",
-        messagingSenderId: "290999899912",
-        appId: "1:290999899912:web:c0ea8f16267b6db991febd",
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
-      const auth = getAuth(app);
-      const provider = new GoogleAuthProvider();
-
-      // Global message ref
-      const msgRef = ref(db, "globalMessage");
-
-      // Listen for updates
-      onValue(msgRef, (snap) => {
-        const msg = snap.val() || "";
-        const msgBox = document.getElementById("globalMessageBox");
-        document.getElementById("globalMessage").innerText = msg;
-        msgBox.style.display = msg ? "block" : "none";
-      });
-      // Remove global message button
-      document
-        .getElementById("removeGlobalMsgBtn")
-        .addEventListener("click", () => {
-          set(msgRef, "");
-        });
-
-        // ======= ADMIN PANEL POWERS =======
-    document.getElementById('unlockAutoRollBtn').onclick = function() {
-      autoRollUnlocked = true;
-      localStorage.setItem('autoRollUnlocked', 'true');
-      document.getElementById('AutoRollButton').classList.add('unlocked');
-      document.getElementById('adminTopbarMsg').innerText = 'Auto Roll unlocked!';
-    };
-
-    document.getElementById('getConsumableBtn').onclick = function() {
-      const c = rarityToConsumable('LEGENDARY');
-      consumables.push(c);
-      localStorage.setItem('consumables', JSON.stringify(consumables));
-      updateConsumablesList();
-      document.getElementById('adminTopbarMsg').innerText = 'Legendary consumable added!';
-    };
-
-    document.getElementById('giftConsumableForm').onsubmit = async function(e) {
-      e.preventDefault();
-      const email = document.getElementById('giftConsumableEmail').value.trim();
-      const type = document.getElementById('giftConsumableType').value;
-      if (!email || !type) return;
-      const c = rarityToConsumable(type);
-      try {
-        const db = getDatabase();
-        const userConsumableRef = ref(db, `userConsumable/${btoa(email)}`);
-        await set(userConsumableRef, { consumable: c, sender: user ? user.email : 'admin' });
-        document.getElementById('adminTopbarMsg').innerText = `Gifted ${c.name} to ${email}!`;
-      } catch (err) {
-        document.getElementById('adminTopbarMsg').innerText = err.message;
-      }
-    };
-
-    document.getElementById('giftLuckForm').onsubmit = async function(e) {
-      e.preventDefault();
-      const email = document.getElementById('giftLuckEmail').value.trim();
-      const mult = parseFloat(document.getElementById('giftLuckMultiplier').value);
-      const secs = parseInt(document.getElementById('giftLuckDuration').value);
-      if (!email || !mult || !secs) return;
-      try {
-        const db = getDatabase();
-        const userLuckRef = ref(db, `userLuck/${btoa(email)}`);
-        await set(userLuckRef, { multiplier: mult, duration: secs, sender: user ? user.email : 'admin' });
-        document.getElementById('adminTopbarMsg').innerText = `Gifted ${mult}x luck for ${secs}s to ${email}!`;
-      } catch (err) {
-        document.getElementById('adminTopbarMsg').innerText = err.message;
-      }
-    };
-
-    document.getElementById('unlockEverythingBtn').onclick = function() {
-      // Unlock all rebirths, brainrots, boosts, etc.
-      rebirths = 3;
-      localStorage.setItem('rebirths', rebirths);
-      inventory = messages.map(m => `${m.text}<br><span class="${m.class}">${m.rarity}</span>`);
-      localStorage.setItem('inventory', JSON.stringify(inventory));
-      autoRollUnlocked = true;
-      localStorage.setItem('autoRollUnlocked', 'true');
-      consumables = ['COMMON','UNCOMMON','RARE','EPIC','LEGENDARY','MYSTICAL','???'].map(rarityToConsumable);
-      localStorage.setItem('consumables', JSON.stringify(consumables));
-      updateInventory();
-      updateConsumablesList();
-      document.getElementById('AutoRollButton').classList.add('unlocked');
-      document.getElementById('adminTopbarMsg').innerText = 'Everything unlocked!';
-    };
-
-      // Send admin message
-      function sendMessage() {
-        const input = document.getElementById("msgInput");
-        const msg = input.value.trim();
-        const user = auth.currentUser;
-        if (msg && user && ADMIN_EMAILS.includes(user.email)) {
-          const prefix = ADMIN_PREFIXES[user.email] || "Admin:";
-          set(msgRef, `${prefix} ${msg}`);
-          input.value = "";
-        }
-      }
-
-      document.getElementById("sendBtn").addEventListener("click", sendMessage);
-      document.getElementById("msgInput").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendMessage();
-      });
-      // Google Sign-In wiring
-      const googleSignInBtn = document.getElementById("googleSignInBtn");
-      const googleSignInError = document.createElement("div");
-      googleSignInError.id = "googleSignInError";
-      googleSignInError.style.color = "red";
-      googleSignInBtn.parentNode.insertBefore(
-        googleSignInError,
-        googleSignInBtn.nextSibling
-      );
-      const loginStatus = document.getElementById("loginStatus");
-      const adminControls = document.getElementById("adminControls");
-
-      // Replace with your admin email
-      const ADMIN_EMAIL = "alfonsoovilchez52@gmail.com";
-
-      function updateLoginPanel(user) {
-        const removeMsgBtn = document.getElementById("removeGlobalMsgBtn");
-        if (user) {
-          console.log('[DEBUG] updateLoginPanel: user signed in:', user.email);
-          loginStatus.innerText = `Signed in as: ${user.displayName || user.email}`;
-          var adminPanelTopbar = document.getElementById("adminPanelTopbar");
-          if (ADMIN_EMAILS.includes(user.email)) {
-            console.log('[DEBUG] User is admin, forcing admin panel and topbar visible.');
-            adminControls.style.display = "block";
-            if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
-            var adminPanel = document.getElementById("adminPanel");
-            if (adminPanel) {
-              adminPanel.style.display = "block";
-              adminPanel.classList.add('active');
-              console.log('[DEBUG] adminPanel forced visible');
-            }
-            if (adminPanelTopbar) {
-              adminPanelTopbar.style.display = "inline-block";
-              adminPanelTopbar.classList.add('active');
-              console.log('[DEBUG] adminPanelTopbar forced visible');
-            }
-            window.closeAdminPanel = function () {
-              if (adminPanel) adminPanel.style.display = "none";
-              window.adminPanelClosed = true;
+            // New admin config
+            const ADMIN_EMAILS = [
+              "alfonsoovilchez52@gmail.com",
+              "imabosslikerickross13@gmail.com",
+              "work2013@myyahoo.com",
+            ];
+            const ADMIN_PREFIXES = {
+              "alfonsoovilchez52@gmail.com": "Alfonso:",
+              "imabosslikerickross13@gmail.com": "Eldrick:",
+              "work2013@myyahoo.com": "Adam:",
             };
-            if (["alfonsoovilchez52@gmail.com","imabosslikerickross13@gmail.com"].includes(user.email)) {
-              document.getElementById("luck2xBtn").style.display = "inline-block";
-              document.getElementById("luck3xBtn").style.display = "inline-block";
-              document.getElementById("luck4xBtn").style.display = "inline-block";
-            } else {
-              document.getElementById("luck2xBtn").style.display = "none";
-              document.getElementById("luck3xBtn").style.display = "none";
-              document.getElementById("luck4xBtn").style.display = "none";
-            }
-            // No need to toggle Give Brainrot form, always visible for admins
-            loginStatus.innerText += ` (Admin access: ${user.email})`;
-          } else {
-            console.log('[DEBUG] User is not admin, hiding admin panel and topbar.');
-            adminControls.style.display = "none";
-            if (removeMsgBtn) removeMsgBtn.style.display = "none";
-            if (adminPanelTopbar) adminPanelTopbar.style.display = "none";
-            document.getElementById("adminPanel").style.display = "none";
-          }
-      // ======= ADMIN CHAT LOGIC =======
-      
-      const adminChatRef = ref(db, "adminChat");
-      const adminChatBox = document.getElementById("adminChatBox");
-      const adminChatForm = document.getElementById("adminChatForm");
-      const adminChatInput = document.getElementById("adminChatInput");
+            // Password management logic
+            const viewPasswordBtn = document.getElementById("viewPasswordBtn");
+            const passwordDisplay = document.getElementById("passwordDisplay");
+            const changePasswordBtn = document.getElementById("changePasswordBtn");
+            const changePasswordForm = document.getElementById("changePasswordForm");
+            const newPasswordInput = document.getElementById("newPasswordInput");
+            const sendVerificationCodeBtn = document.getElementById(
+              "sendVerificationCodeBtn"
+            );
+            const verificationCodeInput = document.getElementById(
+              "verificationCodeInput"
+            );
+            const submitPasswordChangeBtn = document.getElementById(
+              "submitPasswordChangeBtn"
+            );
+            const passwordManagerMsg = document.getElementById("passwordManagerMsg");
 
-      // Listen for chat updates
-      onValue(adminChatRef, (snap) => {
-        try {
-          const val = snap.val() || {};
-          const messages = Object.values(val).sort((a,b)=>a.ts-b.ts);
-          let html = "";
-          messages.slice(-30).forEach(msg => {
-            html += `<div style='margin-bottom:4px;'><b style='color:#ffe066;'>${msg.sender}:</b> ${msg.text}</div>`;
-          });
-          adminChatBox.innerHTML = html;
-          adminChatBox.scrollTop = adminChatBox.scrollHeight;
-        } catch (err) {
-          adminChatBox.innerHTML = `<div style='color:red;'>Failed to load chat: ${err.message}</div>`;
-        }
-      });
+            let verificationId = null;
 
-      // Send chat message
-      adminChatForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const user = auth.currentUser;
-        if (!user || !ADMIN_EMAILS.includes(user.email)) {
-          alert("You must be an admin to send messages.");
-          return;
-        }
-        const sender = ADMIN_PREFIXES[user.email] ? ADMIN_PREFIXES[user.email].replace(':','') : user.email;
-        const text = adminChatInput.value.trim();
-        if (!text) return;
-        try {
-          await push(adminChatRef, { sender, text, ts: Date.now() });
-          adminChatInput.value = "";
-        } catch (err) {
-          alert("Failed to send chat message: " + err.message);
-        }
-      });
-        } else {
-          loginStatus.innerText = "Not signed in.";
-          adminControls.style.display = "none";
-          if (removeMsgBtn) removeMsgBtn.style.display = "none";
-          document.getElementById("adminPanelTopbar").style.display = "none";
-          document.getElementById("adminPanel").style.display = "none";
-        }
-      }
-
-      // Ensure admin topbar is shown for Alfonso on page load if logged in
-      window.addEventListener("DOMContentLoaded", () => {
-        const user = auth.currentUser;
-        if (user && user.email === ADMIN_EMAIL) {
-          document.getElementById("adminTopbar").style.display = "flex";
-        }
-      });
-
-      googleSignInBtn.addEventListener("click", async () => {
-        googleSignInError.innerText = "";
-        googleSignInBtn.disabled = true;
-        googleSignInBtn.innerText = "Signing in...";
-        try {
-          await signInWithPopup(auth, provider);
-        } catch (err) {
-          googleSignInError.innerText = "Google sign-in failed: " + err.message;
-        } finally {
-          googleSignInBtn.disabled = false;
-          googleSignInBtn.innerText = "Sign in with Google";
-        }
-      });
-
-
-      // === CLOUD SYNC ===
-      async function saveUserDataToCloud(user) {
-        if (!user) return;
-        const db = getDatabase();
-        const userKey = btoa(user.email);
-        const userRef = ref(db, `userData/${userKey}`);
-        const data = {
-          inventory,
-          quests,
-          rebirths,
-          totalRolls,
-          questsExclusive,
-          questsExclusiveCompleted,
-          questsSpeedBonus,
-          luckMultiplier
-        };
-        // ...existing code...
-      }
-
-// ...existing code...
-
-      // Save to cloud on key changes
-      function saveGameAndCloud() {
-        saveGame();
-        if (auth.currentUser) saveUserDataToCloud(auth.currentUser);
-      }
-      // Patch saveGame calls
-      window.saveGame = saveGameAndCloud;
-
-      // Email/password auth wiring
-      const emailAuthForm = document.getElementById("emailAuthForm");
-      const emailInput = document.getElementById("emailInput");
-      const passwordInput = document.getElementById("passwordInput");
-      const emailSignUpBtn = document.getElementById("emailSignUpBtn");
-      const emailLogInBtn = document.getElementById("emailLogInBtn");
-      const emailAuthError = document.getElementById("emailAuthError");
-
-      // Prevent form submit from refreshing page
-      emailAuthForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-      });
-
-      emailSignUpBtn.addEventListener("click", async () => {
-        emailAuthError.innerText = "";
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
-        if (!email || !password) return;
-        try {
-            await createUserWithEmailAndPassword(auth, email, password);
-            // Store for auto sign-in
-            localStorage.setItem('autoEmail', email);
-            localStorage.setItem('autoPassword', password);
-        } catch (err) {
-          emailAuthError.innerText = err.message;
-        }
-      });
-
-      emailLogInBtn.addEventListener("click", async () => {
-        emailAuthError.innerText = "";
-        emailLogInBtn.disabled = true;
-        emailLogInBtn.innerText = "Logging in...";
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
-        if (!email || !password) {
-          emailAuthError.innerText = "Please enter both email and password.";
-          emailLogInBtn.disabled = false;
-          emailLogInBtn.innerText = "Log In";
-          return;
-        }
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            // Store for auto sign-in
-            localStorage.setItem('autoEmail', email);
-            localStorage.setItem('autoPassword', password);
-          updateLoginPanel(auth.currentUser);
-        } catch (err) {
-          emailAuthError.innerText = err.message;
-        } finally {
-          emailLogInBtn.disabled = false;
-          emailLogInBtn.innerText = "Log In";
-        }
-      });
-
-      document
-        .getElementById("giveBrainrotForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const user = auth.currentUser;
-          const targetEmail = document.getElementById("targetEmailInput").value.trim();
-          const brainrotName = document.getElementById("brainrotInput").value.trim();
-          const msgSpan = document.getElementById("adminTopbarMsg");
-          if (!user || !ADMIN_EMAILS.includes(user.email)) {
-            msgSpan.innerText = "Only admins can give brainrot.";
-            return;
-          }
-          if (!targetEmail || !brainrotName) {
-            msgSpan.innerText = "Enter target Gmail and brainrot name.";
-            return;
-          }
-          // Remove brainrot from sender's inventory if present
-          let foundIdx = -1;
-          for (let i = 0; i < inventory.length; i++) {
-            if (inventory[i].includes(brainrotName)) {
-              foundIdx = i;
-              break;
-            }
-          }
-          if (foundIdx === -1) {
-            msgSpan.innerText = "You don't have that brainrot in your inventory.";
-            return;
-          }
-          const brainrotToGive = inventory[foundIdx];
-          inventory.splice(foundIdx, 1);
-          localStorage.setItem('inventory', JSON.stringify(inventory));
-          updateInventory();
-          // Write to a special path in Firebase for the target user, include sender info
-          try {
-            const db = getDatabase();
-            const senderName = ADMIN_PREFIXES[user.email] ? ADMIN_PREFIXES[user.email].replace(':','') : user.email;
-            const userBrainrotRef = ref(db, `userBrainrot/${btoa(targetEmail)}`);
-            await set(userBrainrotRef, { brainrot: brainrotToGive, sender: senderName });
-            msgSpan.innerText = `Gave ${brainrotName} to ${targetEmail}!`;
-          } catch (err) {
-            msgSpan.innerText = err.message;
-          }
-        });
-      // Listen for gifted brainrots and add to inventory if received
-      // Listen for gifted consumables
-      if (typeof auth !== "undefined") {
-        onAuthStateChanged(auth, (user) => {
-          if (!user) return;
-          const userConsumableRef = ref(db, `userConsumable/${btoa(user.email)}`);
-          onValue(userConsumableRef, (snap) => {
-            const val = snap.val();
-            if (val && val.consumable) {
-              try {
-                consumables.push(val.consumable);
-                localStorage.setItem('consumables', JSON.stringify(consumables));
-                updateConsumablesList();
-                let msg = `You have been gifted a consumable (${val.consumable.name}) by ${val.sender}!`;
-                const note = document.createElement('div');
-                note.innerText = msg;
-                note.style.position = 'fixed';
-                note.style.bottom = '140px';
-                note.style.left = '50%';
-                note.style.transform = 'translateX(-50%)';
-                note.style.background = '#21a9c4';
-                note.style.color = 'white';
-                note.style.padding = '22px 44px';
-                note.style.borderRadius = '16px';
-                note.style.fontWeight = 'bold';
-                note.style.fontSize = '2rem';
-                note.style.boxShadow = '0 4px 24px #21a9c4';
-                note.style.zIndex = '9999';
-                document.body.appendChild(note);
-                setTimeout(() => note.remove(), 5000);
-                set(userConsumableRef, "");
-              } catch (err) {
-                console.error('Error receiving gifted consumable:', err);
-                const dbg = document.createElement('div');
-                dbg.innerText = 'DEBUG: Error receiving gifted consumable: ' + err.message;
-                dbg.style.position = 'fixed';
-                dbg.style.bottom = '200px';
-                dbg.style.left = '50%';
-                dbg.style.transform = 'translateX(-50%)';
-                dbg.style.background = 'red';
-                dbg.style.color = 'white';
-                dbg.style.padding = '10px 20px';
-                dbg.style.borderRadius = '8px';
-                dbg.style.fontWeight = 'bold';
-                dbg.style.zIndex = '9999';
-                document.body.appendChild(dbg);
-                setTimeout(() => dbg.remove(), 6000);
+            viewPasswordBtn.addEventListener("click", async () => {
+              passwordManagerMsg.innerText = "";
+              const user = auth.currentUser;
+              if (!user) {
+                passwordDisplay.innerText = "Not signed in.";
+                return;
               }
-            }
-          });
-          // Listen for gifted luck
-          const userLuckRef = ref(db, `userLuck/${btoa(user.email)}`);
-          onValue(userLuckRef, (snap) => {
-            const val = snap.val();
-            if (val && val.multiplier && val.duration) {
-              try {
-                showLuckIndicator(val.multiplier, val.duration);
-                let msg = `You have been gifted ${val.multiplier}x luck for ${val.duration}s by ${val.sender}!`;
-                const note = document.createElement('div');
-                note.innerText = msg;
-                note.style.position = 'fixed';
-                note.style.bottom = '200px';
-                note.style.left = '50%';
-                note.style.transform = 'translateX(-50%)';
-                note.style.background = '#21a9c4';
-                note.style.color = 'white';
-                note.style.padding = '22px 44px';
-                note.style.borderRadius = '16px';
-                note.style.fontWeight = 'bold';
-                note.style.fontSize = '2rem';
-                note.style.boxShadow = '0 4px 24px #21a9c4';
-                note.style.zIndex = '9999';
-                document.body.appendChild(note);
-                setTimeout(() => note.remove(), 5000);
-                set(userLuckRef, "");
-              } catch (err) {
-                console.error('Error receiving gifted luck:', err);
-                const dbg = document.createElement('div');
-                dbg.innerText = 'DEBUG: Error receiving gifted luck: ' + err.message;
-                dbg.style.position = 'fixed';
-                dbg.style.bottom = '260px';
-                dbg.style.left = '50%';
-                dbg.style.transform = 'translateX(-50%)';
-                dbg.style.background = 'red';
-                dbg.style.color = 'white';
-                dbg.style.padding = '10px 20px';
-                dbg.style.borderRadius = '8px';
-                dbg.style.fontWeight = 'bold';
-                dbg.style.zIndex = '9999';
-                document.body.appendChild(dbg);
-                setTimeout(() => dbg.remove(), 6000);
+              // For security, you cannot view the password directly. Show info instead.
+              passwordDisplay.innerText =
+                "Your password is securely stored and cannot be viewed. You may change it below.";
+            });
+
+            changePasswordBtn.addEventListener("click", () => {
+              changePasswordForm.style.display = "block";
+              passwordManagerMsg.innerText = "";
+            });
+
+            sendVerificationCodeBtn.addEventListener("click", async () => {
+              passwordManagerMsg.innerText = "";
+              const user = auth.currentUser;
+              if (!user) {
+                passwordManagerMsg.innerText = "Not signed in.";
+                return;
               }
-            }
-          });
-        });
-      }
-      if (typeof auth !== "undefined") {
-        onAuthStateChanged(auth, (user) => {
-          if (!user) return;
-          const userBrainrotRef = ref(db, `userBrainrot/${btoa(user.email)}`);
-          onValue(userBrainrotRef, (snap) => {
-            const val = snap.val();
-            if (val && val.brainrot) {
-              let alreadyInInv = inventory.includes(val.brainrot);
-              if (!alreadyInInv) {
-                inventory.push(val.brainrot);
-                updateInventory();
-                // Also update quests for the gifted brainrot
-                // Extract plain text and rarity from the gifted brainrot HTML
-                let tempDiv = document.createElement('div');
-                tempDiv.innerHTML = val.brainrot;
-                let itemText = tempDiv.textContent.split('\n')[0];
-                let raritySpan = tempDiv.querySelector('span');
-                let itemRarity = raritySpan ? raritySpan.textContent : '';
-                updateQuests(itemText, itemRarity);
-                saveGame();
+              // Only allow verification for email/password users
+              if (user.providerData[0].providerId === "password") {
+                try {
+                  await user.sendEmailVerification();
+                  passwordManagerMsg.innerText =
+                    "Verification code sent to your email. Please check your inbox.";
+                } catch (err) {
+                  passwordManagerMsg.innerText = err.message;
+                }
               } else {
-                // Still save in case other state changed
-                saveGame();
+                passwordManagerMsg.innerText =
+                  "Google accounts are already verified.";
               }
-              // Show message to user (always)
-              let msg = `You have been gifted ${val.brainrot.split('<br>')[0]} by ${val.sender}!`;
-              if (alreadyInInv) msg += ' (already in your inv)';
-              const note = document.createElement('div');
-              note.style.position = 'fixed';
-              note.style.bottom = '80px';
-              note.style.left = '50%';
-              note.style.transform = 'translateX(-50%)';
-              note.style.background = '#21a9c4';
-              note.style.color = 'white';
-              note.style.padding = '22px 44px';
-              note.style.borderRadius = '16px';
-              note.style.fontWeight = 'bold';
-              note.style.fontSize = '2rem';
-              note.style.boxShadow = '0 4px 24px #21a9c4';
-              note.style.zIndex = '9999';
-              note.style.display = 'flex';
-              note.style.alignItems = 'center';
-              note.style.gap = '24px';
-              // Message span
-              const msgSpan = document.createElement('span');
-              msgSpan.innerText = msg;
-              note.appendChild(msgSpan);
-              // Close button
-              const closeBtn = document.createElement('button');
-              closeBtn.innerText = '✖';
-              closeBtn.style.marginLeft = '16px';
-              closeBtn.style.background = 'transparent';
-              closeBtn.style.border = 'none';
-              closeBtn.style.color = 'white';
-              closeBtn.style.fontSize = '2rem';
-              closeBtn.style.cursor = 'pointer';
-              closeBtn.style.fontWeight = 'bold';
-              closeBtn.setAttribute('aria-label', 'Close notification');
-              closeBtn.onclick = () => note.remove();
-              note.appendChild(closeBtn);
-              document.body.appendChild(note);
-              setTimeout(() => note.remove(), 5000);
-              // Clear the gift after receiving
-              set(userBrainrotRef, "");
+            });
+
+            submitPasswordChangeBtn.addEventListener("click", async () => {
+              passwordManagerMsg.innerText = "";
+              const user = auth.currentUser;
+              const newPassword = newPasswordInput.value;
+              const code = verificationCodeInput.value;
+              if (!user) {
+                passwordManagerMsg.innerText = "Not signed in.";
+                return;
+              }
+              if (!newPassword || !code) {
+                passwordManagerMsg.innerText =
+                  "Enter new password and verification code.";
+                return;
+              }
+              // For demo: check if user is verified
+              await user.reload();
+              if (!user.emailVerified) {
+                passwordManagerMsg.innerText =
+                  "Email not verified. Please verify your email first.";
+                return;
+              }
+              try {
+                await user.updatePassword(newPassword);
+                passwordManagerMsg.innerText = "Password changed successfully.";
+                changePasswordForm.style.display = "none";
+              } catch (err) {
+                passwordManagerMsg.innerText = err.message;
+              }
+            });
+            // === Firebase Admin Abuse Integration ===
+
+
+          document.getElementById('giftConsumableForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('giftConsumableEmail').value.trim();
+            const type = document.getElementById('giftConsumableType').value;
+            if (!email || !type) return;
+            const c = rarityToConsumable(type);
+            try {
+              const db = getDatabase();
+              const userConsumableRef = ref(db, `userConsumable/${btoa(email)}`);
+              await set(userConsumableRef, { consumable: c, sender: user ? user.email : 'admin' });
+              document.getElementById('adminTopbarMsg').innerText = `Gifted ${c.name} to ${email}!`;
+            } catch (err) {
+              document.getElementById('adminTopbarMsg').innerText = err.message;
             }
-          });
-        });
-      }
+          };
+
+          document.getElementById('giftLuckForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('giftLuckEmail').value.trim();
+            const mult = parseFloat(document.getElementById('giftLuckMultiplier').value);
+            const secs = parseInt(document.getElementById('giftLuckDuration').value);
+            if (!email || !mult || !secs) return;
+            try {
+              const db = getDatabase();
+              const userLuckRef = ref(db, `userLuck/${btoa(email)}`);
+              await set(userLuckRef, { multiplier: mult, duration: secs, sender: user ? user.email : 'admin' });
+              document.getElementById('adminTopbarMsg').innerText = `Gifted ${mult}x luck for ${secs}s to ${email}!`;
+            } catch (err) {
+              document.getElementById('adminTopbarMsg').innerText = err.message;
+            }
+        }
+
+          document.getElementById('unlockEverythingBtn').onclick = function() {
+            // Unlock all rebirths, brainrots, boosts, etc.
+            rebirths = 3;
+            localStorage.setItem('rebirths', rebirths);
+            inventory = messages.map(m => `${m.text}<br><span class="${m.class}">${m.rarity}</span>`);
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            autoRollUnlocked = true;
+            localStorage.setItem('autoRollUnlocked', 'true');
+            consumables = ['COMMON','UNCOMMON','RARE','EPIC','LEGENDARY','MYSTICAL','???'].map(rarityToConsumable);
+            localStorage.setItem('consumables', JSON.stringify(consumables));
+            updateInventory();
+            updateConsumablesList();
+            document.getElementById('AutoRollButton').classList.add('unlocked');
+            document.getElementById('adminTopbarMsg').innerText = 'Everything unlocked!';
+        }
+
+            // Send admin message
+            function sendMessage() {
+              const input = document.getElementById("msgInput");
+              const msg = input.value.trim();
+              const user = auth.currentUser;
+              if (msg && user && ADMIN_EMAILS.includes(user.email)) {
+                const prefix = ADMIN_PREFIXES[user.email] || "Admin:";
+                set(msgRef, `${prefix} ${msg}`);
+                input.value = "";
+              }
+            }
+
+            document.getElementById("sendBtn").addEventListener("click", sendMessage);
+            document.getElementById("msgInput").addEventListener("keypress", (e) => {
+              if (e.key === "Enter") sendMessage();
+            });
+            // Google Sign-In wiring
+            const googleSignInBtn = document.getElementById("googleSignInBtn");
+            const googleSignInError = document.createElement("div");
+            googleSignInError.id = "googleSignInError";
+            googleSignInError.style.color = "red";
+            googleSignInBtn.parentNode.insertBefore(
+              googleSignInError,
+              googleSignInBtn.nextSibling
+            );
+            const loginStatus = document.getElementById("loginStatus");
+            const adminControls = document.getElementById("adminControls");
+
+            // Replace with your admin email
+            const ADMIN_EMAIL = "alfonsoovilchez52@gmail.com";
+
+            function updateLoginPanel(user) {
+              const removeMsgBtn = document.getElementById("removeGlobalMsgBtn");
+              if (user) {
+                console.log('[DEBUG] updateLoginPanel: user signed in:', user.email);
+                loginStatus.innerText = `Signed in as: ${user.displayName || user.email}`;
+                var adminPanelTopbar = document.getElementById("adminPanelTopbar");
+                if (ADMIN_EMAILS.includes(user.email)) {
+                  console.log('[DEBUG] User is admin, forcing admin panel and topbar visible.');
+                  adminControls.style.display = "block";
+                  if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
+                  var adminPanel = document.getElementById("adminPanel");
+                  if (adminPanel) {
+                    adminPanel.style.display = "block";
+                    adminPanel.classList.add('active');
+                    console.log('[DEBUG] adminPanel forced visible');
+                  }
+                  if (adminPanelTopbar) {
+                    adminPanelTopbar.style.display = "inline-block";
+                    adminPanelTopbar.classList.add('active');
+                    console.log('[DEBUG] adminPanelTopbar forced visible');
+                  }
+                  window.closeAdminPanel = function () {
+                    if (adminPanel) adminPanel.style.display = "none";
+                    window.adminPanelClosed = true;
+                  };
+                  if (["alfonsoovilchez52@gmail.com","imabosslikerickross13@gmail.com"].includes(user.email)) {
+                    document.getElementById("luck2xBtn").style.display = "inline-block";
+                    document.getElementById("luck3xBtn").style.display = "inline-block";
+                    document.getElementById("luck4xBtn").style.display = "inline-block";
+                  } else {
+                    document.getElementById("luck2xBtn").style.display = "none";
+                    document.getElementById("luck3xBtn").style.display = "none";
+                    document.getElementById("luck4xBtn").style.display = "none";
+                  }
+                  // No need to toggle Give Brainrot form, always visible for admins
+                  loginStatus.innerText += ` (Admin access: ${user.email})`;
+                } else {
+                  console.log('[DEBUG] User is not admin, hiding admin panel and topbar.');
+                  adminControls.style.display = "none";
+                  if (removeMsgBtn) removeMsgBtn.style.display = "none";
+                  if (adminPanelTopbar) adminPanelTopbar.style.display = "none";
+                  document.getElementById("adminPanel").style.display = "none";
+                }
+            // ======= ADMIN CHAT LOGIC =======
+
+            const adminChatRef = ref(db, "adminChat");
+            const adminChatBox = document.getElementById("adminChatBox");
+            const adminChatForm = document.getElementById("adminChatForm");
+            const adminChatInput = document.getElementById("adminChatInput");
+
+            // Listen for chat updates
+            onValue(adminChatRef, (snap) => {
+              try {
+                const val = snap.val() || {};
+                const messages = Object.values(val).sort((a,b)=>a.ts-b.ts);
+                let html = "";
+                messages.slice(-30).forEach(msg => {
+                  html += `<div style='margin-bottom:4px;'><b style='color:#ffe066;'>${msg.sender}:</b> ${msg.text}</div>`;
+                });
+                adminChatBox.innerHTML = html;
+                adminChatBox.scrollTop = adminChatBox.scrollHeight;
+              } catch (err) {
+                adminChatBox.innerHTML = `<div style='color:red;'>Failed to load chat: ${err.message}</div>`;
+              }
+            });
+
+            // Send chat message
+            adminChatForm.addEventListener("submit", async (e) => {
+              e.preventDefault();
+              const user = auth.currentUser;
+              if (!user || !ADMIN_EMAILS.includes(user.email)) {
+                alert("You must be an admin to send messages.");
+                return;
+              }
+              const sender = ADMIN_PREFIXES[user.email] ? ADMIN_PREFIXES[user.email].replace(':','') : user.email;
+              const text = adminChatInput.value.trim();
+              if (!text) return;
+              try {
+                await push(adminChatRef, { sender, text, ts: Date.now() });
+                adminChatInput.value = "";
+              } catch (err) {
+                alert("Failed to send chat message: " + err.message);
+              }
+            });
+              } else {
+                loginStatus.innerText = "Not signed in.";
+                adminControls.style.display = "none";
+                if (removeMsgBtn) removeMsgBtn.style.display = "none";
+                document.getElementById("adminPanelTopbar").style.display = "none";
+                document.getElementById("adminPanel").style.display = "none";
+              }
+            }
+
+            // Ensure admin topbar is shown for Alfonso on page load if logged in
+            window.addEventListener("DOMContentLoaded", () => {
+              const user = auth.currentUser;
+              if (user && user.email === ADMIN_EMAIL) {
+                document.getElementById("adminTopbar").style.display = "flex";
+              }
+            });
+
+            googleSignInBtn.addEventListener("click", async () => {
+              googleSignInError.innerText = "";
+              googleSignInBtn.disabled = true;
+              googleSignInBtn.innerText = "Signing in...";
+              try {
+                await signInWithPopup(auth, provider);
+              } catch (err) {
+                googleSignInError.innerText = "Google sign-in failed: " + err.message;
+              } finally {
+                googleSignInBtn.disabled = false;
+                googleSignInBtn.innerText = "Sign in with Google";
+              }
+            });
+
+
+            // === CLOUD SYNC ===
+            async function saveUserDataToCloud(user) {
+              if (!user) return;
+              const db = getDatabase();
+              const userKey = btoa(user.email);
+              const userRef = ref(db, `userData/${userKey}`);
+              const data = {
+                inventory,
+                quests,
+                rebirths,
+                totalRolls,
+                questsExclusive,
+                questsExclusiveCompleted,
+                questsSpeedBonus,
+                luckMultiplier
+              };
+              // ...existing code...
+            }
+
+      // ...existing code...
+
+            // Save to cloud on key changes
+            function saveGameAndCloud() {
+              saveGame();
+              if (auth.currentUser) saveUserDataToCloud(auth.currentUser);
+            }
+            // Patch saveGame calls
+            // Prevent infinite recursion by saving original saveGame
+            if (!window._originalSaveGame) window._originalSaveGame = saveGame;
+            window.saveGame = function() {
+              window._originalSaveGame();
+              if (auth.currentUser) saveUserDataToCloud(auth.currentUser);
+            };
+
+            // Email/password auth wiring
+            const emailAuthForm = document.getElementById("emailAuthForm");
+            const emailInput = document.getElementById("emailInput");
+            const passwordInput = document.getElementById("passwordInput");
+            const emailSignUpBtn = document.getElementById("emailSignUpBtn");
+            const emailLogInBtn = document.getElementById("emailLogInBtn");
+            const emailAuthError = document.getElementById("emailAuthError");
+
+            // Prevent form submit from refreshing page
+            emailAuthForm.addEventListener("submit", (e) => {
+              e.preventDefault();
+            });
+
+            emailSignUpBtn.addEventListener("click", async () => {
+              emailAuthError.innerText = "";
+              const email = emailInput.value.trim();
+              const password = passwordInput.value;
+              if (!email || !password) return;
+              try {
+                  await createUserWithEmailAndPassword(auth, email, password);
+                  // Store for auto sign-in
+                  localStorage.setItem('autoEmail', email);
+                  localStorage.setItem('autoPassword', password);
+              } catch (err) {
+                emailAuthError.innerText = err.message;
+              }
+            });
+
+            emailLogInBtn.addEventListener("click", async () => {
+              emailAuthError.innerText = "";
+              emailLogInBtn.disabled = true;
+              emailLogInBtn.innerText = "Logging in...";
+              const email = emailInput.value.trim();
+              const password = passwordInput.value;
+              if (!email || !password) {
+                emailAuthError.innerText = "Please enter both email and password.";
+                emailLogInBtn.disabled = false;
+                emailLogInBtn.innerText = "Log In";
+                return;
+              }
+              try {
+                  await signInWithEmailAndPassword(auth, email, password);
+                  // Store for auto sign-in
+                  localStorage.setItem('autoEmail', email);
+                  localStorage.setItem('autoPassword', password);
+                updateLoginPanel(auth.currentUser);
+              } catch (err) {
+                emailAuthError.innerText = err.message;
+              } finally {
+                emailLogInBtn.disabled = false;
+                emailLogInBtn.innerText = "Log In";
+              }
+            });
+
+            document
+              .getElementById("giveBrainrotForm")
+              .addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const user = auth.currentUser;
+                const targetEmail = document.getElementById("targetEmailInput").value.trim();
+                const brainrotName = document.getElementById("brainrotInput").value.trim();
+                const msgSpan = document.getElementById("adminTopbarMsg");
+                if (!user || !ADMIN_EMAILS.includes(user.email)) {
+                  msgSpan.innerText = "Only admins can give brainrot.";
+                  return;
+                }
+                if (!targetEmail || !brainrotName) {
+                  msgSpan.innerText = "Enter target Gmail and brainrot name.";
+                  return;
+                }
+                // Remove brainrot from sender's inventory if present
+                let foundIdx = -1;
+                for (let i = 0; i < inventory.length; i++) {
+                  if (inventory[i].includes(brainrotName)) {
+                    foundIdx = i;
+                    break;
+                  }
+                }
+                if (foundIdx === -1) {
+                  msgSpan.innerText = "You don't have that brainrot in your inventory.";
+                  return;
+                }
+                const brainrotToGive = inventory[foundIdx];
+                inventory.splice(foundIdx, 1);
+                localStorage.setItem('inventory', JSON.stringify(inventory));
+                updateInventory();
+                // Write to a special path in Firebase for the target user, include sender info
+                try {
+                  const db = getDatabase();
+                  const senderName = ADMIN_PREFIXES[user.email] ? ADMIN_PREFIXES[user.email].replace(':','') : user.email;
+                  const userBrainrotRef = ref(db, `userBrainrot/${btoa(targetEmail)}`);
+                  await set(userBrainrotRef, { brainrot: brainrotToGive, sender: senderName });
+                  msgSpan.innerText = `Gave ${brainrotName} to ${targetEmail}!`;
+                } catch (err) {
+                  msgSpan.innerText = err.message;
+                }
+              });
+            // Listen for gifted brainrots and add to inventory if received
+            // Listen for gifted consumables
+            if (typeof auth !== "undefined") {
+              onAuthStateChanged(auth, (user) => {
+                if (!user) return;
+                const userConsumableRef = ref(db, `userConsumable/${btoa(user.email)}`);
+                onValue(userConsumableRef, (snap) => {
+                  const val = snap.val();
+                  if (val && val.consumable) {
+                    try {
+                      consumables.push(val.consumable);
+                      localStorage.setItem('consumables', JSON.stringify(consumables));
+                      updateConsumablesList();
+                      let msg = `You have been gifted a consumable (${val.consumable.name}) by ${val.sender}!`;
+                      const note = document.createElement('div');
+                      note.innerText = msg;
+                      note.style.position = 'fixed';
+                      note.style.bottom = '140px';
+                      note.style.left = '50%';
+                      note.style.transform = 'translateX(-50%)';
+                      note.style.background = '#21a9c4';
+                      note.style.color = 'white';
+                      note.style.padding = '22px 44px';
+                      note.style.borderRadius = '16px';
+                      note.style.fontWeight = 'bold';
+                      note.style.fontSize = '2rem';
+                      note.style.boxShadow = '0 4px 24px #21a9c4';
+                      note.style.zIndex = '9999';
+                      document.body.appendChild(note);
+                      setTimeout(() => note.remove(), 5000);
+                      set(userConsumableRef, "");
+                    } catch (err) {
+                      console.error('Error receiving gifted consumable:', err);
+                      const dbg = document.createElement('div');
+                      dbg.innerText = 'DEBUG: Error receiving gifted consumable: ' + err.message;
+                      dbg.style.position = 'fixed';
+                      dbg.style.bottom = '200px';
+                      dbg.style.left = '50%';
+                      dbg.style.transform = 'translateX(-50%)';
+                      dbg.style.background = 'red';
+                      dbg.style.color = 'white';
+                      dbg.style.padding = '10px 20px';
+                      dbg.style.borderRadius = '8px';
+                      dbg.style.fontWeight = 'bold';
+                      dbg.style.zIndex = '9999';
+                      document.body.appendChild(dbg);
+                      setTimeout(() => dbg.remove(), 6000);
+                    }
+                  }
+                });
+                // Listen for gifted luck
+                const userLuckRef = ref(db, `userLuck/${btoa(user.email)}`);
+                onValue(userLuckRef, (snap) => {
+                  const val = snap.val();
+                  if (val && val.multiplier && val.duration) {
+                    try {
+                      showLuckIndicator(val.multiplier, val.duration);
+                      let msg = `You have been gifted ${val.multiplier}x luck for ${val.duration}s by ${val.sender}!`;
+                      const note = document.createElement('div');
+                      note.innerText = msg;
+                      note.style.position = 'fixed';
+                      note.style.bottom = '200px';
+                      note.style.left = '50%';
+                      note.style.transform = 'translateX(-50%)';
+                      note.style.background = '#21a9c4';
+                      note.style.color = 'white';
+                      note.style.padding = '22px 44px';
+                      note.style.borderRadius = '16px';
+                      note.style.fontWeight = 'bold';
+                      note.style.fontSize = '2rem';
+                      note.style.boxShadow = '0 4px 24px #21a9c4';
+                      note.style.zIndex = '9999';
+                      document.body.appendChild(note);
+                      setTimeout(() => note.remove(), 5000);
+                      set(userLuckRef, "");
+                    } catch (err) {
+                      console.error('Error receiving gifted luck:', err);
+                      const dbg = document.createElement('div');
+                      dbg.innerText = 'DEBUG: Error receiving gifted luck: ' + err.message;
+                      dbg.style.position = 'fixed';
+                      dbg.style.bottom = '260px';
+                      dbg.style.left = '50%';
+                      dbg.style.transform = 'translateX(-50%)';
+                      dbg.style.background = 'red';
+                      dbg.style.color = 'white';
+                      dbg.style.padding = '10px 20px';
+                      dbg.style.borderRadius = '8px';
+                      dbg.style.fontWeight = 'bold';
+                      dbg.style.zIndex = '9999';
+                      document.body.appendChild(dbg);
+                      setTimeout(() => dbg.remove(), 6000);
+                    }
+                  }
+                });
+              });
+            }
+            if (typeof auth !== "undefined") {
+              // Removed duplicate onAuthStateChanged for brainrot. Logic will be handled in main handler.
+              onAuthStateChanged(auth, async (user) => {
+                // Auto-login logic
+                if (!user && !window._autoLoginTried) {
+                  window._autoLoginTried = true;
+                  const email = localStorage.getItem('autoEmail');
+                  const password = localStorage.getItem('autoPassword');
+                  if (email && password) {
+                    try {
+                      console.log('[DEBUG] Attempting auto-login with', email);
+                      await signInWithEmailAndPassword(auth, email, password);
+                      setTimeout(() => {
+                        const newUser = auth.currentUser;
+                        if (newUser) {
+                          console.log('[DEBUG] Auto-login success:', newUser.email);
+                          loadUserDataFromCloud(newUser).then(() => updateLoginPanel(newUser));
+                          updateLeaderboardsPanel();
+                          // Listen for gifted consumables
+                          const userConsumableRef = ref(db, `userConsumable/${btoa(newUser.email)}`);
+                          onValue(userConsumableRef, (snap) => {
+                            const val = snap.val();
+                            if (val && val.consumable) {
+                              try {
+                                consumables.push(val.consumable);
+                                localStorage.setItem('consumables', JSON.stringify(consumables));
+                                updateConsumablesList();
+                                let msg = `You have been gifted a consumable (${val.consumable.name}) by ${val.sender}!`;
+                                const note = document.createElement('div');
+                                note.innerText = msg;
+                                note.style.position = 'fixed';
+                                note.style.bottom = '140px';
+                                note.style.left = '50%';
+                                note.style.transform = 'translateX(-50%)';
+                                note.style.background = '#21a9c4';
+                                note.style.color = 'white';
+                                note.style.padding = '22px 44px';
+                                note.style.borderRadius = '16px';
+                                note.style.fontWeight = 'bold';
+                                note.style.fontSize = '2rem';
+                                note.style.boxShadow = '0 4px 24px #21a9c4';
+                                note.style.zIndex = '9999';
+                                document.body.appendChild(note);
+                                setTimeout(() => note.remove(), 5000);
+                                set(userConsumableRef, "");
+                              } catch (err) {
+                                console.error('Error receiving gifted consumable:', err);
+                              }
+                            }
+                          });
+                          // Listen for gifted brainrots
+                          const userBrainrotRef = ref(db, `userBrainrot/${btoa(newUser.email)}`);
+                          onValue(userBrainrotRef, (snap) => {
+                            const val = snap.val();
+                            if (val && val.brainrot) {
+                              let alreadyInInv = inventory.includes(val.brainrot);
+                              if (!alreadyInInv) {
+                                inventory.push(val.brainrot);
+                                updateInventory();
+                                // Also update quests for the gifted brainrot
+                                let tempDiv = document.createElement('div');
+                                tempDiv.innerHTML = val.brainrot;
+                                let itemText = tempDiv.textContent.split('\n')[0];
+                                let raritySpan = tempDiv.querySelector('span');
+                                let itemRarity = raritySpan ? raritySpan.textContent : '';
+                                updateQuests(itemText, itemRarity);
+                                saveGame();
+                              } else {
+                                saveGame();
+                              }
+                              let msg = `You have been gifted ${val.brainrot.split('<br>')[0]} by ${val.sender}!`;
+                              if (alreadyInInv) msg += ' (already in your inv)';
+                              const note = document.createElement('div');
+                              note.style.position = 'fixed';
+                              note.style.bottom = '80px';
+                              note.style.left = '50%';
+                              note.style.transform = 'translateX(-50%)';
+                              note.style.background = '#21a9c4';
+                              note.style.color = 'white';
+                              note.style.padding = '22px 44px';
+                              note.style.borderRadius = '16px';
+                              note.style.fontWeight = 'bold';
+                              note.style.fontSize = '2rem';
+                              note.style.boxShadow = '0 4px 24px #21a9c4';
+                              note.style.zIndex = '9999';
+                              note.style.display = 'flex';
+                              note.style.alignItems = 'center';
+                              note.innerText = msg;
+                              document.body.appendChild(note);
+                              setTimeout(() => note.remove(), 6000);
+                            }
+                          });
+                        } else {
+                          console.log('[DEBUG] Auto-login failed: user still null after sign-in');
+                          updateLoginPanel(null);
+                        }
+                      }, 1000);
+                      return;
+                    } catch (e) {
+                      console.log('[DEBUG] Auto-login failed:', e.message);
+                      localStorage.removeItem('autoEmail');
+                      localStorage.removeItem('autoPassword');
+                    }
+                  } else {
+                    console.log('[DEBUG] No auto-login credentials found.');
+                  }
+                } else if (user) {
+                  console.log('[DEBUG] User already signed in:', user.email);
+                  await loadUserDataFromCloud(user);
+                  updateLoginPanel(user);
+                  updateLeaderboardsPanel();
+                  // Listen for gifted consumables
+                  const userConsumableRef = ref(db, `userConsumable/${btoa(user.email)}`);
+                  onValue(userConsumableRef, (snap) => {
+                    const val = snap.val();
+                    if (val && val.consumable) {
+                      try {
+                        consumables.push(val.consumable);
+                        localStorage.setItem('consumables', JSON.stringify(consumables));
+                        updateConsumablesList();
+                        let msg = `You have been gifted a consumable (${val.consumable.name}) by ${val.sender}!`;
+                        const note = document.createElement('div');
+                        note.innerText = msg;
+                        note.style.position = 'fixed';
+                        note.style.bottom = '140px';
+                        note.style.left = '50%';
+                        note.style.transform = 'translateX(-50%)';
+                        note.style.background = '#21a9c4';
+                        note.style.color = 'white';
+                        note.style.padding = '22px 44px';
+                        note.style.borderRadius = '16px';
+                        note.style.fontWeight = 'bold';
+                        note.style.fontSize = '2rem';
+                        note.style.boxShadow = '0 4px 24px #21a9c4';
+                        note.style.zIndex = '9999';
+                        document.body.appendChild(note);
+                        setTimeout(() => note.remove(), 5000);
+                        set(userConsumableRef, "");
+                      } catch (err) {
+                        console.error('Error receiving gifted consumable:', err);
+                      }
+                    }
+                  });
+                  // Listen for gifted brainrots
+                  const userBrainrotRef = ref(db, `userBrainrot/${btoa(user.email)}`);
+                  onValue(userBrainrotRef, (snap) => {
+                    const val = snap.val();
+                    if (val && val.brainrot) {
+                      let alreadyInInv = inventory.includes(val.brainrot);
+                      if (!alreadyInInv) {
+                        inventory.push(val.brainrot);
+                        updateInventory();
+                        let tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = val.brainrot;
+                        let itemText = tempDiv.textContent.split('\n')[0];
+                        let raritySpan = tempDiv.querySelector('span');
+                        let itemRarity = raritySpan ? raritySpan.textContent : '';
+                        updateQuests(itemText, itemRarity);
+                        saveGame();
+                      } else {
+                        saveGame();
+                      }
+                      let msg = `You have been gifted ${val.brainrot.split('<br>')[0]} by ${val.sender}!`;
+                      if (alreadyInInv) msg += ' (already in your inv)';
+                      const note = document.createElement('div');
+                      note.style.position = 'fixed';
+                      note.style.bottom = '80px';
+                      note.style.left = '50%';
+                      note.style.transform = 'translateX(-50%)';
+                      note.style.background = '#21a9c4';
+                      note.style.color = 'white';
+                      note.style.padding = '22px 44px';
+                      note.style.borderRadius = '16px';
+                      note.style.fontWeight = 'bold';
+                      note.style.fontSize = '2rem';
+                      note.style.boxShadow = '0 4px 24px #21a9c4';
+                      note.style.zIndex = '9999';
+                      note.style.display = 'flex';
+                      note.style.alignItems = 'center';
+                      note.innerText = msg;
+                      document.body.appendChild(note);
+                      setTimeout(() => note.remove(), 6000);
+                    }
+
+                  });
+                } else {
+                  updateLoginPanel(null);
+                  updateLeaderboardsPanel();
+                }
+              });
     </script>
   </body>
 </html>
