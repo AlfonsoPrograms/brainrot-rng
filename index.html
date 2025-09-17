@@ -1033,7 +1033,7 @@
       id="watchAdBtn"
       style="
         display: block;
-        margin: 24px auto 0 auto;
+        margin: 64px auto 0 auto;
         padding: 14px 32px;
         background: linear-gradient(90deg, #21a9c4, #168ba0);
         color: #fff;
@@ -2608,6 +2608,13 @@
         });
 
       // --- Leaderboards logic ---
+      // Make getDatabase available globally if using modules
+      if (
+        typeof window.getDatabase === "undefined" &&
+        typeof getDatabase !== "undefined"
+      ) {
+        window.getDatabase = getDatabase;
+      }
       // We'll use localStorage for demo, but in production use Firebase for global leaderboards
       // Manual roll clicks leaderboard (store as array of {name, rolls, week})
       // All rolls leaderboard (store as array of {name, rolls, week})
@@ -2894,6 +2901,8 @@
               push,
               serverTimestamp
             } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+            // Make getDatabase available globally for non-module scripts
+            window.getDatabase = getDatabase;
             import {
               getAuth,
               signInWithPopup,
