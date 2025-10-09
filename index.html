@@ -1408,25 +1408,6 @@
       <hr />
       <form id="emailAuthForm" style="margin-top: 10px">
         <input
-          type="text"
-          id="usernameInput"
-          placeholder="Username"
-          required
-          style="
-            width: 90%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1.5px solid #21a9c4;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-            background: #182a3a;
-            color: #fff;
-            box-shadow: 0 2px 8px #21a9c433;
-            outline: none;
-            transition: border-color 0.2s;
-          "
-        /><br />
-        <input
           type="email"
           id="emailInput"
           placeholder="Email"
@@ -1443,18 +1424,7 @@
       </form>
       <div id="emailAuthError" style="color: red; margin-top: 8px"></div>
       <div id="emailAuthError"></div>
-      <script>
-        // Store username in localStorage on sign up or login
-        const usernameInput = document.getElementById("usernameInput");
-        emailSignUpBtn.addEventListener("click", function () {
-          if (usernameInput.value)
-            localStorage.setItem("username", usernameInput.value);
-        });
-        emailLogInBtn.addEventListener("click", function () {
-          if (usernameInput.value)
-            localStorage.setItem("username", usernameInput.value);
-        });
-      </script>
+      <
     </div>
 
     <!-- INDEX -->
@@ -2690,7 +2660,7 @@
           // Only award if not already in inventory
           if (
             manualWinner &&
-            localStorage.getItem("username") === manualWinner.name
+            localStorage.getItem("email") === manualWinner.name
           ) {
             let inv = JSON.parse(localStorage.getItem("inventory") || "[]");
             if (!inv.includes("Dragon Canneoli")) {
@@ -2698,10 +2668,7 @@
               localStorage.setItem("inventory", JSON.stringify(inv));
             }
           }
-          if (
-            allWinner &&
-            localStorage.getItem("username") === allWinner.name
-          ) {
+          if (allWinner && localStorage.getItem("email") === allWinner.name) {
             let inv = JSON.parse(localStorage.getItem("inventory") || "[]");
             if (!inv.includes("Dragon Canneoli")) {
               inv.push("Dragon Canneoli");
@@ -3234,16 +3201,16 @@
               const db = getDatabase();
               const userKey = btoa(user.email);
               const userRef = ref(db, `userData/${userKey}`);
-              const data = {
-                inventory,
-                quests,
-                rebirths,
-                totalRolls,
-                questsExclusive,
-                questsExclusiveCompleted,
-                questsSpeedBonus,
-                luckMultiplier
-              };
+            const data = {
+              inventory: window.inventory,
+              quests: window.quests,
+              rebirths: window.rebirths,
+              totalRolls: window.totalRolls,
+              questsExclusive: window.questsExclusive,
+              questsExclusiveCompleted: window.questsExclusiveCompleted,
+              questsSpeedBonus: window.questsSpeedBonus,
+              luckMultiplier: window.luckMultiplier
+            };
               // ...existing code...
             }
 
