@@ -1424,7 +1424,6 @@
       </form>
       <div id="emailAuthError" style="color: red; margin-top: 8px"></div>
       <div id="emailAuthError"></div>
-      <
     </div>
 
     <!-- INDEX -->
@@ -2605,10 +2604,7 @@
       ) {
         window.getDatabase = getDatabase;
       }
-      // We'll use localStorage for demo, but in production use Firebase for global leaderboards
-      // Manual roll clicks leaderboard (store as array of {name, rolls, week})
-      // All rolls leaderboard (store as array of {name, rolls, week})
-      // For now, use user.displayName or user.email as name
+
       function getCurrentWeek() {
         // Returns a string like '2025-W37'
         const now = new Date();
