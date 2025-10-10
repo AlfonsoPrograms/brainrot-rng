@@ -2880,740 +2880,833 @@
       lastRollTs = 0; // fix: always reset cooldown after rebirth panel update
     </script>
     <script type="module">
-            // Firebase imports must be at the top of the module
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-            import {
-              getDatabase,
-              ref,
-              set,
-              onValue,
-              push,
-              serverTimestamp
-            } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-            // Make getDatabase available globally for non-module scripts
-            window.getDatabase = getDatabase;
-            import {
-              getAuth,
-              signInWithPopup,
-              GoogleAuthProvider,
-              onAuthStateChanged,
-              signInWithEmailAndPassword,
-              createUserWithEmailAndPassword
-            } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+      // Firebase imports must be at the top of the module
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        set,
+        onValue,
+        push,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+      // Make getDatabase available globally for non-module scripts
+      window.getDatabase = getDatabase;
+      import {
+        getAuth,
+        signInWithPopup,
+        GoogleAuthProvider,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+      } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-            // New admin config
-            const ADMIN_EMAILS = [
-              "alfonsoovilchez52@gmail.com",
-              "imabosslikerickross13@gmail.com",
-              "work2013@myyahoo.com",
-            ];
-            const ADMIN_PREFIXES = {
-              "alfonsoovilchez52@gmail.com": "Alfonso:",
-              "imabosslikerickross13@gmail.com": "Eldrick:",
-              "work2013@myyahoo.com": "Adam:",
-            };
-            // Password management logic
-            const viewPasswordBtn = document.getElementById("viewPasswordBtn");
-            const passwordDisplay = document.getElementById("passwordDisplay");
-            const changePasswordBtn = document.getElementById("changePasswordBtn");
-            const changePasswordForm = document.getElementById("changePasswordForm");
-            const newPasswordInput = document.getElementById("newPasswordInput");
-            const sendVerificationCodeBtn = document.getElementById(
-              "sendVerificationCodeBtn"
-            );
-            const verificationCodeInput = document.getElementById(
-              "verificationCodeInput"
-            );
-            const submitPasswordChangeBtn = document.getElementById(
-              "submitPasswordChangeBtn"
-            );
-            const passwordManagerMsg = document.getElementById("passwordManagerMsg");
+      // New admin config
+      const ADMIN_EMAILS = [
+        "alfonsoovilchez52@gmail.com",
+        "imabosslikerickross13@gmail.com",
+        "work2013@myyahoo.com",
+      ];
+      const ADMIN_PREFIXES = {
+        "alfonsoovilchez52@gmail.com": "Alfonso:",
+        "imabosslikerickross13@gmail.com": "Eldrick:",
+        "work2013@myyahoo.com": "Adam:",
+      };
+      // Password management logic
+      const viewPasswordBtn = document.getElementById("viewPasswordBtn");
+      const passwordDisplay = document.getElementById("passwordDisplay");
+      const changePasswordBtn = document.getElementById("changePasswordBtn");
+      const changePasswordForm = document.getElementById("changePasswordForm");
+      const newPasswordInput = document.getElementById("newPasswordInput");
+      const sendVerificationCodeBtn = document.getElementById(
+        "sendVerificationCodeBtn"
+      );
+      const verificationCodeInput = document.getElementById(
+        "verificationCodeInput"
+      );
+      const submitPasswordChangeBtn = document.getElementById(
+        "submitPasswordChangeBtn"
+      );
+      const passwordManagerMsg = document.getElementById("passwordManagerMsg");
 
-            let verificationId = null;
+      let verificationId = null;
 
-            viewPasswordBtn.addEventListener("click", async () => {
-              passwordManagerMsg.innerText = "";
-              const user = auth.currentUser;
-              if (!user) {
-                passwordDisplay.innerText = "Not signed in.";
-                return;
-              }
-              // For security, you cannot view the password directly. Show info instead.
-              passwordDisplay.innerText =
-                "Your password is securely stored and cannot be viewed. You may change it below.";
-            });
-
-            changePasswordBtn.addEventListener("click", () => {
-              changePasswordForm.style.display = "block";
-              passwordManagerMsg.innerText = "";
-            });
-
-            sendVerificationCodeBtn.addEventListener("click", async () => {
-              passwordManagerMsg.innerText = "";
-              const user = auth.currentUser;
-              if (!user) {
-                passwordManagerMsg.innerText = "Not signed in.";
-                return;
-              }
-              // Only allow verification for email/password users
-              if (user.providerData[0].providerId === "password") {
-                try {
-                  await user.sendEmailVerification();
-                  passwordManagerMsg.innerText =
-                    "Verification code sent to your email. Please check your inbox.";
-                } catch (err) {
-                  passwordManagerMsg.innerText = err.message;
-                }
-              } else {
-                passwordManagerMsg.innerText =
-                  "Google accounts are already verified.";
-              }
-            });
-
-            submitPasswordChangeBtn.addEventListener("click", async () => {
-              passwordManagerMsg.innerText = "";
-              const user = auth.currentUser;
-              const newPassword = newPasswordInput.value;
-              const code = verificationCodeInput.value;
-              if (!user) {
-                passwordManagerMsg.innerText = "Not signed in.";
-                return;
-              }
-              if (!newPassword || !code) {
-                passwordManagerMsg.innerText =
-                  "Enter new password and verification code.";
-                return;
-              }
-              // For demo: check if user is verified
-              await user.reload();
-              if (!user.emailVerified) {
-                passwordManagerMsg.innerText =
-                  "Email not verified. Please verify your email first.";
-                return;
-              }
-              try {
-                await user.updatePassword(newPassword);
-                passwordManagerMsg.innerText = "Password changed successfully.";
-                changePasswordForm.style.display = "none";
-              } catch (err) {
-                passwordManagerMsg.innerText = err.message;
-              }
-            });
-            // === Firebase Admin Abuse Integration ===
-
-
-          document.getElementById('giftConsumableForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('giftConsumableEmail').value.trim();
-            const type = document.getElementById('giftConsumableType').value;
-            if (!email || !type) return;
-            const c = rarityToConsumable(type);
-            try {
-              const db = getDatabase();
-              const userConsumableRef = ref(db, `userConsumable/${btoa(email)}`);
-              await set(userConsumableRef, { consumable: c, sender: user ? user.email : 'admin' });
-              document.getElementById('adminTopbarMsg').innerText = `Gifted ${c.name} to ${email}!`;
-            } catch (err) {
-              document.getElementById('adminTopbarMsg').innerText = err.message;
-            }
-          };
-
-          document.getElementById('giftLuckForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('giftLuckEmail').value.trim();
-            const mult = parseFloat(document.getElementById('giftLuckMultiplier').value);
-            const secs = parseInt(document.getElementById('giftLuckDuration').value);
-            if (!email || !mult || !secs) return;
-            try {
-              const db = getDatabase();
-              const userLuckRef = ref(db, `userLuck/${btoa(email)}`);
-              await set(userLuckRef, { multiplier: mult, duration: secs, sender: user ? user.email : 'admin' });
-              document.getElementById('adminTopbarMsg').innerText = `Gifted ${mult}x luck for ${secs}s to ${email}!`;
-            } catch (err) {
-              document.getElementById('adminTopbarMsg').innerText = err.message;
-            }
+      viewPasswordBtn.addEventListener("click", async () => {
+        passwordManagerMsg.innerText = "";
+        const user = auth.currentUser;
+        if (!user) {
+          passwordDisplay.innerText = "Not signed in.";
+          return;
         }
+        // For security, you cannot view the password directly. Show info instead.
+        passwordDisplay.innerText =
+          "Your password is securely stored and cannot be viewed. You may change it below.";
+      });
 
-          document.getElementById('unlockEverythingBtn').onclick = function() {
-            // Unlock all rebirths, brainrots, boosts, etc.
-            rebirths = 3;
-            localStorage.setItem('rebirths', rebirths);
-            inventory = messages.map(m => `${m.text}<br><span class="${m.class}">${m.rarity}</span>`);
-            localStorage.setItem('inventory', JSON.stringify(inventory));
-            autoRollUnlocked = true;
-            localStorage.setItem('autoRollUnlocked', 'true');
-            consumables = ['COMMON','UNCOMMON','RARE','EPIC','LEGENDARY','MYSTICAL','???'].map(rarityToConsumable);
-            localStorage.setItem('consumables', JSON.stringify(consumables));
-            updateInventory();
-            updateConsumablesList();
-            document.getElementById('AutoRollButton').classList.add('unlocked');
-            document.getElementById('adminTopbarMsg').innerText = 'Everything unlocked!';
+      changePasswordBtn.addEventListener("click", () => {
+        changePasswordForm.style.display = "block";
+        passwordManagerMsg.innerText = "";
+      });
+
+      sendVerificationCodeBtn.addEventListener("click", async () => {
+        passwordManagerMsg.innerText = "";
+        const user = auth.currentUser;
+        if (!user) {
+          passwordManagerMsg.innerText = "Not signed in.";
+          return;
         }
+        // Only allow verification for email/password users
+        if (user.providerData[0].providerId === "password") {
+          try {
+            await user.sendEmailVerification();
+            passwordManagerMsg.innerText =
+              "Verification code sent to your email. Please check your inbox.";
+          } catch (err) {
+            passwordManagerMsg.innerText = err.message;
+          }
+        } else {
+          passwordManagerMsg.innerText =
+            "Google accounts are already verified.";
+        }
+      });
 
-            // Send admin message
-            function sendMessage() {
-              const input = document.getElementById("msgInput");
-              const msg = input.value.trim();
-              const user = auth.currentUser;
-              if (msg && user && ADMIN_EMAILS.includes(user.email)) {
-                const prefix = ADMIN_PREFIXES[user.email] || "Admin:";
-                set(msgRef, `${prefix} ${msg}`);
-                input.value = "";
-              }
-            }
+      submitPasswordChangeBtn.addEventListener("click", async () => {
+        passwordManagerMsg.innerText = "";
+        const user = auth.currentUser;
+        const newPassword = newPasswordInput.value;
+        const code = verificationCodeInput.value;
+        if (!user) {
+          passwordManagerMsg.innerText = "Not signed in.";
+          return;
+        }
+        if (!newPassword || !code) {
+          passwordManagerMsg.innerText =
+            "Enter new password and verification code.";
+          return;
+        }
+        // For demo: check if user is verified
+        await user.reload();
+        if (!user.emailVerified) {
+          passwordManagerMsg.innerText =
+            "Email not verified. Please verify your email first.";
+          return;
+        }
+        try {
+          await user.updatePassword(newPassword);
+          passwordManagerMsg.innerText = "Password changed successfully.";
+          changePasswordForm.style.display = "none";
+        } catch (err) {
+          passwordManagerMsg.innerText = err.message;
+        }
+      });
+      // === Firebase Admin Abuse Integration ===
 
-            document.getElementById("sendBtn").addEventListener("click", sendMessage);
-            document.getElementById("msgInput").addEventListener("keypress", (e) => {
-              if (e.key === "Enter") sendMessage();
-            });
-            // Google Sign-In wiring
-            const googleSignInBtn = document.getElementById("googleSignInBtn");
-            const googleSignInError = document.createElement("div");
-            googleSignInError.id = "googleSignInError";
-            googleSignInError.style.color = "red";
-            googleSignInBtn.parentNode.insertBefore(
-              googleSignInError,
-              googleSignInBtn.nextSibling
+      document.getElementById("giftConsumableForm").onsubmit = async function (
+        e
+      ) {
+        e.preventDefault();
+        const email = document
+          .getElementById("giftConsumableEmail")
+          .value.trim();
+        const type = document.getElementById("giftConsumableType").value;
+        if (!email || !type) return;
+        const c = rarityToConsumable(type);
+        try {
+          const db = getDatabase();
+          const userConsumableRef = ref(db, `userConsumable/${btoa(email)}`);
+          await set(userConsumableRef, {
+            consumable: c,
+            sender: user ? user.email : "admin",
+          });
+          document.getElementById(
+            "adminTopbarMsg"
+          ).innerText = `Gifted ${c.name} to ${email}!`;
+        } catch (err) {
+          document.getElementById("adminTopbarMsg").innerText = err.message;
+        }
+      };
+
+      document.getElementById("giftLuckForm").onsubmit = async function (e) {
+        e.preventDefault();
+        const email = document.getElementById("giftLuckEmail").value.trim();
+        const mult = parseFloat(
+          document.getElementById("giftLuckMultiplier").value
+        );
+        const secs = parseInt(
+          document.getElementById("giftLuckDuration").value
+        );
+        if (!email || !mult || !secs) return;
+        try {
+          const db = getDatabase();
+          const userLuckRef = ref(db, `userLuck/${btoa(email)}`);
+          await set(userLuckRef, {
+            multiplier: mult,
+            duration: secs,
+            sender: user ? user.email : "admin",
+          });
+          document.getElementById(
+            "adminTopbarMsg"
+          ).innerText = `Gifted ${mult}x luck for ${secs}s to ${email}!`;
+        } catch (err) {
+          document.getElementById("adminTopbarMsg").innerText = err.message;
+        }
+      };
+
+      document.getElementById("unlockEverythingBtn").onclick = function () {
+        // Unlock all rebirths, brainrots, boosts, etc.
+        rebirths = 3;
+        localStorage.setItem("rebirths", rebirths);
+        inventory = messages.map(
+          (m) => `${m.text}<br><span class="${m.class}">${m.rarity}</span>`
+        );
+        localStorage.setItem("inventory", JSON.stringify(inventory));
+        autoRollUnlocked = true;
+        localStorage.setItem("autoRollUnlocked", "true");
+        consumables = [
+          "COMMON",
+          "UNCOMMON",
+          "RARE",
+          "EPIC",
+          "LEGENDARY",
+          "MYSTICAL",
+          "???",
+        ].map(rarityToConsumable);
+        localStorage.setItem("consumables", JSON.stringify(consumables));
+        updateInventory();
+        updateConsumablesList();
+        document.getElementById("AutoRollButton").classList.add("unlocked");
+        document.getElementById("adminTopbarMsg").innerText =
+          "Everything unlocked!";
+      };
+
+      // Send admin message
+      function sendMessage() {
+        const input = document.getElementById("msgInput");
+        const msg = input.value.trim();
+        const user = auth.currentUser;
+        if (msg && user && ADMIN_EMAILS.includes(user.email)) {
+          const prefix = ADMIN_PREFIXES[user.email] || "Admin:";
+          set(msgRef, `${prefix} ${msg}`);
+          input.value = "";
+        }
+      }
+
+      document.getElementById("sendBtn").addEventListener("click", sendMessage);
+      document.getElementById("msgInput").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+      // Google Sign-In wiring
+      const googleSignInBtn = document.getElementById("googleSignInBtn");
+      const googleSignInError = document.createElement("div");
+      googleSignInError.id = "googleSignInError";
+      googleSignInError.style.color = "red";
+      googleSignInBtn.parentNode.insertBefore(
+        googleSignInError,
+        googleSignInBtn.nextSibling
+      );
+      const loginStatus = document.getElementById("loginStatus");
+      const adminControls = document.getElementById("adminControls");
+
+      // Replace with your admin email
+      const ADMIN_EMAIL = "alfonsoovilchez52@gmail.com";
+
+      function updateLoginPanel(user) {
+        const removeMsgBtn = document.getElementById("removeGlobalMsgBtn");
+        if (user) {
+          console.log("[DEBUG] updateLoginPanel: user signed in:", user.email);
+          loginStatus.innerText = `Signed in as: ${
+            user.displayName || user.email
+          }`;
+          var adminPanelTopbar = document.getElementById("adminPanelTopbar");
+          if (ADMIN_EMAILS.includes(user.email)) {
+            console.log(
+              "[DEBUG] User is admin, forcing admin panel and topbar visible."
             );
-            const loginStatus = document.getElementById("loginStatus");
-            const adminControls = document.getElementById("adminControls");
-
-            // Replace with your admin email
-            const ADMIN_EMAIL = "alfonsoovilchez52@gmail.com";
-
-            function updateLoginPanel(user) {
-              const removeMsgBtn = document.getElementById("removeGlobalMsgBtn");
-              if (user) {
-                console.log('[DEBUG] updateLoginPanel: user signed in:', user.email);
-                loginStatus.innerText = `Signed in as: ${user.displayName || user.email}`;
-                var adminPanelTopbar = document.getElementById("adminPanelTopbar");
-                if (ADMIN_EMAILS.includes(user.email)) {
-                  console.log('[DEBUG] User is admin, forcing admin panel and topbar visible.');
-                  adminControls.style.display = "block";
-                  if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
-                  var adminPanel = document.getElementById("adminPanel");
-                  if (adminPanel) {
-                    adminPanel.style.display = "block";
-                    adminPanel.classList.add('active');
-                    console.log('[DEBUG] adminPanel forced visible');
-                  }
-                  if (adminPanelTopbar) {
-                    adminPanelTopbar.style.display = "inline-block";
-                    adminPanelTopbar.classList.add('active');
-                    console.log('[DEBUG] adminPanelTopbar forced visible');
-                  }
-                  window.closeAdminPanel = function () {
-                    if (adminPanel) adminPanel.style.display = "none";
-                    window.adminPanelClosed = true;
-                  };
-                  if (["alfonsoovilchez52@gmail.com","imabosslikerickross13@gmail.com"].includes(user.email)) {
-                    document.getElementById("luck2xBtn").style.display = "inline-block";
-                    document.getElementById("luck3xBtn").style.display = "inline-block";
-                    document.getElementById("luck4xBtn").style.display = "inline-block";
-                  } else {
-                    document.getElementById("luck2xBtn").style.display = "none";
-                    document.getElementById("luck3xBtn").style.display = "none";
-                    document.getElementById("luck4xBtn").style.display = "none";
-                  }
-                  // No need to toggle Give Brainrot form, always visible for admins
-                  loginStatus.innerText += ` (Admin access: ${user.email})`;
-                } else {
-                  console.log('[DEBUG] User is not admin, hiding admin panel and topbar.');
-                  adminControls.style.display = "none";
-                  if (removeMsgBtn) removeMsgBtn.style.display = "none";
-                  if (adminPanelTopbar) adminPanelTopbar.style.display = "none";
-                  document.getElementById("adminPanel").style.display = "none";
-                }
-            // ======= ADMIN CHAT LOGIC =======
-
-            const adminChatRef = ref(db, "adminChat");
-            const adminChatBox = document.getElementById("adminChatBox");
-            const adminChatForm = document.getElementById("adminChatForm");
-            const adminChatInput = document.getElementById("adminChatInput");
-
-            // Listen for chat updates
-            onValue(adminChatRef, (snap) => {
-              try {
-                const val = snap.val() || {};
-                const messages = Object.values(val).sort((a,b)=>a.ts-b.ts);
-                let html = "";
-                messages.slice(-30).forEach(msg => {
-                  html += `<div style='margin-bottom:4px;'><b style='color:#ffe066;'>${msg.sender}:</b> ${msg.text}</div>`;
-                });
-                adminChatBox.innerHTML = html;
-                adminChatBox.scrollTop = adminChatBox.scrollHeight;
-              } catch (err) {
-                adminChatBox.innerHTML = `<div style='color:red;'>Failed to load chat: ${err.message}</div>`;
-              }
-            });
-
-            // Send chat message
-            adminChatForm.addEventListener("submit", async (e) => {
-              e.preventDefault();
-              const user = auth.currentUser;
-              if (!user || !ADMIN_EMAILS.includes(user.email)) {
-                alert("You must be an admin to send messages.");
-                return;
-              }
-              const sender = ADMIN_PREFIXES[user.email] ? ADMIN_PREFIXES[user.email].replace(':','') : user.email;
-              const text = adminChatInput.value.trim();
-              if (!text) return;
-              try {
-                await push(adminChatRef, { sender, text, ts: Date.now() });
-                adminChatInput.value = "";
-              } catch (err) {
-                alert("Failed to send chat message: " + err.message);
-              }
-            });
-              } else {
-                loginStatus.innerText = "Not signed in.";
-                adminControls.style.display = "none";
-                if (removeMsgBtn) removeMsgBtn.style.display = "none";
-                document.getElementById("adminPanelTopbar").style.display = "none";
-                document.getElementById("adminPanel").style.display = "none";
-              }
+            adminControls.style.display = "block";
+            if (removeMsgBtn) removeMsgBtn.style.display = "inline-block";
+            var adminPanel = document.getElementById("adminPanel");
+            if (adminPanel) {
+              adminPanel.style.display = "block";
+              adminPanel.classList.add("active");
+              console.log("[DEBUG] adminPanel forced visible");
             }
-
-            // Ensure admin topbar is shown for Alfonso on page load if logged in
-            window.addEventListener("DOMContentLoaded", () => {
-              const user = auth.currentUser;
-              if (user && user.email === ADMIN_EMAIL) {
-                document.getElementById("adminTopbar").style.display = "flex";
-              }
-            });
-
-            googleSignInBtn.addEventListener("click", async () => {
-              googleSignInError.innerText = "";
-              googleSignInBtn.disabled = true;
-              googleSignInBtn.innerText = "Signing in...";
-              try {
-                await signInWithPopup(auth, provider);
-              } catch (err) {
-                googleSignInError.innerText = "Google sign-in failed: " + err.message;
-              } finally {
-                googleSignInBtn.disabled = false;
-                googleSignInBtn.innerText = "Sign in with Google";
-              }
-            });
-
-
-            // === CLOUD SYNC ===
-            async function saveUserDataToCloud(user) {
-              if (!user) return;
-              const db = getDatabase();
-              const userKey = btoa(user.email);
-              const userRef = ref(db, `userData/${userKey}`);
-            const data = {
-              inventory: window.inventory,
-              quests: window.quests,
-              rebirths: window.rebirths,
-              totalRolls: window.totalRolls,
-              questsExclusive: window.questsExclusive,
-              questsExclusiveCompleted: window.questsExclusiveCompleted,
-              questsSpeedBonus: window.questsSpeedBonus,
-              luckMultiplier: window.luckMultiplier
+            if (adminPanelTopbar) {
+              adminPanelTopbar.style.display = "inline-block";
+              adminPanelTopbar.classList.add("active");
+              console.log("[DEBUG] adminPanelTopbar forced visible");
+            }
+            window.closeAdminPanel = function () {
+              if (adminPanel) adminPanel.style.display = "none";
+              window.adminPanelClosed = true;
             };
-              // ...existing code...
+            if (
+              [
+                "alfonsoovilchez52@gmail.com",
+                "imabosslikerickross13@gmail.com",
+              ].includes(user.email)
+            ) {
+              document.getElementById("luck2xBtn").style.display =
+                "inline-block";
+              document.getElementById("luck3xBtn").style.display =
+                "inline-block";
+              document.getElementById("luck4xBtn").style.display =
+                "inline-block";
+            } else {
+              document.getElementById("luck2xBtn").style.display = "none";
+              document.getElementById("luck3xBtn").style.display = "none";
+              document.getElementById("luck4xBtn").style.display = "none";
             }
+            // No need to toggle Give Brainrot form, always visible for admins
+            loginStatus.innerText += ` (Admin access: ${user.email})`;
+          } else {
+            console.log(
+              "[DEBUG] User is not admin, hiding admin panel and topbar."
+            );
+            adminControls.style.display = "none";
+            if (removeMsgBtn) removeMsgBtn.style.display = "none";
+            if (adminPanelTopbar) adminPanelTopbar.style.display = "none";
+            document.getElementById("adminPanel").style.display = "none";
+          }
+          // ======= ADMIN CHAT LOGIC =======
+
+          const adminChatRef = ref(db, "adminChat");
+          const adminChatBox = document.getElementById("adminChatBox");
+          const adminChatForm = document.getElementById("adminChatForm");
+          const adminChatInput = document.getElementById("adminChatInput");
+
+          // Listen for chat updates
+          onValue(adminChatRef, (snap) => {
+            try {
+              const val = snap.val() || {};
+              const messages = Object.values(val).sort((a, b) => a.ts - b.ts);
+              let html = "";
+              messages.slice(-30).forEach((msg) => {
+                html += `<div style='margin-bottom:4px;'><b style='color:#ffe066;'>${msg.sender}:</b> ${msg.text}</div>`;
+              });
+              adminChatBox.innerHTML = html;
+              adminChatBox.scrollTop = adminChatBox.scrollHeight;
+            } catch (err) {
+              adminChatBox.innerHTML = `<div style='color:red;'>Failed to load chat: ${err.message}</div>`;
+            }
+          });
+
+          // Send chat message
+          adminChatForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            if (!user || !ADMIN_EMAILS.includes(user.email)) {
+              alert("You must be an admin to send messages.");
+              return;
+            }
+            const sender = ADMIN_PREFIXES[user.email]
+              ? ADMIN_PREFIXES[user.email].replace(":", "")
+              : user.email;
+            const text = adminChatInput.value.trim();
+            if (!text) return;
+            try {
+              await push(adminChatRef, { sender, text, ts: Date.now() });
+              adminChatInput.value = "";
+            } catch (err) {
+              alert("Failed to send chat message: " + err.message);
+            }
+          });
+        } else {
+          loginStatus.innerText = "Not signed in.";
+          adminControls.style.display = "none";
+          if (removeMsgBtn) removeMsgBtn.style.display = "none";
+          document.getElementById("adminPanelTopbar").style.display = "none";
+          document.getElementById("adminPanel").style.display = "none";
+        }
+      }
+
+      // Ensure admin topbar is shown for Alfonso on page load if logged in
+      window.addEventListener("DOMContentLoaded", () => {
+        const user = auth.currentUser;
+        if (user && user.email === ADMIN_EMAIL) {
+          document.getElementById("adminTopbar").style.display = "flex";
+        }
+      });
+
+      googleSignInBtn.addEventListener("click", async () => {
+        googleSignInError.innerText = "";
+        googleSignInBtn.disabled = true;
+        googleSignInBtn.innerText = "Signing in...";
+        try {
+          await signInWithPopup(auth, provider);
+        } catch (err) {
+          googleSignInError.innerText = "Google sign-in failed: " + err.message;
+        } finally {
+          googleSignInBtn.disabled = false;
+          googleSignInBtn.innerText = "Sign in with Google";
+        }
+      });
+
+      // === CLOUD SYNC ===
+      async function saveUserDataToCloud(user) {
+        if (!user) return;
+        const db = getDatabase();
+        const userKey = btoa(user.email);
+        const userRef = ref(db, `userData/${userKey}`);
+        const data = {
+          inventory: window.inventory,
+          quests: window.quests,
+          rebirths: window.rebirths,
+          totalRolls: window.totalRolls,
+          questsExclusive: window.questsExclusive,
+          questsExclusiveCompleted: window.questsExclusiveCompleted,
+          questsSpeedBonus: window.questsSpeedBonus,
+          luckMultiplier: window.luckMultiplier,
+        };
+        // ...existing code...
+      }
 
       // ...existing code...
 
-            // Save to cloud on key changes
-            function saveGameAndCloud() {
-              saveGame();
-              if (auth.currentUser) saveUserDataToCloud(auth.currentUser);
+      // Save to cloud on key changes
+      function saveGameAndCloud() {
+        saveGame();
+        if (auth.currentUser) saveUserDataToCloud(auth.currentUser);
+      }
+      // Patch saveGame calls
+      // Prevent infinite recursion by saving original saveGame
+      if (!window._originalSaveGame) window._originalSaveGame = saveGame;
+      window.saveGame = function () {
+        window._originalSaveGame();
+        if (auth.currentUser) saveUserDataToCloud(auth.currentUser);
+      };
+
+      // Email/password auth wiring
+      const emailAuthForm = document.getElementById("emailAuthForm");
+      const emailInput = document.getElementById("emailInput");
+      const passwordInput = document.getElementById("passwordInput");
+      const emailSignUpBtn = document.getElementById("emailSignUpBtn");
+      const emailLogInBtn = document.getElementById("emailLogInBtn");
+      const emailAuthError = document.getElementById("emailAuthError");
+
+      // Prevent form submit from refreshing page
+      emailAuthForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+      });
+
+      emailSignUpBtn.addEventListener("click", async () => {
+        emailAuthError.innerText = "";
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        if (!email || !password) return;
+        try {
+          await createUserWithEmailAndPassword(auth, email, password);
+          // Store for auto sign-in
+          localStorage.setItem("autoEmail", email);
+          localStorage.setItem("autoPassword", password);
+        } catch (err) {
+          emailAuthError.innerText = err.message;
+        }
+      });
+
+      emailLogInBtn.addEventListener("click", async () => {
+        emailAuthError.innerText = "";
+        emailLogInBtn.disabled = true;
+        emailLogInBtn.innerText = "Logging in...";
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        if (!email || !password) {
+          emailAuthError.innerText = "Please enter both email and password.";
+          emailLogInBtn.disabled = false;
+          emailLogInBtn.innerText = "Log In";
+          return;
+        }
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+          // Store for auto sign-in
+          localStorage.setItem("autoEmail", email);
+          localStorage.setItem("autoPassword", password);
+          updateLoginPanel(auth.currentUser);
+        } catch (err) {
+          emailAuthError.innerText = err.message;
+        } finally {
+          emailLogInBtn.disabled = false;
+          emailLogInBtn.innerText = "Log In";
+        }
+      });
+
+      document
+        .getElementById("giveBrainrotForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const user = auth.currentUser;
+          const targetEmail = document
+            .getElementById("targetEmailInput")
+            .value.trim();
+          const brainrotName = document
+            .getElementById("brainrotInput")
+            .value.trim();
+          const msgSpan = document.getElementById("adminTopbarMsg");
+          if (!user || !ADMIN_EMAILS.includes(user.email)) {
+            msgSpan.innerText = "Only admins can give brainrot.";
+            return;
+          }
+          if (!targetEmail || !brainrotName) {
+            msgSpan.innerText = "Enter target Gmail and brainrot name.";
+            return;
+          }
+          // Remove brainrot from sender's inventory if present
+          let foundIdx = -1;
+          for (let i = 0; i < inventory.length; i++) {
+            if (inventory[i].includes(brainrotName)) {
+              foundIdx = i;
+              break;
             }
-            // Patch saveGame calls
-            // Prevent infinite recursion by saving original saveGame
-            if (!window._originalSaveGame) window._originalSaveGame = saveGame;
-            window.saveGame = function() {
-              window._originalSaveGame();
-              if (auth.currentUser) saveUserDataToCloud(auth.currentUser);
-            };
-
-            // Email/password auth wiring
-            const emailAuthForm = document.getElementById("emailAuthForm");
-            const emailInput = document.getElementById("emailInput");
-            const passwordInput = document.getElementById("passwordInput");
-            const emailSignUpBtn = document.getElementById("emailSignUpBtn");
-            const emailLogInBtn = document.getElementById("emailLogInBtn");
-            const emailAuthError = document.getElementById("emailAuthError");
-
-            // Prevent form submit from refreshing page
-            emailAuthForm.addEventListener("submit", (e) => {
-              e.preventDefault();
+          }
+          if (foundIdx === -1) {
+            msgSpan.innerText =
+              "You don't have that brainrot in your inventory.";
+            return;
+          }
+          const brainrotToGive = inventory[foundIdx];
+          inventory.splice(foundIdx, 1);
+          localStorage.setItem("inventory", JSON.stringify(inventory));
+          updateInventory();
+          // Write to a special path in Firebase for the target user, include sender info
+          try {
+            const db = getDatabase();
+            const senderName = ADMIN_PREFIXES[user.email]
+              ? ADMIN_PREFIXES[user.email].replace(":", "")
+              : user.email;
+            const userBrainrotRef = ref(
+              db,
+              `userBrainrot/${btoa(targetEmail)}`
+            );
+            await set(userBrainrotRef, {
+              brainrot: brainrotToGive,
+              sender: senderName,
             });
-
-            emailSignUpBtn.addEventListener("click", async () => {
-              emailAuthError.innerText = "";
-              const email = emailInput.value.trim();
-              const password = passwordInput.value;
-              if (!email || !password) return;
+            msgSpan.innerText = `Gave ${brainrotName} to ${targetEmail}!`;
+          } catch (err) {
+            msgSpan.innerText = err.message;
+          }
+        });
+      // Listen for gifted brainrots and add to inventory if received
+      // Listen for gifted consumables
+      if (typeof auth !== "undefined") {
+        onAuthStateChanged(auth, (user) => {
+          if (!user) return;
+          const userConsumableRef = ref(
+            db,
+            `userConsumable/${btoa(user.email)}`
+          );
+          onValue(userConsumableRef, (snap) => {
+            const val = snap.val();
+            if (val && val.consumable) {
               try {
-                  await createUserWithEmailAndPassword(auth, email, password);
-                  // Store for auto sign-in
-                  localStorage.setItem('autoEmail', email);
-                  localStorage.setItem('autoPassword', password);
+                consumables.push(val.consumable);
+                localStorage.setItem(
+                  "consumables",
+                  JSON.stringify(consumables)
+                );
+                updateConsumablesList();
+                let msg = `You have been gifted a consumable (${val.consumable.name}) by ${val.sender}!`;
+                const note = document.createElement("div");
+                note.innerText = msg;
+                note.style.position = "fixed";
+                note.style.bottom = "140px";
+                note.style.left = "50%";
+                note.style.transform = "translateX(-50%)";
+                note.style.background = "#21a9c4";
+                note.style.color = "white";
+                note.style.padding = "22px 44px";
+                note.style.borderRadius = "16px";
+                note.style.fontWeight = "bold";
+                note.style.fontSize = "2rem";
+                note.style.boxShadow = "0 4px 24px #21a9c4";
+                note.style.zIndex = "9999";
+                document.body.appendChild(note);
+                setTimeout(() => note.remove(), 5000);
+                set(userConsumableRef, "");
               } catch (err) {
-                emailAuthError.innerText = err.message;
+                console.error("Error receiving gifted consumable:", err);
+                const dbg = document.createElement("div");
+                dbg.innerText =
+                  "DEBUG: Error receiving gifted consumable: " + err.message;
+                dbg.style.position = "fixed";
+                dbg.style.bottom = "200px";
+                dbg.style.left = "50%";
+                dbg.style.transform = "translateX(-50%)";
+                dbg.style.background = "red";
+                dbg.style.color = "white";
+                dbg.style.padding = "10px 20px";
+                dbg.style.borderRadius = "8px";
+                dbg.style.fontWeight = "bold";
+                dbg.style.zIndex = "9999";
+                document.body.appendChild(dbg);
+                setTimeout(() => dbg.remove(), 6000);
               }
-            });
-
-            emailLogInBtn.addEventListener("click", async () => {
-              emailAuthError.innerText = "";
-              emailLogInBtn.disabled = true;
-              emailLogInBtn.innerText = "Logging in...";
-              const email = emailInput.value.trim();
-              const password = passwordInput.value;
-              if (!email || !password) {
-                emailAuthError.innerText = "Please enter both email and password.";
-                emailLogInBtn.disabled = false;
-                emailLogInBtn.innerText = "Log In";
-                return;
-              }
-              try {
-                  await signInWithEmailAndPassword(auth, email, password);
-                  // Store for auto sign-in
-                  localStorage.setItem('autoEmail', email);
-                  localStorage.setItem('autoPassword', password);
-                updateLoginPanel(auth.currentUser);
-              } catch (err) {
-                emailAuthError.innerText = err.message;
-              } finally {
-                emailLogInBtn.disabled = false;
-                emailLogInBtn.innerText = "Log In";
-              }
-            });
-
-            document
-              .getElementById("giveBrainrotForm")
-              .addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const user = auth.currentUser;
-                const targetEmail = document.getElementById("targetEmailInput").value.trim();
-                const brainrotName = document.getElementById("brainrotInput").value.trim();
-                const msgSpan = document.getElementById("adminTopbarMsg");
-                if (!user || !ADMIN_EMAILS.includes(user.email)) {
-                  msgSpan.innerText = "Only admins can give brainrot.";
-                  return;
-                }
-                if (!targetEmail || !brainrotName) {
-                  msgSpan.innerText = "Enter target Gmail and brainrot name.";
-                  return;
-                }
-                // Remove brainrot from sender's inventory if present
-                let foundIdx = -1;
-                for (let i = 0; i < inventory.length; i++) {
-                  if (inventory[i].includes(brainrotName)) {
-                    foundIdx = i;
-                    break;
-                  }
-                }
-                if (foundIdx === -1) {
-                  msgSpan.innerText = "You don't have that brainrot in your inventory.";
-                  return;
-                }
-                const brainrotToGive = inventory[foundIdx];
-                inventory.splice(foundIdx, 1);
-                localStorage.setItem('inventory', JSON.stringify(inventory));
-                updateInventory();
-                // Write to a special path in Firebase for the target user, include sender info
-                try {
-                  const db = getDatabase();
-                  const senderName = ADMIN_PREFIXES[user.email] ? ADMIN_PREFIXES[user.email].replace(':','') : user.email;
-                  const userBrainrotRef = ref(db, `userBrainrot/${btoa(targetEmail)}`);
-                  await set(userBrainrotRef, { brainrot: brainrotToGive, sender: senderName });
-                  msgSpan.innerText = `Gave ${brainrotName} to ${targetEmail}!`;
-                } catch (err) {
-                  msgSpan.innerText = err.message;
-                }
-              });
-            // Listen for gifted brainrots and add to inventory if received
-            // Listen for gifted consumables
-            if (typeof auth !== "undefined") {
-              onAuthStateChanged(auth, (user) => {
-                if (!user) return;
-                const userConsumableRef = ref(db, `userConsumable/${btoa(user.email)}`);
-                onValue(userConsumableRef, (snap) => {
-                  const val = snap.val();
-                  if (val && val.consumable) {
-                    try {
-                      consumables.push(val.consumable);
-                      localStorage.setItem('consumables', JSON.stringify(consumables));
-                      updateConsumablesList();
-                      let msg = `You have been gifted a consumable (${val.consumable.name}) by ${val.sender}!`;
-                      const note = document.createElement('div');
-                      note.innerText = msg;
-                      note.style.position = 'fixed';
-                      note.style.bottom = '140px';
-                      note.style.left = '50%';
-                      note.style.transform = 'translateX(-50%)';
-                      note.style.background = '#21a9c4';
-                      note.style.color = 'white';
-                      note.style.padding = '22px 44px';
-                      note.style.borderRadius = '16px';
-                      note.style.fontWeight = 'bold';
-                      note.style.fontSize = '2rem';
-                      note.style.boxShadow = '0 4px 24px #21a9c4';
-                      note.style.zIndex = '9999';
-                      document.body.appendChild(note);
-                      setTimeout(() => note.remove(), 5000);
-                      set(userConsumableRef, "");
-                    } catch (err) {
-                      console.error('Error receiving gifted consumable:', err);
-                      const dbg = document.createElement('div');
-                      dbg.innerText = 'DEBUG: Error receiving gifted consumable: ' + err.message;
-                      dbg.style.position = 'fixed';
-                      dbg.style.bottom = '200px';
-                      dbg.style.left = '50%';
-                      dbg.style.transform = 'translateX(-50%)';
-                      dbg.style.background = 'red';
-                      dbg.style.color = 'white';
-                      dbg.style.padding = '10px 20px';
-                      dbg.style.borderRadius = '8px';
-                      dbg.style.fontWeight = 'bold';
-                      dbg.style.zIndex = '9999';
-                      document.body.appendChild(dbg);
-                      setTimeout(() => dbg.remove(), 6000);
-                    }
-                  }
-                });
-                // Listen for gifted luck
-                const userLuckRef = ref(db, `userLuck/${btoa(user.email)}`);
-                onValue(userLuckRef, (snap) => {
-                  const val = snap.val();
-                  if (val && val.multiplier && val.duration) {
-                    try {
-                      showLuckIndicator(val.multiplier, val.duration);
-                      let msg = `You have been gifted ${val.multiplier}x luck for ${val.duration}s by ${val.sender}!`;
-                      const note = document.createElement('div');
-                      note.innerText = msg;
-                      note.style.position = 'fixed';
-                      note.style.bottom = '200px';
-                      note.style.left = '50%';
-                      note.style.transform = 'translateX(-50%)';
-                      note.style.background = '#21a9c4';
-                      note.style.color = 'white';
-                      note.style.padding = '22px 44px';
-                      note.style.borderRadius = '16px';
-                      note.style.fontWeight = 'bold';
-                      note.style.fontSize = '2rem';
-                      note.style.boxShadow = '0 4px 24px #21a9c4';
-                      note.style.zIndex = '9999';
-                      document.body.appendChild(note);
-                      setTimeout(() => note.remove(), 5000);
-                      set(userLuckRef, "");
-                    } catch (err) {
-                      console.error('Error receiving gifted luck:', err);
-                      const dbg = document.createElement('div');
-                      dbg.innerText = 'DEBUG: Error receiving gifted luck: ' + err.message;
-                      dbg.style.position = 'fixed';
-                      dbg.style.bottom = '260px';
-                      dbg.style.left = '50%';
-                      dbg.style.transform = 'translateX(-50%)';
-                      dbg.style.background = 'red';
-                      dbg.style.color = 'white';
-                      dbg.style.padding = '10px 20px';
-                      dbg.style.borderRadius = '8px';
-                      dbg.style.fontWeight = 'bold';
-                      dbg.style.zIndex = '9999';
-                      document.body.appendChild(dbg);
-                      setTimeout(() => dbg.remove(), 6000);
-                    }
-                  }
-                });
-              });
             }
-            if (typeof auth !== "undefined") {
-              // Removed duplicate onAuthStateChanged for brainrot. Logic will be handled in main handler.
-              onAuthStateChanged(auth, async (user) => {
-                // Auto-login logic
-                if (!user && !window._autoLoginTried) {
-                  window._autoLoginTried = true;
-                  const email = localStorage.getItem('autoEmail');
-                  const password = localStorage.getItem('autoPassword');
-                  if (email && password) {
-                    try {
-                      console.log('[DEBUG] Attempting auto-login with', email);
-                      await signInWithEmailAndPassword(auth, email, password);
-                      setTimeout(() => {
-                        const newUser = auth.currentUser;
-                        if (newUser) {
-                          console.log('[DEBUG] Auto-login success:', newUser.email);
-                          loadUserDataFromCloud(newUser).then(() => updateLoginPanel(newUser));
-                          updateLeaderboardsPanel();
-                          // Listen for gifted consumables
-                          const userConsumableRef = ref(db, `userConsumable/${btoa(newUser.email)}`);
-                          onValue(userConsumableRef, (snap) => {
-                            const val = snap.val();
-                            if (val && val.consumable) {
-                              try {
-                                consumables.push(val.consumable);
-                                localStorage.setItem('consumables', JSON.stringify(consumables));
-                                updateConsumablesList();
-                                let msg = `You have been gifted a consumable (${val.consumable.name}) by ${val.sender}!`;
-                                const note = document.createElement('div');
-                                note.innerText = msg;
-                                note.style.position = 'fixed';
-                                note.style.bottom = '140px';
-                                note.style.left = '50%';
-                                note.style.transform = 'translateX(-50%)';
-                                note.style.background = '#21a9c4';
-                                note.style.color = 'white';
-                                note.style.padding = '22px 44px';
-                                note.style.borderRadius = '16px';
-                                note.style.fontWeight = 'bold';
-                                note.style.fontSize = '2rem';
-                                note.style.boxShadow = '0 4px 24px #21a9c4';
-                                note.style.zIndex = '9999';
-                                document.body.appendChild(note);
-                                setTimeout(() => note.remove(), 5000);
-                                set(userConsumableRef, "");
-                              } catch (err) {
-                                console.error('Error receiving gifted consumable:', err);
-                              }
-                            }
-                          });
-                          // Listen for gifted brainrots
-                          const userBrainrotRef = ref(db, `userBrainrot/${btoa(newUser.email)}`);
-                          onValue(userBrainrotRef, (snap) => {
-                            const val = snap.val();
-                            if (val && val.brainrot) {
-                              let alreadyInInv = inventory.includes(val.brainrot);
-                              if (!alreadyInInv) {
-                                inventory.push(val.brainrot);
-                                updateInventory();
-                                // Also update quests for the gifted brainrot
-                                let tempDiv = document.createElement('div');
-                                tempDiv.innerHTML = val.brainrot;
-                                let itemText = tempDiv.textContent.split('\n')[0];
-                                let raritySpan = tempDiv.querySelector('span');
-                                let itemRarity = raritySpan ? raritySpan.textContent : '';
-                                updateQuests(itemText, itemRarity);
-                                saveGame();
-                              } else {
-                                saveGame();
-                              }
-                              let msg = `You have been gifted ${val.brainrot.split('<br>')[0]} by ${val.sender}!`;
-                              if (alreadyInInv) msg += ' (already in your inv)';
-                              const note = document.createElement('div');
-                              note.style.position = 'fixed';
-                              note.style.bottom = '80px';
-                              note.style.left = '50%';
-                              note.style.transform = 'translateX(-50%)';
-                              note.style.background = '#21a9c4';
-                              note.style.color = 'white';
-                              note.style.padding = '22px 44px';
-                              note.style.borderRadius = '16px';
-                              note.style.fontWeight = 'bold';
-                              note.style.fontSize = '2rem';
-                              note.style.boxShadow = '0 4px 24px #21a9c4';
-                              note.style.zIndex = '9999';
-                              note.style.display = 'flex';
-                              note.style.alignItems = 'center';
-                              note.innerText = msg;
-                              document.body.appendChild(note);
-                              setTimeout(() => note.remove(), 6000);
-                            }
-                          });
-                        } else {
-                          console.log('[DEBUG] Auto-login failed: user still null after sign-in');
-                          updateLoginPanel(null);
+          });
+          // Listen for gifted luck
+          const userLuckRef = ref(db, `userLuck/${btoa(user.email)}`);
+          onValue(userLuckRef, (snap) => {
+            const val = snap.val();
+            if (val && val.multiplier && val.duration) {
+              try {
+                showLuckIndicator(val.multiplier, val.duration);
+                let msg = `You have been gifted ${val.multiplier}x luck for ${val.duration}s by ${val.sender}!`;
+                const note = document.createElement("div");
+                note.innerText = msg;
+                note.style.position = "fixed";
+                note.style.bottom = "200px";
+                note.style.left = "50%";
+                note.style.transform = "translateX(-50%)";
+                note.style.background = "#21a9c4";
+                note.style.color = "white";
+                note.style.padding = "22px 44px";
+                note.style.borderRadius = "16px";
+                note.style.fontWeight = "bold";
+                note.style.fontSize = "2rem";
+                note.style.boxShadow = "0 4px 24px #21a9c4";
+                note.style.zIndex = "9999";
+                document.body.appendChild(note);
+                setTimeout(() => note.remove(), 5000);
+                set(userLuckRef, "");
+              } catch (err) {
+                console.error("Error receiving gifted luck:", err);
+                const dbg = document.createElement("div");
+                dbg.innerText =
+                  "DEBUG: Error receiving gifted luck: " + err.message;
+                dbg.style.position = "fixed";
+                dbg.style.bottom = "260px";
+                dbg.style.left = "50%";
+                dbg.style.transform = "translateX(-50%)";
+                dbg.style.background = "red";
+                dbg.style.color = "white";
+                dbg.style.padding = "10px 20px";
+                dbg.style.borderRadius = "8px";
+                dbg.style.fontWeight = "bold";
+                dbg.style.zIndex = "9999";
+                document.body.appendChild(dbg);
+                setTimeout(() => dbg.remove(), 6000);
+              }
+            }
+          });
+        });
+      }
+      if (typeof auth !== "undefined") {
+        // Removed duplicate onAuthStateChanged for brainrot. Logic will be handled in main handler.
+        onAuthStateChanged(auth, async (user) => {
+          // Auto-login logic
+          if (!user && !window._autoLoginTried) {
+            window._autoLoginTried = true;
+            const email = localStorage.getItem("autoEmail");
+            const password = localStorage.getItem("autoPassword");
+            if (email && password) {
+              try {
+                console.log("[DEBUG] Attempting auto-login with", email);
+                await signInWithEmailAndPassword(auth, email, password);
+                setTimeout(() => {
+                  const newUser = auth.currentUser;
+                  if (newUser) {
+                    console.log("[DEBUG] Auto-login success:", newUser.email);
+                    loadUserDataFromCloud(newUser).then(() =>
+                      updateLoginPanel(newUser)
+                    );
+                    updateLeaderboardsPanel();
+                    // Listen for gifted consumables
+                    const userConsumableRef = ref(
+                      db,
+                      `userConsumable/${btoa(newUser.email)}`
+                    );
+                    onValue(userConsumableRef, (snap) => {
+                      const val = snap.val();
+                      if (val && val.consumable) {
+                        try {
+                          consumables.push(val.consumable);
+                          localStorage.setItem(
+                            "consumables",
+                            JSON.stringify(consumables)
+                          );
+                          updateConsumablesList();
+                          let msg = `You have been gifted a consumable (${val.consumable.name}) by ${val.sender}!`;
+                          const note = document.createElement("div");
+                          note.innerText = msg;
+                          note.style.position = "fixed";
+                          note.style.bottom = "140px";
+                          note.style.left = "50%";
+                          note.style.transform = "translateX(-50%)";
+                          note.style.background = "#21a9c4";
+                          note.style.color = "white";
+                          note.style.padding = "22px 44px";
+                          note.style.borderRadius = "16px";
+                          note.style.fontWeight = "bold";
+                          note.style.fontSize = "2rem";
+                          note.style.boxShadow = "0 4px 24px #21a9c4";
+                          note.style.zIndex = "9999";
+                          document.body.appendChild(note);
+                          setTimeout(() => note.remove(), 5000);
+                          set(userConsumableRef, "");
+                        } catch (err) {
+                          console.error(
+                            "Error receiving gifted consumable:",
+                            err
+                          );
                         }
-                      }, 1000);
-                      return;
-                    } catch (e) {
-                      console.log('[DEBUG] Auto-login failed:', e.message);
-                      localStorage.removeItem('autoEmail');
-                      localStorage.removeItem('autoPassword');
-                    }
-                  } else {
-                    console.log('[DEBUG] No auto-login credentials found.');
-                  }
-                } else if (user) {
-                  console.log('[DEBUG] User already signed in:', user.email);
-                  await loadUserDataFromCloud(user);
-                  updateLoginPanel(user);
-                  updateLeaderboardsPanel();
-                  // Listen for gifted consumables
-                  const userConsumableRef = ref(db, `userConsumable/${btoa(user.email)}`);
-                  onValue(userConsumableRef, (snap) => {
-                    const val = snap.val();
-                    if (val && val.consumable) {
-                      try {
-                        consumables.push(val.consumable);
-                        localStorage.setItem('consumables', JSON.stringify(consumables));
-                        updateConsumablesList();
-                        let msg = `You have been gifted a consumable (${val.consumable.name}) by ${val.sender}!`;
-                        const note = document.createElement('div');
+                      }
+                    });
+                    // Listen for gifted brainrots
+                    const userBrainrotRef = ref(
+                      db,
+                      `userBrainrot/${btoa(newUser.email)}`
+                    );
+                    onValue(userBrainrotRef, (snap) => {
+                      const val = snap.val();
+                      if (val && val.brainrot) {
+                        let alreadyInInv = inventory.includes(val.brainrot);
+                        if (!alreadyInInv) {
+                          inventory.push(val.brainrot);
+                          updateInventory();
+                          // Also update quests for the gifted brainrot
+                          let tempDiv = document.createElement("div");
+                          tempDiv.innerHTML = val.brainrot;
+                          let itemText = tempDiv.textContent.split("\n")[0];
+                          let raritySpan = tempDiv.querySelector("span");
+                          let itemRarity = raritySpan
+                            ? raritySpan.textContent
+                            : "";
+                          updateQuests(itemText, itemRarity);
+                          saveGame();
+                        } else {
+                          saveGame();
+                        }
+                        let msg = `You have been gifted ${
+                          val.brainrot.split("<br>")[0]
+                        } by ${val.sender}!`;
+                        if (alreadyInInv) msg += " (already in your inv)";
+                        const note = document.createElement("div");
+                        note.style.position = "fixed";
+                        note.style.bottom = "80px";
+                        note.style.left = "50%";
+                        note.style.transform = "translateX(-50%)";
+                        note.style.background = "#21a9c4";
+                        note.style.color = "white";
+                        note.style.padding = "22px 44px";
+                        note.style.borderRadius = "16px";
+                        note.style.fontWeight = "bold";
+                        note.style.fontSize = "2rem";
+                        note.style.boxShadow = "0 4px 24px #21a9c4";
+                        note.style.zIndex = "9999";
+                        note.style.display = "flex";
+                        note.style.alignItems = "center";
                         note.innerText = msg;
-                        note.style.position = 'fixed';
-                        note.style.bottom = '140px';
-                        note.style.left = '50%';
-                        note.style.transform = 'translateX(-50%)';
-                        note.style.background = '#21a9c4';
-                        note.style.color = 'white';
-                        note.style.padding = '22px 44px';
-                        note.style.borderRadius = '16px';
-                        note.style.fontWeight = 'bold';
-                        note.style.fontSize = '2rem';
-                        note.style.boxShadow = '0 4px 24px #21a9c4';
-                        note.style.zIndex = '9999';
                         document.body.appendChild(note);
-                        setTimeout(() => note.remove(), 5000);
-                        set(userConsumableRef, "");
-                      } catch (err) {
-                        console.error('Error receiving gifted consumable:', err);
+                        setTimeout(() => note.remove(), 6000);
                       }
-                    }
-                  });
-                  // Listen for gifted brainrots
-                  const userBrainrotRef = ref(db, `userBrainrot/${btoa(user.email)}`);
-                  onValue(userBrainrotRef, (snap) => {
-                    const val = snap.val();
-                    if (val && val.brainrot) {
-                      let alreadyInInv = inventory.includes(val.brainrot);
-                      if (!alreadyInInv) {
-                        inventory.push(val.brainrot);
-                        updateInventory();
-                        let tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = val.brainrot;
-                        let itemText = tempDiv.textContent.split('\n')[0];
-                        let raritySpan = tempDiv.querySelector('span');
-                        let itemRarity = raritySpan ? raritySpan.textContent : '';
-                        updateQuests(itemText, itemRarity);
-                        saveGame();
-                      } else {
-                        saveGame();
-                      }
-                      let msg = `You have been gifted ${val.brainrot.split('<br>')[0]} by ${val.sender}!`;
-                      if (alreadyInInv) msg += ' (already in your inv)';
-                      const note = document.createElement('div');
-                      note.style.position = 'fixed';
-                      note.style.bottom = '80px';
-                      note.style.left = '50%';
-                      note.style.transform = 'translateX(-50%)';
-                      note.style.background = '#21a9c4';
-                      note.style.color = 'white';
-                      note.style.padding = '22px 44px';
-                      note.style.borderRadius = '16px';
-                      note.style.fontWeight = 'bold';
-                      note.style.fontSize = '2rem';
-                      note.style.boxShadow = '0 4px 24px #21a9c4';
-                      note.style.zIndex = '9999';
-                      note.style.display = 'flex';
-                      note.style.alignItems = 'center';
-                      note.innerText = msg;
-                      document.body.appendChild(note);
-                      setTimeout(() => note.remove(), 6000);
-                    }
-
-                  });
-                } else {
-                  updateLoginPanel(null);
-                  updateLeaderboardsPanel();
+                    });
+                  } else {
+                    console.log(
+                      "[DEBUG] Auto-login failed: user still null after sign-in"
+                    );
+                    updateLoginPanel(null);
+                  }
+                }, 1000);
+                return;
+              } catch (e) {
+                console.log("[DEBUG] Auto-login failed:", e.message);
+                localStorage.removeItem("autoEmail");
+                localStorage.removeItem("autoPassword");
+              }
+            } else {
+              console.log("[DEBUG] No auto-login credentials found.");
+            }
+          } else if (user) {
+            console.log("[DEBUG] User already signed in:", user.email);
+            await loadUserDataFromCloud(user);
+            updateLoginPanel(user);
+            updateLeaderboardsPanel();
+            // Listen for gifted consumables
+            const userConsumableRef = ref(
+              db,
+              `userConsumable/${btoa(user.email)}`
+            );
+            onValue(userConsumableRef, (snap) => {
+              const val = snap.val();
+              if (val && val.consumable) {
+                try {
+                  consumables.push(val.consumable);
+                  localStorage.setItem(
+                    "consumables",
+                    JSON.stringify(consumables)
+                  );
+                  updateConsumablesList();
+                  let msg = `You have been gifted a consumable (${val.consumable.name}) by ${val.sender}!`;
+                  const note = document.createElement("div");
+                  note.innerText = msg;
+                  note.style.position = "fixed";
+                  note.style.bottom = "140px";
+                  note.style.left = "50%";
+                  note.style.transform = "translateX(-50%)";
+                  note.style.background = "#21a9c4";
+                  note.style.color = "white";
+                  note.style.padding = "22px 44px";
+                  note.style.borderRadius = "16px";
+                  note.style.fontWeight = "bold";
+                  note.style.fontSize = "2rem";
+                  note.style.boxShadow = "0 4px 24px #21a9c4";
+                  note.style.zIndex = "9999";
+                  document.body.appendChild(note);
+                  setTimeout(() => note.remove(), 5000);
+                  set(userConsumableRef, "");
+                } catch (err) {
+                  console.error("Error receiving gifted consumable:", err);
                 }
-              });
+              }
+            });
+            // Listen for gifted brainrots
+            const userBrainrotRef = ref(db, `userBrainrot/${btoa(user.email)}`);
+            onValue(userBrainrotRef, (snap) => {
+              const val = snap.val();
+              if (val && val.brainrot) {
+                let alreadyInInv = inventory.includes(val.brainrot);
+                if (!alreadyInInv) {
+                  inventory.push(val.brainrot);
+                  updateInventory();
+                  let tempDiv = document.createElement("div");
+                  tempDiv.innerHTML = val.brainrot;
+                  let itemText = tempDiv.textContent.split("\n")[0];
+                  let raritySpan = tempDiv.querySelector("span");
+                  let itemRarity = raritySpan ? raritySpan.textContent : "";
+                  updateQuests(itemText, itemRarity);
+                  saveGame();
+                } else {
+                  saveGame();
+                }
+                let msg = `You have been gifted ${
+                  val.brainrot.split("<br>")[0]
+                } by ${val.sender}!`;
+                if (alreadyInInv) msg += " (already in your inv)";
+                const note = document.createElement("div");
+                note.style.position = "fixed";
+                note.style.bottom = "80px";
+                note.style.left = "50%";
+                note.style.transform = "translateX(-50%)";
+                note.style.background = "#21a9c4";
+                note.style.color = "white";
+                note.style.padding = "22px 44px";
+                note.style.borderRadius = "16px";
+                note.style.fontWeight = "bold";
+                note.style.fontSize = "2rem";
+                note.style.boxShadow = "0 4px 24px #21a9c4";
+                note.style.zIndex = "9999";
+                note.style.display = "flex";
+                note.style.alignItems = "center";
+                note.innerText = msg;
+                document.body.appendChild(note);
+                setTimeout(() => note.remove(), 6000);
+              }
+            });
+          } else {
+            updateLoginPanel(null);
+            updateLeaderboardsPanel();
+          }
+        });
+      }
     </script>
   </body>
 </html>
