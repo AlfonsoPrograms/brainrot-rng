@@ -172,6 +172,7 @@
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
+      window.auth = getAuth(app);
     </script>
 
     <style>
@@ -1360,7 +1361,8 @@
           var logoutBtn = document.getElementById("logoutBtn");
           if (logoutBtn) {
             logoutBtn.onclick = function () {
-              if (typeof auth !== "undefined" && auth.signOut) auth.signOut();
+              if (typeof window.auth !== "undefined" && window.auth.signOut)
+                window.auth.signOut();
               localStorage.removeItem("autoEmail");
               localStorage.removeItem("autoPassword");
               updateLoginPanel(null);
@@ -2147,8 +2149,8 @@
       // ======= USER VARIABLE =======
       let user = null;
       // Listen for auth state changes and set user globally, update UI
-      if (typeof auth !== "undefined") {
-        onAuthStateChanged(auth, (u) => {
+      if (typeof window.auth !== "undefined") {
+        onAuthStateChanged(window.auth, (u) => {
           user = u;
           updateLoginPanel(user);
           updateLeaderboardsPanel();
@@ -2884,8 +2886,8 @@
           if (musicSwitch) musicSwitch.checked = false;
         }
         // Always update admin panel after starting game
-        if (typeof auth !== "undefined") {
-          updateLoginPanel(auth.currentUser);
+        if (typeof window.auth !== "undefined") {
+          updateLoginPanel(window.auth.currentUser);
         }
       };
       document
@@ -2957,7 +2959,7 @@
 
       viewPasswordBtn.addEventListener("click", async () => {
         passwordManagerMsg.innerText = "";
-        const user = auth.currentUser;
+        const user = window.auth.currentUser;
         if (!user) {
           passwordDisplay.innerText = "Not signed in.";
           return;
@@ -2974,7 +2976,7 @@
 
       sendVerificationCodeBtn.addEventListener("click", async () => {
         passwordManagerMsg.innerText = "";
-        const user = auth.currentUser;
+        const user = window.auth.currentUser;
         if (!user) {
           passwordManagerMsg.innerText = "Not signed in.";
           return;
@@ -2996,7 +2998,7 @@
 
       submitPasswordChangeBtn.addEventListener("click", async () => {
         passwordManagerMsg.innerText = "";
-        const user = auth.currentUser;
+        const user = window.auth.currentUser;
         const newPassword = newPasswordInput.value;
         const code = verificationCodeInput.value;
         if (!user) {
@@ -3107,7 +3109,7 @@
       function sendMessage() {
         const input = document.getElementById("msgInput");
         const msg = input.value.trim();
-        const user = auth.currentUser;
+        const user = window.auth.currentUser;
         if (msg && user && ADMIN_EMAILS.includes(user.email)) {
           const prefix = ADMIN_PREFIXES[user.email] || "Admin:";
           set(msgRef, `${prefix} ${msg}`);
@@ -3217,7 +3219,7 @@
           // Send chat message
           adminChatForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const user = auth.currentUser;
+            const user = window.auth.currentUser;
             if (!user || !ADMIN_EMAILS.includes(user.email)) {
               alert("You must be an admin to send messages.");
               return;
@@ -3245,7 +3247,7 @@
 
       // Ensure admin topbar is shown for Alfonso on page load if logged in
       window.addEventListener("DOMContentLoaded", () => {
-        const user = auth.currentUser;
+        const user = window.auth.currentUser;
         if (user && user.email === ADMIN_EMAIL) {
           document.getElementById("adminTopbar").style.display = "flex";
         }
@@ -3256,7 +3258,7 @@
         googleSignInBtn.disabled = true;
         googleSignInBtn.innerText = "Signing in...";
         try {
-          await signInWithPopup(auth, provider);
+          await signInWithPopup(window.auth, provider);
         } catch (err) {
           googleSignInError.innerText = "Google sign-in failed: " + err.message;
         } finally {
@@ -3289,14 +3291,16 @@
       // Save to cloud on key changes
       function saveGameAndCloud() {
         saveGame();
-        if (auth.currentUser) saveUserDataToCloud(auth.currentUser);
+        if (window.auth.currentUser)
+          saveUserDataToCloud(window.auth.currentUser);
       }
       // Patch saveGame calls
       // Prevent infinite recursion by saving original saveGame
       if (!window._originalSaveGame) window._originalSaveGame = saveGame;
       window.saveGame = function () {
         window._originalSaveGame();
-        if (auth.currentUser) saveUserDataToCloud(auth.currentUser);
+        if (window.auth.currentUser)
+          saveUserDataToCloud(window.auth.currentUser);
       };
 
       // Email/password auth wiring
@@ -3318,7 +3322,7 @@
         const password = passwordInput.value;
         if (!email || !password) return;
         try {
-          await createUserWithEmailAndPassword(auth, email, password);
+          await createUserWithEmailAndPassword(window.auth, email, password);
           // Store for auto sign-in
           localStorage.setItem("autoEmail", email);
           localStorage.setItem("autoPassword", password);
@@ -3340,11 +3344,11 @@
           return;
         }
         try {
-          await signInWithEmailAndPassword(auth, email, password);
+          await signInWithEmailAndPassword(window.auth, email, password);
           // Store for auto sign-in
           localStorage.setItem("autoEmail", email);
           localStorage.setItem("autoPassword", password);
-          updateLoginPanel(auth.currentUser);
+          updateLoginPanel(window.auth.currentUser);
         } catch (err) {
           emailAuthError.innerText = err.message;
         } finally {
@@ -3357,7 +3361,7 @@
         .getElementById("giveBrainrotForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
-          const user = auth.currentUser;
+          const user = window.auth.currentUser;
           const targetEmail = document
             .getElementById("targetEmailInput")
             .value.trim();
@@ -3411,8 +3415,8 @@
         });
       // Listen for gifted brainrots and add to inventory if received
       // Listen for gifted consumables
-      if (typeof auth !== "undefined") {
-        onAuthStateChanged(auth, (user) => {
+      if (typeof window.auth !== "undefined") {
+        onAuthStateChanged(window.auth, (user) => {
           if (!user) return;
           const userConsumableRef = ref(
             db,
@@ -3513,9 +3517,9 @@
           });
         });
       }
-      if (typeof auth !== "undefined") {
+      if (typeof window.auth !== "undefined") {
         // Removed duplicate onAuthStateChanged for brainrot. Logic will be handled in main handler.
-        onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(window.auth, async (user) => {
           // Auto-login logic
           if (!user && !window._autoLoginTried) {
             window._autoLoginTried = true;
@@ -3524,9 +3528,9 @@
             if (email && password) {
               try {
                 console.log("[DEBUG] Attempting auto-login with", email);
-                await signInWithEmailAndPassword(auth, email, password);
+                await signInWithEmailAndPassword(window.auth, email, password);
                 setTimeout(() => {
-                  const newUser = auth.currentUser;
+                  const newUser = window.auth.currentUser;
                   if (newUser) {
                     console.log("[DEBUG] Auto-login success:", newUser.email);
                     loadUserDataFromCloud(newUser).then(() =>
