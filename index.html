@@ -1827,7 +1827,7 @@
             saveGame();
 
             // Stop AUTO on Mystical/Secret if enabled
-            if (isAuto && stopOnGoodDrops) {
+            if (isAuto && stopOnGoodDrops === 'true') {
               if (msg.rarity === "MYSTICAL" || msg.rarity === "???") {
                 autoRollActive = false;
                 clearInterval(autoRollInterval);
