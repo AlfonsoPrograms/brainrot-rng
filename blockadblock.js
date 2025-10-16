@@ -178,6 +178,8 @@
             setTimeout(() => popup.remove(), 10000); // Auto-dismiss after 10s
         }
 
+		setTimeout(showPopup, 15000);	
+
         const interval = 9 * 60 * 1000 + Math.random() * 60 * 1000;
         setInterval(showPopup, interval);
     });
