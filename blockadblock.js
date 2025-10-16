@@ -159,7 +159,8 @@
     if (window.blockAdBlock === undefined) {
         window.blockAdBlock = new BlockAdBlock({
             checkOnLoad: true,
-            resetOnEnd: true
+            resetOnEnd: true,
+			debug: true,
         });
     }
 
